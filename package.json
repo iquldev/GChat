@@ -1,0 +1,37 @@
+{
+  "name": "gchat",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "@vueuse/core": "^14.1.0",
+    "@vueuse/motion": "^3.0.3",
+    "lodash.debounce": "^4.0.8",
+    "motion-v": "^1.7.4",
+    "nuxt": "^4.2.2",
+    "tailwindcss": "^4.1.17",
+    "vue": "^3.5.25",
+    "vue-router": "^4.6.3"
+  },
+  "devDependencies": {
+    "@nuxt/test-utils": "^3.23.0",
+    "@nuxt/ui": "^4.3.0",
+    "@nuxtjs/color-mode": "^4.0.0",
+    "@nuxtjs/i18n": "^10.2.1",
+    "@pinia/nuxt": "^0.11.3",
+    "@pinia/testing": "^1.0.3",
+    "@types/lodash": "^4.17.21",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.1.0",
+    "nuxt-security": "^2.5.0",
+    "vitest": "^3.2.4"
+  }
+}
