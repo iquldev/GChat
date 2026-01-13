@@ -1,22 +1,22 @@
-<template>
-  <div class="h-screen p-6">
-    <Sidebar />
-    <SettingsModal v-model="ui.isSettingsOpen" v-if="isMounted" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import Sidebar from "~/components/sidebar/sidebar.vue";
 import SettingsModal from "~/components/settings/settingsModal.vue";
-import { useUIStore } from "~/stores/ui";
 
-const ui = useUIStore();
-const isMounted = ref(false);
+const isSettingsOpen = ref(false);
 
-onMounted(() => {
-  isMounted.value = true;
-});
+const toggleSettings = (value?: boolean) => {
+  isSettingsOpen.value = value !== undefined ? value : !isSettingsOpen.value;
+};
+
+provide("toggleSettings", toggleSettings);
 </script>
+
+<template>
+  <div class="h-screen p-6">
+    <Sidebar />
+    <SettingsModal :is-settings-open="isSettingsOpen" />
+  </div>
+</template>
 
 <style>
 * {

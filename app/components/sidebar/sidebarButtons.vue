@@ -25,6 +25,8 @@
 import { motion } from "motion-v";
 import SidebarButton from "./sidebarButton.vue";
 
+const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
+
 defineProps({
   isSidebarExpanded: {
     type: Boolean,
@@ -35,10 +37,6 @@ defineProps({
     required: true,
   },
   toggleSidebar: {
-    type: Function,
-    required: true,
-  },
-  toggleSettings: {
     type: Function,
     required: true,
   },

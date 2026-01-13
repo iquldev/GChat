@@ -15,7 +15,6 @@
         :isSidebarExpanded="isSidebarExpanded"
         :newChatHandler="newChatHandler"
         :toggleSidebar="toggleSidebar"
-        :toggleSettings="toggleSettings"
         :toggleSearch="toggleSearch"
         :isMobile="isMobile"
       />
@@ -38,13 +37,16 @@ import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import sidebarButtons from "./sidebarButtons.vue";
 import sidebarSearch from "./sidebarSearch.vue";
 import sidebarChatList from "./sidebarChatList.vue";
+import { useUIStore } from "~/stores/ui";
+import { useChatStore } from "~/stores/chat";
+import { storeToRefs } from "pinia";
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();
 
 const { isSidebarExpanded, isHomeScreen, isSearchActive, searchQuery } =
   storeToRefs(uiStore);
-const { toggleSidebar, toggleSettings, toggleSearch, setHomeScreen } = uiStore;
+const { toggleSidebar, toggleSearch, setHomeScreen } = uiStore;
 const { chats } = storeToRefs(chatStore);
 const { changeSelected, removeSelection } = chatStore;
 

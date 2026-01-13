@@ -6,14 +6,8 @@ export const useUIStore = defineStore("ui", () => {
   const isSearchActive = useState("ui:isSearchActive", () => false);
   const searchQuery = useState("ui:searchQuery", () => "");
 
-  const isSettingsOpen = ref(false);
-
   const toggleSidebar = () => {
     isSidebarExpanded.value = !isSidebarExpanded.value;
-  };
-
-  const toggleSettings = (value?: boolean) => {
-    isSettingsOpen.value = value !== undefined ? value : !isSettingsOpen.value;
   };
 
   const toggleSearch = () => {
@@ -32,10 +26,8 @@ export const useUIStore = defineStore("ui", () => {
     isSidebarExpanded,
     isHomeScreen,
     isSearchActive,
-    isSettingsOpen,
     searchQuery,
     toggleSidebar,
-    toggleSettings,
     toggleSearch,
     setSearchQuery,
     setHomeScreen,
