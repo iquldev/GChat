@@ -15,6 +15,7 @@
         :isSidebarExpanded="isSidebarExpanded"
         :newChatHandler="newChatHandler"
         :toggleSidebar="toggleSidebar"
+        :toggleSettings="toggleSettings"
         :toggleSearch="toggleSearch"
         :isMobile="isMobile"
       />
@@ -43,7 +44,7 @@ const chatStore = useChatStore();
 
 const { isSidebarExpanded, isHomeScreen, isSearchActive, searchQuery } =
   storeToRefs(uiStore);
-const { toggleSidebar, toggleSearch, setHomeScreen } = uiStore;
+const { toggleSidebar, toggleSettings, toggleSearch, setHomeScreen } = uiStore;
 const { chats } = storeToRefs(chatStore);
 const { changeSelected, removeSelection } = chatStore;
 

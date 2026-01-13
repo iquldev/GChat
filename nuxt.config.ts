@@ -12,6 +12,19 @@ export default defineNuxtConfig({
     "nuxt-security",
     "motion-v/nuxt",
   ],
+  i18n: {
+    strategy: "no_prefix",
+    defaultLocale: "en",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      alwaysRedirect: true,
+    },
+    locales: [
+      { code: "en", language: "en-US" },
+      { code: "ru", language: "ru-RU" },
+    ],
+  },
   css: ["./app/assets/css/main.css"],
   vite: {
     plugins: [tailwindcss()],

@@ -8,5 +8,6 @@
 .dark {
   --ui-background: #0f0f0f;
   --ui-sidebar-background: #080808;
+  --ui-text-primary: #ffffff;
   --ui-text-second: #acacac;
 }

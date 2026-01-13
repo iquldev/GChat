@@ -5,7 +5,7 @@
     :transition="{ ease: ['easeIn', 'easeOut'] }"
     layout
   >
-    <SidebarButton icon="lucide:settings" />
+    <SidebarButton icon="lucide:settings" @click="toggleSettings(true)" />
     <SidebarButton icon="lucide:search" @click="toggleSearch" />
     <SidebarButton icon="lucide:message-square-plus" @click="newChatHandler" />
     <SidebarButton
@@ -35,6 +35,10 @@ defineProps({
     required: true,
   },
   toggleSidebar: {
+    type: Function,
+    required: true,
+  },
+  toggleSettings: {
     type: Function,
     required: true,
   },

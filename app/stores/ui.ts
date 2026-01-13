@@ -1,13 +1,19 @@
 import { defineStore } from "pinia";
 
 export const useUIStore = defineStore("ui", () => {
-  const isSidebarExpanded = ref(false);
-  const isHomeScreen = ref(true);
-  const isSearchActive = ref(false);
-  const searchQuery = ref("");
+  const isSidebarExpanded = useState("ui:isSidebarExpanded", () => false);
+  const isHomeScreen = useState("ui:isHomeScreen", () => true);
+  const isSearchActive = useState("ui:isSearchActive", () => false);
+  const searchQuery = useState("ui:searchQuery", () => "");
+
+  const isSettingsOpen = ref(false);
 
   const toggleSidebar = () => {
     isSidebarExpanded.value = !isSidebarExpanded.value;
+  };
+
+  const toggleSettings = (value?: boolean) => {
+    isSettingsOpen.value = value !== undefined ? value : !isSettingsOpen.value;
   };
 
   const toggleSearch = () => {
@@ -26,8 +32,10 @@ export const useUIStore = defineStore("ui", () => {
     isSidebarExpanded,
     isHomeScreen,
     isSearchActive,
+    isSettingsOpen,
     searchQuery,
     toggleSidebar,
+    toggleSettings,
     toggleSearch,
     setSearchQuery,
     setHomeScreen,
