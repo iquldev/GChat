@@ -1,6 +1,6 @@
 <template>
-  <div class="flex items-center justify-between gap-12">
-    <p class="text-(--ui-text-second)">{{ label }}</p>
+  <div class="flex items-center justify-between md:gap-12 gap-8">
+    <p class="text-(--ui-text-second) md:text-base text-sm">{{ label }}</p>
     <Selector
       v-if="options.length > 0"
       v-model="modelValue"

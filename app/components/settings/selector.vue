@@ -2,7 +2,7 @@
   <div class="relative flex items-center w-fit">
     <select
       v-model="modelValue"
-      class="appearance-none pl-4 pr-10 py-2 rounded-3xl bg-(--ui-background) outline-none border-none cursor-pointer text-(--ui-text-primary) hover:opacity-50 transition-all"
+      class="appearance-none pl-4 pr-10 py-2 rounded-full bg-(--ui-background) outline-none border-none cursor-pointer text-(--ui-text-primary) md:text-base text-sm hover:opacity-50 transition-all"
     >
       <option
         v-for="option in options"

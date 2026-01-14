@@ -2,7 +2,7 @@
   <dialog
     ref="dialogRef"
     class="settings-dialog backdrop:bg-black/80 backdrop:backdrop-blur-sm"
-    @close="handleClose"
+    @close="toggleSettings(false)"
     @click="handleBackdropClick"
   >
     <motion.div
@@ -12,7 +12,7 @@
       :animate="{ opacity: 1, scale: 1, y: 0 }"
     >
       <div class="flex items-center justify-between">
-        <h1 class="font-bold text-2xl">Settings</h1>
+        <h1 class="font-bold md:text-2xl text-xl">Settings</h1>
         <SidebarButton
           icon="lucide:arrow-left"
           @click="closeDialog"
@@ -93,10 +93,6 @@ watch(
     }
   }
 );
-
-const handleClose = () => {
-  toggleSettings(false);
-};
 
 const handleBackdropClick = (event: MouseEvent) => {
   if (event.target === dialogRef.value) {
