@@ -15,7 +15,7 @@
     </select>
     <Icon
       name="lucide:chevron-down"
-      class="absolute right-3 w-5 h-5 pointer-events-none text-(--ui-text-primary)"
+      class="text-(--ui-text-second) absolute right-3 w-5 h-5 pointer-events-none"
     />
   </div>
 </template>
