@@ -13,26 +13,22 @@ describe("Chat Store", () => {
     expect(store.chats[0]?.title).toBeDefined();
   });
 
-  it("selects a chat and deselects others", () => {
+  it("selects a chat by ID", () => {
     const store = useChatStore();
     const targetId = 2;
 
     store.changeSelected(targetId);
 
-    const selectedChat = store.chats.find((c) => c.id === targetId);
-    const unselectedChat = store.chats.find((c) => c.id !== targetId);
-
-    expect(selectedChat?.isSelected).toBe(true);
-    expect(unselectedChat?.isSelected).toBe(false);
+    expect(store.selectedChatId).toBe(targetId);
+    expect(store.selectedChat?.id).toBe(targetId);
   });
 
-  it("removes selection from all chats", () => {
+  it("removes selection", () => {
     const store = useChatStore();
     store.changeSelected(1);
-
     store.removeSelection();
 
-    const anySelected = store.chats.some((c) => c.isSelected);
-    expect(anySelected).toBe(false);
+    expect(store.selectedChatId).toBeNull();
+    expect(store.selectedChat).toBeUndefined();
   });
 });

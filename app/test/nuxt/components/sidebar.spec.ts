@@ -12,6 +12,12 @@ vi.mock("motion-v", () => ({
   },
 }));
 
+vi.mock("#app", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
 describe("Sidebar Component", () => {
   it("renders correctly", () => {
     const wrapper = mount(Sidebar, {
@@ -28,6 +34,9 @@ describe("Sidebar Component", () => {
         stubs: {
           sidebarButtons: true,
           sidebarChatList: true,
+        },
+        provide: {
+          toggleSettings: vi.fn(),
         },
         mocks: {
           $colorMode: {
@@ -47,6 +56,9 @@ describe("Sidebar Component", () => {
     const wrapper = mount(Sidebar, {
       global: {
         plugins: [createTestingPinia({ createSpy: vi.fn })],
+        provide: {
+          toggleSettings: vi.fn(),
+        },
         mocks: {
           $colorMode: {
             preference: "light",

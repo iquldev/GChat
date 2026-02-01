@@ -1,6 +1,6 @@
 <template>
   <motion.div
-    class="bg-(--ui-sidebar-background) rounded-4xl md:p-4 p-6 md:w-fit w-full md:h-full overflow-hidden overflow-y-scroll"
+    class="bg-(--ui-sidebar-background) rounded-4xl md:p-4 p-6 md:w-fit w-full md:h-full overflow-hidden"
     :class="{
       'rounded-full': isSidebarExpanded,
       'h-fit': isSidebarExpanded,
@@ -10,7 +10,11 @@
     :animate="{ filter: 'blur(0px)' }"
     :while-layout="{ filter: 'blur(5px)' }"
   >
-    <motion.div class="flex flex-col gap-4 h-fit" layout>
+    <motion.div
+      class="flex flex-col gap-4"
+      :class="isSidebarExpanded ? 'h-fit' : 'h-full min-h-0'"
+      layout
+    >
       <sidebarButtons
         :isSidebarExpanded="isSidebarExpanded"
         :newChatHandler="newChatHandler"
@@ -22,7 +26,19 @@
         v-model:searchQuery="searchQuery"
         v-if="isSearchActive && !isSidebarExpanded"
       />
+      <div
+        v-if="!isSidebarExpanded"
+        class="flex-1 overflow-y-auto scrollbar-hide"
+        :class="{ 'max-h-[280px] md:max-h-none': isMobile }"
+      >
+        <sidebarChatList
+          :chats="visibleChats"
+          :changeSelected="handleChangeSelected"
+          :isSidebarExpanded="isSidebarExpanded"
+        />
+      </div>
       <sidebarChatList
+        v-else
         :chats="visibleChats"
         :changeSelected="handleChangeSelected"
         :isSidebarExpanded="isSidebarExpanded"
@@ -44,9 +60,8 @@ import { storeToRefs } from "pinia";
 const uiStore = useUIStore();
 const chatStore = useChatStore();
 
-const { isSidebarExpanded, isHomeScreen, isSearchActive, searchQuery } =
-  storeToRefs(uiStore);
-const { toggleSidebar, toggleSearch, setHomeScreen } = uiStore;
+const { isSidebarExpanded, isSearchActive, searchQuery } = storeToRefs(uiStore);
+const { toggleSidebar, toggleSearch } = uiStore;
 const { chats } = storeToRefs(chatStore);
 const { changeSelected, removeSelection } = chatStore;
 
@@ -58,13 +73,15 @@ const visibleChats = computed(() => {
   });
 });
 
+const router = useRouter();
+
 const handleChangeSelected = (id: number) => {
   changeSelected(id);
-  setHomeScreen(false);
+  router.push(`/chat/${id}`);
 };
 
 const newChatHandler = async () => {
   await removeSelection();
-  setHomeScreen(true);
+  router.push("/");
 };
 </script>

@@ -1,6 +1,27 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-hide::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-hide::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+  }
+  .scrollbar-hide::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+}
+
 :root {
   --ui-background: #ffffff;
 }

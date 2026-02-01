@@ -8,16 +8,17 @@
     <SidebarButton icon="lucide:settings" @click="toggleSettings(true)" />
     <SidebarButton icon="lucide:search" @click="toggleSearch" />
     <SidebarButton icon="lucide:message-square-plus" @click="newChatHandler" />
-    <SidebarButton
-      :icon="
-        !isMobile
-          ? 'lucide:sidebar'
-          : isSidebarExpanded
-          ? 'lucide:arrow-up'
-          : 'lucide:arrow-down'
-      "
-      @click="toggleSidebar"
-    />
+    <client-only>
+      <SidebarButton
+        v-if="isMobile"
+        :icon="isSidebarExpanded ? 'lucide:arrow-up' : 'lucide:arrow-down'"
+        @click="toggleSidebar"
+      />
+      <SidebarButton v-else icon="lucide:sidebar" @click="toggleSidebar" />
+      <template #fallback>
+        <SidebarButton icon="lucide:sidebar" @click="toggleSidebar" />
+      </template>
+    </client-only>
   </motion.div>
 </template>
 

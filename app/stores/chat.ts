@@ -3,7 +3,6 @@ import { defineStore } from "pinia";
 export interface Chat {
   id: number;
   title: string;
-  isSelected: boolean;
 }
 
 export const useChatStore = defineStore("chat", () => {
@@ -12,55 +11,60 @@ export const useChatStore = defineStore("chat", () => {
       id: 1,
       title:
         "The connections we build with others often define our experiences.",
-      isSelected: false,
     },
     {
       id: 2,
       title: "Isn't it amazing how music can evoke such strong emotions?",
-      isSelected: false,
+    },
+    { id: 3, title: "Curiosity often leads to the most profound discoveries." },
+    {
+      id: 14,
+      title: "Curiosity often leads to the most profound discoveries.",
     },
     {
-      id: 3,
+      id: 15,
       title: "Curiosity often leads to the most profound discoveries.",
-      isSelected: false,
     },
     {
-      id: 4,
+      id: 16,
       title: "Curiosity often leads to the most profound discoveries.",
-      isSelected: false,
     },
     {
-      id: 5,
+      id: 17,
       title: "Curiosity often leads to the most profound discoveries.",
-      isSelected: false,
     },
     {
-      id: 6,
+      id: 18,
       title: "Curiosity often leads to the most profound discoveries.",
-      isSelected: false,
+    },
+    {
+      id: 19,
+      title: "Curiosity often leads to the most profound discoveries.",
+    },
+    {
+      id: 20,
+      title: "Curiosity often leads to the most profound discoveries.",
     },
   ]);
 
+  const selectedChatId = ref<number | null>(null);
+
+  const selectedChat = computed(() =>
+    chats.value.find((chat) => chat.id === selectedChatId.value),
+  );
+
   const changeSelected = (id: number) => {
-    chats.value = chats.value.map((chat) => {
-      if (chat.id === id) {
-        chat.isSelected = true;
-      } else {
-        chat.isSelected = false;
-      }
-      return chat;
-    });
+    selectedChatId.value = id;
   };
 
   const removeSelection = () => {
-    chats.value = chats.value.map((chat) => {
-      chat.isSelected = false;
-      return chat;
-    });
+    selectedChatId.value = null;
   };
 
   return {
     chats,
+    selectedChatId,
+    selectedChat,
     changeSelected,
     removeSelection,
   };

@@ -7,7 +7,7 @@
       v-for="chat in chats"
       :key="chat.id"
       :title="chat.title"
-      :is-selected="chat.isSelected"
+      :is-selected="chat.id === selectedChatId"
       :id="chat.id"
       @click="changeSelected(chat.id)"
     ></sidebarChat>
@@ -17,12 +17,16 @@
 <script lang="ts" setup>
 import { motion } from "motion-v";
 import sidebarChat from "./sidebarChat.vue";
+import { useChatStore } from "~/stores/chat";
+import { storeToRefs } from "pinia";
 
 interface chat {
   id: number;
   title: string;
-  isSelected: boolean;
 }
+
+const chatStore = useChatStore();
+const { selectedChatId } = storeToRefs(chatStore);
 
 const props = defineProps({
   isSidebarExpanded: {

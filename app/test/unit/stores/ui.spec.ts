@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useUIStore } from "~/stores/ui";
 
@@ -30,9 +30,8 @@ describe("UI Store", () => {
     expect(store.searchQuery).toBe("test query");
   });
 
-  it("sets home screen state", () => {
+  it("has a default selected model", () => {
     const store = useUIStore();
-    store.setHomeScreen(false);
-    expect(store.isHomeScreen).toBe(false);
+    expect(store.selectedModel).toBe("gemini-3-flash");
   });
 });

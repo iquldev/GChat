@@ -1,11 +1,17 @@
 import { defineStore } from "pinia";
+import { useStorage } from "@vueuse/core";
 
 export const useUIStore = defineStore("ui", () => {
-  const isSidebarExpanded = useState("ui:isSidebarExpanded", () => false);
-  const isHomeScreen = useState("ui:isHomeScreen", () => true);
+  const isSidebarExpanded = useCookie("ui:isSidebarExpanded", {
+    default: () => false,
+  });
   const isSearchActive = useState("ui:isSearchActive", () => false);
   const searchQuery = useState("ui:searchQuery", () => "");
   const isSettingsOpen = useState("ui:isSettingsOpen", () => false);
+
+  const selectedModel = useCookie("ui:selectedModel", {
+    default: () => "gemini-3-flash",
+  });
 
   const toggleSidebar = () => {
     isSidebarExpanded.value = !isSidebarExpanded.value;
@@ -19,24 +25,19 @@ export const useUIStore = defineStore("ui", () => {
     searchQuery.value = query;
   };
 
-  const setHomeScreen = (value: boolean) => {
-    isHomeScreen.value = value;
-  };
-
   const toggleSettings = (value?: boolean) => {
     isSettingsOpen.value = value !== undefined ? value : !isSettingsOpen.value;
   };
 
   return {
     isSidebarExpanded,
-    isHomeScreen,
     isSearchActive,
     searchQuery,
     isSettingsOpen,
+    selectedModel,
     toggleSidebar,
     toggleSearch,
     setSearchQuery,
-    setHomeScreen,
     toggleSettings,
   };
 });
