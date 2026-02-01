@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { useStorage } from "@vueuse/core";
 
 export const useUIStore = defineStore("ui", () => {
   const isSidebarExpanded = useCookie("ui:isSidebarExpanded", {
