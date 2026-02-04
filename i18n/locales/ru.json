@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "title": "Настройки",
+    "apiKey": "Gemini API Ключ",
+    "language": "Язык",
+    "theme": "Тема",
+    "disableBlur": "Отключить блюр",
+    "options": {
+      "on": "Вкл",
+      "off": "Выкл"
+    },
+    "themes": {
+      "system": "Системная",
+      "light": "Светлая",
+      "dark": "Темная"
+    }
+  },
+  "chat": {
+    "promptPlaceholder": "Введите ваш запрос...",
+    "promptLabel": "Чат запрос"
+  },
+  "common": {
+    "select": "Выбрать...",
+    "search": "Поиск..."
+  }
+}

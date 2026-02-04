@@ -5,44 +5,59 @@
     @close="toggleSettings(false)"
     @click="handleBackdropClick"
   >
-    <motion.div
-      v-if="isAnimating"
-      class="settings-content bg-(--ui-sidebar-background) flex flex-col gap-4 p-4 pl-6 rounded-4xl"
-      :initial="{ opacity: 0, scale: 0.95, y: -20 }"
-      :animate="{ opacity: 1, scale: 1, y: 0 }"
+    <Transition
+      enter-active-class="animate-modal-in"
+      leave-active-class="animate-modal-out"
+      @after-leave="handleAfterLeave"
     >
-      <div class="flex items-center justify-between">
-        <h1 class="font-bold md:text-2xl text-xl">Settings</h1>
-        <SidebarButton
-          icon="lucide:arrow-left"
-          @click="closeDialog"
-        ></SidebarButton>
+      <div
+        v-if="isAnimating"
+        class="settings-content bg-(--ui-sidebar-background) flex flex-col gap-4 p-4 pl-6 rounded-4xl"
+      >
+        <div class="flex items-center justify-between">
+          <h1 class="font-bold md:text-2xl text-xl">
+            {{ $t("settings.title") }}
+          </h1>
+          <SidebarButton
+            icon="lucide:arrow-left"
+            @click="toggleSettings(false)"
+          ></SidebarButton>
+        </div>
+        <div class="flex flex-col gap-2">
+          <Setting
+            v-model="apiKey"
+            :label="$t('settings.apiKey')"
+            placeholder="AIzaSyC..."
+            isKey
+          />
+          <Setting
+            v-model="currentLocale"
+            :label="$t('settings.language')"
+            :options="languages"
+          />
+          <Setting
+            v-model="colorMode.preference"
+            :label="$t('settings.theme')"
+            :options="themes"
+          />
+          <Setting
+            v-model="isBlurDisabled"
+            :label="$t('settings.disableBlur')"
+            :options="[
+              { label: $t('settings.options.off'), value: false },
+              { label: $t('settings.options.on'), value: true },
+            ]"
+          />
+        </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <Setting
-          v-model="apiKey"
-          label="Gemini API Key"
-          placeholder="AIzaSyC..."
-          isKey
-        />
-        <Setting
-          v-model="currentLocale"
-          label="Language"
-          :options="languages"
-        />
-        <Setting
-          v-model="colorMode.preference"
-          label="Theme"
-          :options="themes"
-        />
-      </div>
-    </motion.div>
+    </Transition>
   </dialog>
 </template>
 
 <script setup lang="ts">
 import Setting from "./setting.vue";
-import { motion } from "motion-v";
+import { useUIStore } from "~/stores/ui";
+import { storeToRefs } from "pinia";
 
 const props = defineProps<{ isSettingsOpen: boolean }>();
 
@@ -52,23 +67,26 @@ const isAnimating = ref(false);
 const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
 
 const colorMode = useColorMode();
-const { locale, setLocale } = useI18n();
+const { locale, setLocale, t } = useI18n();
 
 const apiKey = useCookie("gemini_api_key", {
   maxAge: 60 * 60 * 24 * 30,
   path: "/",
 });
 
+const uiStore = useUIStore();
+const { isBlurDisabled } = storeToRefs(uiStore);
+
 const languages = [
   { label: "English", value: "en" },
   { label: "Русский", value: "ru" },
 ];
 
-const themes = [
-  { label: "System", value: "system" },
-  { label: "Light", value: "light" },
-  { label: "Dark", value: "dark" },
-];
+const themes = computed(() => [
+  { label: t("settings.themes.system"), value: "system" },
+  { label: t("settings.themes.light"), value: "light" },
+  { label: t("settings.themes.dark"), value: "dark" },
+]);
 
 const currentLocale = computed({
   get: () => locale.value,
@@ -88,20 +106,21 @@ watch(
       dialogRef.value.showModal();
     } else {
       isAnimating.value = false;
-      dialogRef.value.close();
-      dialogRef.value.style.display = "none";
     }
-  }
+  },
 );
 
-const handleBackdropClick = (event: MouseEvent) => {
-  if (event.target === dialogRef.value) {
-    closeDialog();
+const handleAfterLeave = () => {
+  if (dialogRef.value) {
+    dialogRef.value.close();
+    dialogRef.value.style.display = "none";
   }
 };
 
-const closeDialog = () => {
-  dialogRef.value?.close();
+const handleBackdropClick = (event: MouseEvent) => {
+  if (event.target === dialogRef.value) {
+    toggleSettings(false);
+  }
 };
 </script>
 

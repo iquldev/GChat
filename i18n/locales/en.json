@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "title": "Settings",
+    "apiKey": "Gemini API Key",
+    "language": "Language",
+    "theme": "Theme",
+    "disableBlur": "Disable Blur",
+    "options": {
+      "on": "On",
+      "off": "Off"
+    },
+    "themes": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    }
+  },
+  "chat": {
+    "promptPlaceholder": "Enter your prompt...",
+    "promptLabel": "Chat prompt"
+  },
+  "common": {
+    "select": "Select...",
+    "search": "Search..."
+  }
+}

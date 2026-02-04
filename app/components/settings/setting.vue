@@ -16,8 +16,8 @@
 </template>
 
 <script setup lang="ts">
-import inputField from "./inputField.vue";
-import Selector from "./selector.vue";
+import inputField from "~/components/inputField.vue";
+import Selector from "~/components/selector.vue";
 
 import type { PropType } from "vue";
 

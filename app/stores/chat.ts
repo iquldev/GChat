@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useLocalStorage } from "@vueuse/core";
 
 export interface Chat {
   id: number;
@@ -47,7 +48,7 @@ export const useChatStore = defineStore("chat", () => {
     },
   ]);
 
-  const selectedChatId = ref<number | null>(null);
+  const selectedChatId = useLocalStorage<number | null>("selectedChatId", null);
 
   const selectedChat = computed(() =>
     chats.value.find((chat) => chat.id === selectedChatId.value),

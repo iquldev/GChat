@@ -12,6 +12,10 @@ export const useUIStore = defineStore("ui", () => {
     default: () => "gemini-3-flash",
   });
 
+  const isBlurDisabled = useCookie<boolean>("ui:isBlurDisabled", {
+    default: () => false,
+  });
+
   const toggleSidebar = () => {
     isSidebarExpanded.value = !isSidebarExpanded.value;
   };
@@ -34,6 +38,7 @@ export const useUIStore = defineStore("ui", () => {
     searchQuery,
     isSettingsOpen,
     selectedModel,
+    isBlurDisabled,
     toggleSidebar,
     toggleSearch,
     setSearchQuery,

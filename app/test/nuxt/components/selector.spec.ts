@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount, VueWrapper } from "@vue/test-utils";
-import Selector from "~/components/settings/selector.vue";
+import Selector from "~/components/selector.vue";
 
 vi.mock("motion-v", () => ({
   motion: {

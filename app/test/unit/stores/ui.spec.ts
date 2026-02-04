@@ -34,4 +34,11 @@ describe("UI Store", () => {
     const store = useUIStore();
     expect(store.selectedModel).toBe("gemini-3-flash");
   });
+
+  it("manages blur disabled state", () => {
+    const store = useUIStore();
+    expect(store.isBlurDisabled).toBe(false);
+    store.isBlurDisabled = true;
+    expect(store.isBlurDisabled).toBe(true);
+  });
 });

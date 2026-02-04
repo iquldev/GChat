@@ -1,9 +1,17 @@
 <template>
   <motion.div
-    class="flex items-center justify-between w-full gap-y-4"
     :class="{ 'md:flex-col flex-row': isSidebarExpanded }"
-    :transition="{ ease: ['easeIn', 'easeOut'] }"
+    class="flex items-center justify-between w-full gap-y-4 shrink-0"
     layout
+    :animate="{
+      filter: isSidebarExpanded
+        ? ['blur(4px)', 'blur(0px)']
+        : ['blur(4px)', 'blur(0px)'],
+    }"
+    :transition="{
+      layout: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+      filter: { duration: 0.4 },
+    }"
   >
     <SidebarButton icon="lucide:settings" @click="toggleSettings(true)" />
     <SidebarButton icon="lucide:search" @click="toggleSearch" />

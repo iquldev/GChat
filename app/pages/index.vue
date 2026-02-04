@@ -4,4 +4,12 @@
 
 <script setup lang="ts">
 import ChatBlock from "~/components/homepage/chatBlock.vue";
+import { useChatStore } from "~/stores/chat";
+
+const chatStore = useChatStore();
+const { removeSelection } = chatStore;
+
+onMounted(() => {
+  removeSelection();
+});
 </script>

@@ -6,9 +6,17 @@
       'h-fit': isSidebarExpanded,
     }"
     layout
-    :initial="{ filter: 'blur(5px)' }"
-    :animate="{ filter: 'blur(0px)' }"
-    :while-layout="{ filter: 'blur(5px)' }"
+    :initial="{ filter: 'blur(0px)', opacity: 1 }"
+    :animate="{
+      filter: isSidebarExpanded
+        ? ['blur(8px)', 'blur(0px)']
+        : ['blur(8px)', 'blur(0px)'],
+      opacity: 1,
+    }"
+    :transition="{
+      layout: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+      filter: { duration: 0.4 },
+    }"
   >
     <motion.div
       class="flex flex-col gap-4"
@@ -22,10 +30,15 @@
         :toggleSearch="toggleSearch"
         :isMobile="isMobile"
       />
-      <sidebarSearch
-        v-model:searchQuery="searchQuery"
-        v-if="isSearchActive && !isSidebarExpanded"
-      />
+      <Transition
+        enter-active-class="animate-fade-in"
+        leave-active-class="animate-fade-out"
+      >
+        <sidebarSearch
+          v-model:searchQuery="searchQuery"
+          v-if="isSearchActive && !isSidebarExpanded"
+        />
+      </Transition>
       <div
         v-if="!isSidebarExpanded"
         class="flex-1 overflow-y-auto scrollbar-hide"

@@ -20,9 +20,10 @@ export default defineNuxtConfig({
       cookieKey: "i18n_redirected",
       alwaysRedirect: true,
     },
+    langDir: "locales",
     locales: [
-      { code: "en", language: "en-US" },
-      { code: "ru", language: "ru-RU" },
+      { code: "en", language: "en-US", file: "en.json" },
+      { code: "ru", language: "ru-RU", file: "ru.json" },
     ],
   },
   css: ["./app/assets/css/main.css"],
