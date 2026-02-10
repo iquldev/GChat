@@ -186,6 +186,20 @@
       background-position: -200% 0;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-out,
+    .animate-dropdown-in,
+    .animate-dropdown-out,
+    .animate-dropdown-up-in,
+    .animate-dropdown-up-out,
+    .animate-modal-in,
+    .animate-modal-out,
+    .animate-text-shimmer {
+      animation: none !important;
+    }
+  }
 }
 
 :root {

@@ -2,6 +2,13 @@
   <div class="relative flex items-center w-fit" ref="target">
     <div
       @click="isOpen = !isOpen"
+      @keydown.enter.prevent="isOpen = !isOpen"
+      @keydown.space.prevent="isOpen = !isOpen"
+      @keydown.escape="isOpen = false"
+      role="combobox"
+      :aria-expanded="isOpen"
+      aria-haspopup="listbox"
+      tabindex="0"
       class="flex items-center pl-4 pr-10 py-2 rounded-full bg-(--ui-background) cursor-pointer text-(--ui-text-primary) md:text-base text-sm hover:opacity-80 transition-all select-none"
     >
       {{ currentLabel }}
@@ -11,7 +18,6 @@
         :class="{ 'rotate-180': isOpen }"
       />
     </div>
-
     <client-only>
       <Transition
         :enter-active-class="
@@ -31,17 +37,14 @@
           <div class="p-1 flex flex-col gap-1">
             <div
               v-for="option in options"
-              :key="option.value"
+              :key="String(option.value)"
               @click="selectOption(option.value)"
               class="px-4 py-2 rounded-full cursor-pointer text-(--ui-text-primary) md:text-base text-sm transition-colors whitespace-nowrap hover:bg-(--ui-button-selected)"
               :class="{
                 'bg-white/5':
-                  modelValue === option.value &&
-                  (colorMode.preference === 'dark' ||
-                    colorMode.preference === 'system'),
+                  modelValue === option.value && colorMode.value === 'dark',
                 'bg-black/10':
-                  modelValue === option.value &&
-                  colorMode.preference === 'light',
+                  modelValue === option.value && colorMode.value === 'light',
               }"
             >
               {{ option.label }}
@@ -61,7 +64,9 @@ import type { PropType } from "vue";
 
 const props = defineProps({
   options: {
-    type: Array as PropType<{ label: string; value: string | number }[]>,
+    type: Array as PropType<
+      { label: string; value: string | number | boolean }[]
+    >,
     required: true,
   },
   direction: {
@@ -70,9 +75,9 @@ const props = defineProps({
   },
 });
 
-const modelValue = defineModel<string | number>();
+const modelValue = defineModel<string | number | boolean>();
 const isOpen = ref(false);
-const target = ref(null);
+const target = ref<HTMLElement | null>(null);
 const { t } = useI18n();
 
 const colorMode = useColorMode();
@@ -88,7 +93,7 @@ const currentLabel = computed(() => {
   );
 });
 
-const selectOption = (value: string | number) => {
+const selectOption = (value: string | number | boolean) => {
   modelValue.value = value;
   isOpen.value = false;
 };

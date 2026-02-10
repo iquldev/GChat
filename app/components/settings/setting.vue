@@ -6,7 +6,7 @@
       v-model="modelValue"
       :options="options"
     />
-    <inputField
+    <InputField
       v-else
       v-model="modelValue"
       :placeholder="placeholder || ''"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import inputField from "~/components/inputField.vue";
+import InputField from "~/components/inputField.vue";
 import Selector from "~/components/selector.vue";
 
 import type { PropType } from "vue";
@@ -31,7 +31,9 @@ const props = defineProps({
     required: false,
   },
   options: {
-    type: Array as PropType<{ label: string; value: string | number }[]>,
+    type: Array as PropType<
+      { label: string; value: string | number | boolean }[]
+    >,
     default: () => [],
   },
   isKey: {

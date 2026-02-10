@@ -32,16 +32,26 @@
           role === 'user' ? 'bg-(--ui-user-avatar)' : 'bg-(--ui-ai-avatar)'
         "
       >
-        <p class="text-(--ui-background) font-bold text-sm">{{ sender }}</p>
+        <p class="text-(--ui-background) font-bold text-sm select-none">
+          {{ sender }}
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+interface Message {
+  role: "user" | "model";
+  content: string;
+  status: "sent" | "pending" | "received" | "error";
+  timestamp: string;
+  model?: string;
+}
+
 const props = defineProps({
   message: {
-    type: Object,
+    type: Object as () => Message,
     required: true,
   },
 });
@@ -70,6 +80,7 @@ const statusColor = computed(() => {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 </script>

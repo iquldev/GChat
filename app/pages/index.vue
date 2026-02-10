@@ -7,9 +7,8 @@ import ChatBlock from "~/components/homepage/chatBlock.vue";
 import { useChatStore } from "~/stores/chat";
 
 const chatStore = useChatStore();
-const { removeSelection } = chatStore;
 
 onMounted(() => {
-  removeSelection();
+  chatStore.removeSelection();
 });
 </script>

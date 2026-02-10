@@ -8,7 +8,7 @@
       />
     </div>
     <div class="p-4 flex justify-center">
-      <NewChat :chatId="Number(route.params.id)" />
+      <NewChat :chatId="currentChat?.id" />
     </div>
   </motion.div>
 </template>

@@ -34,26 +34,11 @@ import SidebarButton from "./sidebarButton.vue";
 
 const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
 
-defineProps({
-  isSidebarExpanded: {
-    type: Boolean,
-    required: true,
-  },
-  newChatHandler: {
-    type: Function,
-    required: true,
-  },
-  toggleSidebar: {
-    type: Function,
-    required: true,
-  },
-  toggleSearch: {
-    type: Function,
-    required: true,
-  },
-  isMobile: {
-    type: Boolean,
-    required: true,
-  },
-});
+defineProps<{
+  isSidebarExpanded: boolean;
+  newChatHandler: () => void;
+  toggleSidebar: () => void;
+  toggleSearch: () => void;
+  isMobile: boolean;
+}>();
 </script>

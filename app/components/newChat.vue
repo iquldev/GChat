@@ -22,6 +22,9 @@
         />
         <button
           class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all"
+          type="button"
+          :aria-label="$t('chat.addAttachment')"
+          :title="$t('chat.addAttachment')"
         >
           <Icon name="lucide:plus" />
         </button>
@@ -29,6 +32,8 @@
       <button
         class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default"
         :disabled="!prompt"
+        type="button"
+        :aria-label="$t('chat.send')"
       >
         <Icon name="lucide:send" />
       </button>
@@ -43,14 +48,11 @@ import Selector from "~/components/selector.vue";
 
 const uiStore = useUIStore();
 const { selectedModel } = storeToRefs(uiStore);
-const { t } = useI18n();
+useI18n();
 
-const props = defineProps({
-  chatId: {
-    type: Number,
-    required: false,
-  },
-});
+const props = defineProps<{
+  chatId?: number;
+}>();
 
 const prompt = ref("");
 const textarea = ref<HTMLTextAreaElement | null>(null);

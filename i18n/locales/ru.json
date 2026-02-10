@@ -17,7 +17,9 @@
   },
   "chat": {
     "promptPlaceholder": "Введите ваш запрос...",
-    "promptLabel": "Чат запрос"
+    "promptLabel": "Чат запрос",
+    "addAttachment": "Добавить вложение",
+    "send": "Отправить"
   },
   "common": {
     "select": "Выбрать...",

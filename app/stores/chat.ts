@@ -1,17 +1,22 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
 
+type MessageRole = "user" | "model";
+type MessageStatus = "sent" | "received" | "error" | "pending";
+
+export interface Message {
+  id: number;
+  role: MessageRole;
+  content: string;
+  timestamp: string;
+  status: MessageStatus;
+  model: string;
+}
+
 export interface Chat {
   id: number;
   title: string;
-  content: {
-    id: number;
-    role: string;
-    content: string;
-    timestamp: string;
-    status: string;
-    model: string;
-  }[];
+  content: Message[];
 }
 
 export const useChatStore = defineStore("chat", () => {
@@ -95,6 +100,19 @@ export const useChatStore = defineStore("chat", () => {
 
   const selectedChat = computed(() =>
     chats.value.find((chat) => chat.id === selectedChatId.value),
+  );
+
+  watch(
+    chats,
+    (newChats) => {
+      if (
+        selectedChatId.value &&
+        !newChats.find((chat) => chat.id === selectedChatId.value)
+      ) {
+        selectedChatId.value = null;
+      }
+    },
+    { immediate: true, deep: true },
   );
 
   const changeSelected = (id: number) => {

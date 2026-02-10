@@ -3,6 +3,9 @@
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -12,11 +15,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@formkit/auto-animate": "^0.9.0",
     "@nuxt/fonts": "^0.13.0",
     "@tailwindcss/vite": "^4.1.17",
     "@vueuse/core": "^14.2.0",
-    "@vueuse/motion": "^3.0.3",
     "lodash.debounce": "^4.0.8",
     "motion-v": "^1.10.2",
     "nuxt": "^4.3.0",

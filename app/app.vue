@@ -11,7 +11,7 @@
           filter: uiStore.isBlurDisabled ? 'blur(0px)' : 'blur(10px)',
           opacity: 0,
         }"
-        :animate="{ filter: 'blur(0)', opacity: 1 }"
+        :animate="{ filter: 'blur(0px)', opacity: 1 }"
         :transition="{ duration: 0.6, ease: 'easeOut' }"
       >
         <Sidebar class="shrink-0" />
