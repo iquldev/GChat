@@ -15,7 +15,11 @@
     />
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center gap-2">
-        <Selector :options="options" v-model="selectedModel" />
+        <Selector
+          :options="options"
+          v-model="selectedModel"
+          :direction="chatId ? 'up' : 'down'"
+        />
         <button
           class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all"
         >

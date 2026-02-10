@@ -14,20 +14,35 @@
 
     <client-only>
       <Transition
-        enter-active-class="animate-dropdown-in"
-        leave-active-class="animate-dropdown-out"
+        :enter-active-class="
+          direction === 'up' ? 'animate-dropdown-up-in' : 'animate-dropdown-in'
+        "
+        :leave-active-class="
+          direction === 'up'
+            ? 'animate-dropdown-up-out'
+            : 'animate-dropdown-out'
+        "
       >
         <div
           v-if="isOpen"
-          class="absolute top-full left-0 mt-2 min-w-full w-max bg-(--ui-background) border border-white/5 rounded-3xl shadow-xl z-50 overflow-hidden backdrop-blur-md"
+          class="absolute left-0 min-w-full w-max bg-(--ui-background) border border-white/5 rounded-3xl shadow-xl z-50 overflow-hidden backdrop-blur-md"
+          :class="direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'"
         >
           <div class="p-1 flex flex-col gap-1">
             <div
               v-for="option in options"
               :key="option.value"
               @click="selectOption(option.value)"
-              class="px-4 py-2 rounded-full cursor-pointer text-(--ui-text-primary) md:text-base text-sm transition-colors hover:bg-white/5 whitespace-nowrap"
-              :class="{ 'bg-white/5': modelValue === option.value }"
+              class="px-4 py-2 rounded-full cursor-pointer text-(--ui-text-primary) md:text-base text-sm transition-colors whitespace-nowrap hover:bg-(--ui-button-selected)"
+              :class="{
+                'bg-white/5':
+                  modelValue === option.value &&
+                  (colorMode.preference === 'dark' ||
+                    colorMode.preference === 'system'),
+                'bg-black/10':
+                  modelValue === option.value &&
+                  colorMode.preference === 'light',
+              }"
             >
               {{ option.label }}
             </div>
@@ -49,12 +64,18 @@ const props = defineProps({
     type: Array as PropType<{ label: string; value: string | number }[]>,
     required: true,
   },
+  direction: {
+    type: String as PropType<"up" | "down">,
+    default: "down",
+  },
 });
 
 const modelValue = defineModel<string | number>();
 const isOpen = ref(false);
 const target = ref(null);
 const { t } = useI18n();
+
+const colorMode = useColorMode();
 
 onClickOutside(target, () => {
   isOpen.value = false;

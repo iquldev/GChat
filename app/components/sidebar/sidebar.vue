@@ -8,9 +8,7 @@
     layout
     :initial="{ filter: 'blur(0px)', opacity: 1 }"
     :animate="{
-      filter: isSidebarExpanded
-        ? ['blur(8px)', 'blur(0px)']
-        : ['blur(8px)', 'blur(0px)'],
+      filter: ['blur(8px)', 'blur(0px)'],
       opacity: 1,
     }"
     :transition="{

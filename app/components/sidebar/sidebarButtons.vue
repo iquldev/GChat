@@ -1,12 +1,10 @@
 <template>
   <motion.div
-    :class="{ 'md:flex-col flex-row': isSidebarExpanded }"
-    class="flex items-center justify-between w-full gap-y-4 shrink-0"
+    class="grid w-full gap-4 shrink-0 justify-items-center items-center"
+    :class="isMobile || !isSidebarExpanded ? 'grid-cols-4' : 'grid-cols-1'"
     layout
     :animate="{
-      filter: isSidebarExpanded
-        ? ['blur(4px)', 'blur(0px)']
-        : ['blur(4px)', 'blur(0px)'],
+      filter: ['blur(4px)', 'blur(0px)'],
     }"
     :transition="{
       layout: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },

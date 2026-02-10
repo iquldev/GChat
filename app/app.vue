@@ -7,14 +7,39 @@
       <motion.div
         layout
         class="h-screen p-6 flex flex-col md:flex-row gap-4 will-change-[filter,transform]"
-        :initial="{ filter: 'blur(10px)', opacity: 0 }"
+        :initial="{
+          filter: uiStore.isBlurDisabled ? 'blur(0px)' : 'blur(10px)',
+          opacity: 0,
+        }"
         :animate="{ filter: 'blur(0)', opacity: 1 }"
         :transition="{ duration: 0.6, ease: 'easeOut' }"
       >
         <Sidebar class="shrink-0" />
-        <div class="flex-1 min-w-0 h-full overflow-hidden">
-          <NuxtPage />
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            :key="$route.path"
+            class="flex-1 min-w-0 h-full overflow-hidden will-change-[transform,opacity]"
+            :initial="{
+              opacity: 0,
+              y: 10,
+              scale: 0.98,
+              filter: uiStore.isBlurDisabled ? 'blur(0px)' : 'blur(10px)',
+            }"
+            :animate="{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }"
+            :exit="{
+              opacity: 0,
+              y: -10,
+              scale: 0.98,
+              filter: uiStore.isBlurDisabled ? 'blur(0px)' : 'blur(10px)',
+            }"
+            :transition="{
+              duration: 0.4,
+              ease: [0.22, 1, 0.36, 1],
+            }"
+          >
+            <NuxtPage />
+          </motion.div>
+        </AnimatePresence>
         <SettingsModal :is-settings-open="isSettingsOpen" />
       </motion.div>
     </LayoutGroup>
@@ -25,7 +50,7 @@
 import Sidebar from "~/components/sidebar/sidebar.vue";
 import SettingsModal from "~/components/settings/settingsModal.vue";
 import { useUIStore } from "~/stores/ui";
-import { motion, LayoutGroup } from "motion-v";
+import { motion, LayoutGroup, AnimatePresence } from "motion-v";
 import { ref, provide } from "vue";
 
 const isSettingsOpen = ref(false);
@@ -46,22 +71,5 @@ provide("toggleSettings", toggleSettings);
 body {
   background-color: var(--ui-background);
   overflow: hidden;
-}
-
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.page-enter-from {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
-  filter: blur(10px);
-}
-
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(-10px) scale(0.98);
-  filter: blur(10px);
 }
 </style>

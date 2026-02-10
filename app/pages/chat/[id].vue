@@ -1,6 +1,15 @@
 <template>
-  <motion.div layout class="h-full w-full flex flex-col justify-end">
-    <NewChat :chatId="Number(route.params.id)" />
+  <motion.div layout class="h-full w-full flex flex-col overflow-hidden">
+    <div class="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-4 py-4">
+      <Message
+        v-for="message in currentChat?.content"
+        :key="message.id"
+        :message="message"
+      />
+    </div>
+    <div class="p-4 flex justify-center">
+      <NewChat :chatId="Number(route.params.id)" />
+    </div>
   </motion.div>
 </template>
 
@@ -8,6 +17,7 @@
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 import { motion } from "motion-v";
+import Message from "~/components/chat/message.vue";
 
 const route = useRoute();
 const chatStore = useChatStore();
