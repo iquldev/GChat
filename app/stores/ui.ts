@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useCookie, useState } from "#app";
 
 export const useUIStore = defineStore("ui", () => {
   const isSidebarExpanded = useCookie("ui:isSidebarExpanded", {

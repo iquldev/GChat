@@ -1,6 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
+import { ref } from "vue";
 import { useChatStore } from "~/stores/chat";
+
+vi.mock("@vueuse/core", () => ({
+  useLocalStorage: vi.fn((key, defaultValue) => ref(defaultValue)),
+}));
 
 describe("Chat Store", () => {
   beforeEach(() => {
@@ -30,5 +35,19 @@ describe("Chat Store", () => {
 
     expect(store.selectedChatId).toBeNull();
     expect(store.selectedChat).toBeUndefined();
+  });
+
+  it("clears selection when selected chat is removed", async () => {
+    const store = useChatStore();
+    const chatId = 1;
+    store.changeSelected(chatId);
+
+    expect(store.selectedChatId).toBe(chatId);
+
+    store.chats = store.chats.filter((c) => c.id !== chatId);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.selectedChatId).toBeNull();
   });
 });

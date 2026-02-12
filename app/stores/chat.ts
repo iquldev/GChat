@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
+import { ref, computed, watch } from "vue";
 
 type MessageRole = "user" | "model";
 type MessageStatus = "sent" | "received" | "error" | "pending";
@@ -99,15 +100,15 @@ export const useChatStore = defineStore("chat", () => {
   const selectedChatId = useLocalStorage<number | null>("selectedChatId", null);
 
   const selectedChat = computed(() =>
-    chats.value.find((chat) => chat.id === selectedChatId.value),
+    chats.value.find((chat: Chat) => chat.id === selectedChatId.value),
   );
 
   watch(
     chats,
-    (newChats) => {
+    (newChats: Chat[]) => {
       if (
         selectedChatId.value &&
-        !newChats.find((chat) => chat.id === selectedChatId.value)
+        !newChats.find((chat: Chat) => chat.id === selectedChatId.value)
       ) {
         selectedChatId.value = null;
       }

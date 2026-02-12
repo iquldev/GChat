@@ -41,4 +41,21 @@ describe("UI Store", () => {
     store.isBlurDisabled = true;
     expect(store.isBlurDisabled).toBe(true);
   });
+
+  it("toggles settings state", () => {
+    const store = useUIStore();
+    expect(store.isSettingsOpen).toBe(false);
+
+    store.toggleSettings();
+    expect(store.isSettingsOpen).toBe(true);
+
+    store.toggleSettings();
+    expect(store.isSettingsOpen).toBe(false);
+
+    store.toggleSettings(true);
+    expect(store.isSettingsOpen).toBe(true);
+
+    store.toggleSettings(false);
+    expect(store.isSettingsOpen).toBe(false);
+  });
 });
