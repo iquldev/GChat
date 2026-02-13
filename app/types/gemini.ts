@@ -46,7 +46,7 @@ export interface GeminiStreamChunk {
   candidates?: {
     content: {
       parts: ContentPart[];
-      role: string;
+      role: MessageRole;
     };
     finishReason?: string;
     index: number;
@@ -67,7 +67,7 @@ export interface GeminiResponse {
   candidates: {
     content: {
       parts: ContentPart[];
-      role: string;
+      role: MessageRole;
     };
     finishReason: string;
     index: number;
