@@ -11,13 +11,24 @@
         class="flex flex-col gap-1 w-full"
         :class="role === 'user' ? 'items-end' : 'items-start'"
       >
-        <div class="px-4 py-2 rounded-2xl bg-(--ui-sidebar-background)">
-          <p
+        <div
+          class="px-4 py-2 rounded-2xl bg-(--ui-block-background)"
+          :class="{
+            'blur-disabled': isBlurDisabled,
+            'no-animation':
+              message.status !== 'received' && message.role === 'model',
+          }"
+        >
+          <TransitionGroup
+            name="stream"
+            tag="p"
             class="text-base break-words whitespace-pre-wrap"
             :class="{ 'animate-text-shimmer': message.status === 'pending' }"
           >
-            {{ message.content }}
-          </p>
+            <span v-for="(part, index) in message.parts" :key="index">
+              {{ "text" in part ? part.text : "" }}
+            </span>
+          </TransitionGroup>
         </div>
         <div class="text-sm font-thin text-(--ui-text-second) opacity-70 px-1">
           <p>
@@ -41,26 +52,26 @@
 </template>
 
 <script setup lang="ts">
-interface Message {
-  role: "user" | "model";
-  content: string;
-  status: "sent" | "pending" | "received" | "error";
-  timestamp: string;
-  model?: string;
-}
+import type { ChatMessage } from "~/types/gemini";
+import { useUIStore } from "~/stores/ui";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   message: {
-    type: Object as () => Message,
+    type: Object as () => ChatMessage,
     required: true,
   },
 });
+
+const uiStore = useUIStore();
+const { isBlurDisabled } = storeToRefs(uiStore);
 
 const role = computed(() => props.message.role);
 
 const sender = computed(() => {
   if (role.value === "user") return "You";
-  return "AI";
+  if (role.value === "model") return "AI";
+  return "";
 });
 
 const status = computed(() => {

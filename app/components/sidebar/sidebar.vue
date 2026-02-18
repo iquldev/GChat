@@ -1,6 +1,6 @@
 <template>
   <motion.div
-    class="bg-(--ui-sidebar-background) rounded-4xl md:p-4 p-6 md:w-fit w-full md:h-full overflow-hidden"
+    class="bg-(--ui-block-background) rounded-4xl md:p-4 p-6 md:w-fit w-full md:h-full overflow-hidden"
     :class="{
       'rounded-full': isSidebarExpanded,
       'h-fit': isSidebarExpanded,

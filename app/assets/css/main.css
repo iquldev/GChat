@@ -187,6 +187,42 @@
     }
   }
 
+  .stream-enter-active {
+    animation: streamIn 0.4s cubic-bezier(0.1, 0, 0.2, 1) forwards;
+  }
+
+  .no-animation .stream-enter-active {
+    animation: none !important;
+  }
+
+  @keyframes streamIn {
+    0% {
+      opacity: 0;
+      filter: blur(8px);
+      transform: translateY(2px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+  }
+
+  .blur-disabled .stream-enter-active {
+    animation: streamInNoBlur 0.3s cubic-bezier(0.1, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes streamInNoBlur {
+    0% {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in,
     .animate-fade-out,
@@ -204,7 +240,7 @@
 
 :root {
   --ui-background: #ffffff;
-  --ui-sidebar-background: #e1e1e1;
+  --ui-block-background: #e1e1e1;
   --ui-text-primary: #000000;
   --ui-text-second: #2f2f2f;
   --ui-button-selected: rgba(0, 0, 0, 0.1);
@@ -212,7 +248,7 @@
 
 .dark {
   --ui-background: #0a0a0a;
-  --ui-sidebar-background: #080808;
+  --ui-block-background: #080808;
   --ui-text-primary: #ffffff;
   --ui-text-second: #acacac;
   --ui-button-selected: rgba(255, 255, 255, 0.05);

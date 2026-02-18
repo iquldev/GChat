@@ -1,20 +1,22 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import Message from "~/components/chat/message.vue";
+import type { ChatMessage } from "~/types/gemini";
 
 describe("Message", () => {
-  const createMessage = (overrides: Record<string, unknown> = {}) => ({
-    role: "user" as const,
-    content: "Hello world",
-    status: "sent" as const,
+  const createMessage = (
+    overrides: Partial<ChatMessage> = {},
+  ): ChatMessage => ({
+    id: 1,
+    role: "user",
+    parts: [{ text: "Hello world" }],
+    status: "sent",
     timestamp: "2026-01-15T12:30:00.000Z",
-    model: "gemini-3-flash",
+    model: "gemini-3-flash-preview",
     ...overrides,
   });
 
-  const mountMessage = async (
-    messageOverrides: Record<string, unknown> = {},
-  ) => {
+  const mountMessage = async (messageOverrides: Partial<ChatMessage> = {}) => {
     return await mountSuspended(Message, {
       props: {
         message: createMessage(messageOverrides),
@@ -23,7 +25,9 @@ describe("Message", () => {
   };
 
   it("renders message content", async () => {
-    const wrapper = await mountMessage({ content: "Test message content" });
+    const wrapper = await mountMessage({
+      parts: [{ text: "Test message content" }],
+    });
     expect(wrapper.text()).toContain("Test message content");
   });
 
@@ -62,7 +66,7 @@ describe("Message", () => {
   it('shows model name for "received" status', async () => {
     const wrapper = await mountMessage({
       status: "received",
-      model: "gemini-3-flash",
+      model: "gemini-3-flash-preview",
     });
     expect(wrapper.text()).toContain("gemini-3-flash");
   });

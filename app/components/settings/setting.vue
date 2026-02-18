@@ -6,12 +6,7 @@
       v-model="modelValue"
       :options="options"
     />
-    <InputField
-      v-else
-      v-model="modelValue"
-      :placeholder="placeholder || ''"
-      :is-key="isKey"
-    />
+    <InputField v-else v-model="modelValue" :placeholder="placeholder || ''" />
   </div>
 </template>
 
@@ -35,10 +30,6 @@ const props = defineProps({
       { label: string; value: string | number | boolean }[]
     >,
     default: () => [],
-  },
-  isKey: {
-    type: Boolean,
-    default: false,
   },
 });
 

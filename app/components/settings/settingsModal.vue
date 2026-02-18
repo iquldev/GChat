@@ -12,7 +12,7 @@
     >
       <div
         v-if="isAnimating"
-        class="settings-content bg-(--ui-sidebar-background) flex flex-col gap-4 p-4 pl-6 rounded-4xl"
+        class="settings-content bg-(--ui-block-background) flex flex-col gap-4 p-4 pl-6 rounded-4xl"
       >
         <div class="flex items-center justify-between">
           <h1 class="font-bold md:text-2xl text-xl">
@@ -24,12 +24,6 @@
           ></SidebarButton>
         </div>
         <div class="flex flex-col gap-2">
-          <Setting
-            v-model="apiKey"
-            :label="$t('settings.apiKey')"
-            placeholder="AIzaSyC..."
-            isKey
-          />
           <Setting
             v-model="currentLocale"
             :label="$t('settings.language')"
@@ -72,6 +66,8 @@ const { locale, setLocale, t } = useI18n();
 const apiKey = useCookie("gemini_api_key", {
   maxAge: 60 * 60 * 24 * 30,
   path: "/",
+  secure: true,
+  sameSite: "strict",
 });
 
 const uiStore = useUIStore();

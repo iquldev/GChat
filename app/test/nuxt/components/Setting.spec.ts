@@ -12,7 +12,7 @@ describe("Setting", () => {
   it("renders the label", async () => {
     const wrapper = await mountSuspended(Setting, {
       props: {
-        label: "API Key",
+        label: "Custom Setting",
         modelValue: "",
       },
       global: {
@@ -22,20 +22,20 @@ describe("Setting", () => {
       },
     });
 
-    expect(wrapper.text()).toContain("API Key");
+    expect(wrapper.text()).toContain("Custom Setting");
   });
 
   it("renders Selector when options are provided", async () => {
     const options = [
-      { label: "English", value: "en" },
-      { label: "Русский", value: "ru" },
+      { label: "Option 1", value: "1" },
+      { label: "Option 2", value: "2" },
     ];
 
     const wrapper = await mountSuspended(Setting, {
       props: {
-        label: "Language",
+        label: "Select Setting",
         options,
-        modelValue: "en",
+        modelValue: "1",
       },
       global: {
         mocks: {
@@ -51,9 +51,9 @@ describe("Setting", () => {
   it("renders InputField when options are empty", async () => {
     const wrapper = await mountSuspended(Setting, {
       props: {
-        label: "API Key",
+        label: "Input Setting",
         options: [],
-        placeholder: "Enter key...",
+        placeholder: "Enter value...",
         modelValue: "",
       },
       global: {
@@ -65,25 +65,5 @@ describe("Setting", () => {
 
     const inputField = wrapper.findComponent({ name: "InputField" });
     expect(inputField.exists()).toBe(true);
-  });
-
-  it("passes isKey prop to InputField", async () => {
-    const wrapper = await mountSuspended(Setting, {
-      props: {
-        label: "API Key",
-        options: [],
-        isKey: true,
-        modelValue: "",
-      },
-      global: {
-        mocks: {
-          $t: (msg: string) => msg,
-        },
-      },
-    });
-
-    const inputField = wrapper.findComponent({ name: "InputField" });
-    expect(inputField.exists()).toBe(true);
-    expect(inputField.props("isKey")).toBe(true);
   });
 });

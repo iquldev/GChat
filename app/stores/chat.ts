@@ -1,103 +1,20 @@
-import { defineStore } from "pinia";
+import { defineStore, skipHydrate } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
 import { ref, computed, watch } from "vue";
-
-type MessageRole = "user" | "model";
-type MessageStatus = "sent" | "received" | "error" | "pending";
-
-export interface Message {
-  id: number;
-  role: MessageRole;
-  content: string;
-  timestamp: string;
-  status: MessageStatus;
-  model: string;
-}
+import { type ChatMessage, type TextPart } from "@/types/gemini";
 
 export interface Chat {
   id: number;
   title: string;
-  content: Message[];
+  content: ChatMessage[];
 }
 
 export const useChatStore = defineStore("chat", () => {
-  const chats = ref<Chat[]>([
-    {
-      id: 1,
-      title:
-        "The connections we build with others often define our experiences.",
-      content: [
-        {
-          id: 1,
-          role: "user",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dui nunc,  pharetra vitae tristique eget, sollicitudin nec quam. Phasellus mattis  lacinia placerat. Nullam sit amet mi ligula.",
-          timestamp: new Date().toISOString(),
-          status: "sent",
-          model: "gemini-3-flash",
-        },
-        {
-          id: 2,
-          role: "model",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dui nunc,  pharetra vitae tristique eget, sollicitudin nec quam. Phasellus mattis  lacinia placerat. Nullam sit amet mi ligula.",
-          timestamp: new Date().toISOString(),
-          status: "received",
-          model: "gemini-3-flash",
-        },
-        {
-          id: 3,
-          role: "user",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dui nunc,  pharetra vitae tristique eget, sollicitudin nec quam. Phasellus mattis  lacinia placerat. Nullam sit amet mi ligula.",
-          timestamp: new Date().toISOString(),
-          status: "error",
-          model: "gemini-3-flash",
-        },
-        {
-          id: 4,
-          role: "user",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dui nunc,  pharetra vitae tristique eget, sollicitudin nec quam. Phasellus mattis  lacinia placerat. Nullam sit amet mi ligula.",
-          timestamp: new Date().toISOString(),
-          status: "pending",
-          model: "gemini-3-flash",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title:
-        "The connections we build with others often define our experiences.",
-      content: [
-        {
-          id: 1,
-          role: "user",
-          content: "Hello",
-          timestamp: new Date().toISOString(),
-          status: "sent",
-          model: "gemini-3-flash",
-        },
-      ],
-    },
-    {
-      id: 3,
-      title:
-        "The connections we build with others often define our experiences.",
-      content: [
-        {
-          id: 1,
-          role: "user",
-          content: "Hello",
-          timestamp: new Date().toISOString(),
-          status: "sent",
-          model: "gemini-3-flash",
-        },
-      ],
-    },
-  ]);
-
-  const selectedChatId = useLocalStorage<number | null>("selectedChatId", null);
+  const chats = useLocalStorage<Chat[]>("gchat:chats", []);
+  const selectedChatId = useLocalStorage<number | null>(
+    "gchat:selectedChatId",
+    null,
+  );
 
   const selectedChat = computed(() =>
     chats.value.find((chat: Chat) => chat.id === selectedChatId.value),
@@ -116,6 +33,131 @@ export const useChatStore = defineStore("chat", () => {
     { immediate: true, deep: true },
   );
 
+  const addChat = (firstMessage: ChatMessage) => {
+    const newId = Date.now();
+    const textPart = firstMessage.parts.find((p) => "text" in p) as
+      | TextPart
+      | undefined;
+    const titleText = textPart?.text || "New Chat";
+
+    const newChat: Chat = {
+      id: newId,
+      title: titleText.slice(0, 30) + (titleText.length > 30 ? "..." : ""),
+      content: [JSON.parse(JSON.stringify(firstMessage))],
+    };
+
+    chats.value = [...chats.value, newChat];
+    return newId;
+  };
+
+  const addMessage = (chatId: number, message: ChatMessage) => {
+    const chat = chats.value.find((c) => c.id === chatId);
+    if (chat) {
+      chat.content.push(message);
+    }
+  };
+
+  const sendMessage = async (message: ChatMessage, chatId?: number) => {
+    let targetChatId = chatId;
+    if (!targetChatId) {
+      targetChatId = addChat(message);
+    } else {
+      addMessage(targetChatId, message);
+    }
+
+    const aiMessage: ChatMessage = {
+      id: Date.now() + 1,
+      role: "model",
+      parts: [{ text: "" }],
+      timestamp: new Date().toISOString(),
+      status: "pending",
+      model: message.model,
+    };
+    addMessage(targetChatId, aiMessage);
+
+    processResponse(targetChatId, message, aiMessage);
+
+    return targetChatId;
+  };
+
+  const processResponse = async (
+    targetChatId: number,
+    userMessage: ChatMessage,
+    aiMessage: ChatMessage,
+  ) => {
+    try {
+      const chat = chats.value.find((c) => c.id === targetChatId);
+      if (!chat) throw new Error("Chat not found in store");
+
+      const payload = {
+        model: userMessage.model,
+        content: chat.content
+          .filter((m) => m.role === "user" || m.status !== "pending")
+          .map((m) => ({
+            role: m.role,
+            parts: m.parts
+              .map((p) => ({ text: "text" in p ? p.text : "" }))
+              .filter((p) => p.text.length > 0),
+          })),
+      };
+
+      const response = await fetch("/api/chat/stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "text/event-stream",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        let errorMsg = `Server error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.statusMessage || errorData.message || errorMsg;
+        } catch (e) {}
+        throw new Error(errorMsg);
+      }
+
+      if (!response.body) {
+        throw new Error("Response body is not available");
+      }
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      const userMsgInStore = chat.content.find((m) => m.id === userMessage.id);
+      if (userMsgInStore) userMsgInStore.status = "sent";
+
+      const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
+      if (msgInStore) msgInStore.status = "received";
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        if (msgInStore) {
+          const lastPart = msgInStore.parts[msgInStore.parts.length - 1];
+          if (lastPart && "text" in lastPart) {
+            lastPart.text += chunk;
+          } else {
+            msgInStore.parts.push({ text: chunk });
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error(error);
+      const chat = chats.value.find((c) => c.id === targetChatId);
+      const msgInStore = chat?.content.find((m) => m.id === aiMessage.id);
+      if (msgInStore) {
+        msgInStore.status = "error";
+        msgInStore.parts = [
+          { text: `Error: ${error.message || "Unknown error"}` },
+        ];
+      }
+    }
+  };
+
   const changeSelected = (id: number) => {
     selectedChatId.value = id;
   };
@@ -125,9 +167,12 @@ export const useChatStore = defineStore("chat", () => {
   };
 
   return {
-    chats,
-    selectedChatId,
+    chats: skipHydrate(chats),
+    selectedChatId: skipHydrate(selectedChatId),
     selectedChat,
+    addChat,
+    addMessage,
+    sendMessage,
     changeSelected,
     removeSelection,
   };

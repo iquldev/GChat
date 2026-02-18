@@ -18,7 +18,7 @@ export type ContentPart = TextPart | InlineDataPart;
 export interface ChatMessage {
   id: number;
   role: MessageRole;
-  content: string;
+  parts: ContentPart[];
   timestamp: string;
   status: MessageStatus;
   model: string;

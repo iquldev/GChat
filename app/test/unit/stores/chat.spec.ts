@@ -12,20 +12,26 @@ describe("Chat Store", () => {
     setActivePinia(createPinia());
   });
 
-  it("initializes with default chats", () => {
+  it("initializes with an empty chat list", () => {
     const store = useChatStore();
-    expect(store.chats.length).toBeGreaterThan(0);
-    expect(store.chats[0]?.title).toBeDefined();
+    expect(store.chats.length).toBe(0);
   });
 
   it("selects a chat by ID", () => {
     const store = useChatStore();
-    const targetId = 2;
+    const chatId = store.addChat({
+      id: 1,
+      role: "user",
+      parts: [{ text: "Hello" }],
+      timestamp: new Date().toISOString(),
+      status: "sent",
+      model: "gemini-3-flash-preview",
+    });
 
-    store.changeSelected(targetId);
+    store.changeSelected(chatId);
 
-    expect(store.selectedChatId).toBe(targetId);
-    expect(store.selectedChat?.id).toBe(targetId);
+    expect(store.selectedChatId).toBe(chatId);
+    expect(store.selectedChat?.id).toBe(chatId);
   });
 
   it("removes selection", () => {

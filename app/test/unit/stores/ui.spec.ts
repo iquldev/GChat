@@ -32,7 +32,7 @@ describe("UI Store", () => {
 
   it("has a default selected model", () => {
     const store = useUIStore();
-    expect(store.selectedModel).toBe("gemini-3-flash");
+    expect(store.selectedModel).toBe("gemini-3-flash-preview");
   });
 
   it("manages blur disabled state", () => {

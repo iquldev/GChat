@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "nuxt-security",
     "motion-v/nuxt",
+    "@nuxt/eslint",
   ],
   i18n: {
     strategy: "no_prefix",
@@ -40,5 +41,11 @@ export default defineNuxtConfig({
   },
   fonts: {
     provider: "google",
+  },
+  eslint: {
+    checker: true,
+  },
+  runtimeConfig: {
+    aiApiKey: process.env.NUXT_AI_API_KEY,
   },
 });

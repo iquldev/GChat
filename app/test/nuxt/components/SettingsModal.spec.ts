@@ -87,12 +87,6 @@ describe("SettingsModal", () => {
     wrapper.unmount();
   });
 
-  it("shows API Key setting when open", async () => {
-    const wrapper = await mountModal(true);
-    expect(wrapper.text()).toContain("API Key");
-    wrapper.unmount();
-  });
-
   it("shows Language setting when open", async () => {
     const wrapper = await mountModal(true);
     expect(wrapper.text()).toContain("Language");

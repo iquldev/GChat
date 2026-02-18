@@ -17,21 +17,25 @@
     "test:all": "pnpm test && pnpm test:e2e"
   },
   "dependencies": {
+    "@google/genai": "^1.41.0",
     "@nuxt/fonts": "^0.13.0",
     "@tailwindcss/vite": "^4.1.17",
     "@vueuse/core": "^14.2.1",
+    "axios": "^1.13.5",
     "lodash.debounce": "^4.0.8",
     "motion-v": "^1.10.3",
     "nuxt": "^4.3.1",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.1.17",
     "vue": "^3.5.28",
-    "vue-router": "^5.0.2"
+    "vue-router": "^5.0.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.90",
     "@nuxt/test-utils": "^4.0.0",
     "@nuxt/ui": "^4.4.0",
+    "@nuxt/eslint": "1.15.1",
     "@nuxtjs/color-mode": "^4.0.0",
     "@nuxtjs/i18n": "^10.2.3",
     "@pinia/nuxt": "^0.11.3",
@@ -43,6 +47,7 @@
     "happy-dom": "^20.6.1",
     "nuxt-security": "^2.5.1",
     "vite": "^7.3.1",
+    "vite-plugin-eslint2": "^5.0.5",
     "vitest": "^4.0.18"
   }
 }
