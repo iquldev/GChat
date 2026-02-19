@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   }));
 
   const ai = new GoogleGenAI({ apiKey });
-  const modelName = model || "gemini-3-flash-preview";
+  const modelName = model || "gemini-2.5-flash";
 
   let response;
   try {
@@ -48,19 +48,22 @@ export default defineEventHandler(async (event) => {
       contents: formattedContent,
     });
     response = result;
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Gemini API Error:", e);
-    if (e?.status === 429)
+
+    const err = e as { status?: number; message?: string };
+
+    if (err?.status === 429)
       throw createError({
         statusCode: 429,
         statusMessage: "Rate limit exceeded",
       });
-    if (e?.status === 400 || e?.message?.includes("location")) {
+    if (err?.status === 400 && err?.message?.includes("location"))
       throw createError({
         statusCode: 400,
         statusMessage: "Location not supported",
       });
-    }
+
     throw createError({
       statusCode: 502,
       statusMessage: "AI service unavailable",

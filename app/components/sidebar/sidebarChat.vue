@@ -15,7 +15,7 @@
 <script setup>
 import { motion } from "motion-v";
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     required: true,

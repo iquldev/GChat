@@ -10,6 +10,19 @@ mockNuxtImport("useColorMode", () => {
   });
 });
 
+mockNuxtImport("useI18n", () => {
+  return () => ({
+    locale: ref("en"),
+    setLocale: () => {},
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        "common.search": "Search...",
+      };
+      return translations[key] ?? key;
+    },
+  });
+});
+
 // @ts-expect-error - __NUXT_COLOR_MODE__ is injected by @nuxtjs/color-mode plugin
 window.__NUXT_COLOR_MODE__ = {
   preference: "light",

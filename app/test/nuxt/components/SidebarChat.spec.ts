@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarChat from "~/components/sidebar/sidebarChat.vue";
+import SidebarChat from "~/components/sidebar/SidebarChat.vue";
 
 describe("SidebarChat", () => {
   const mountChat = async (props = {}) => {

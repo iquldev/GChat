@@ -30,7 +30,6 @@
 
 <script lang="ts" setup>
 import { motion } from "motion-v";
-import SidebarButton from "./sidebarButton.vue";
 
 const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
 

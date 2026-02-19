@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import Message from "~/components/chat/message.vue";
+import Message from "~/components/chat/ChatMessage.vue";
 import type { ChatMessage } from "~/types/gemini";
 
 describe("Message", () => {
@@ -78,13 +78,13 @@ describe("Message", () => {
 
   it("applies shimmer animation class for pending status", async () => {
     const wrapper = await mountMessage({ status: "pending" });
-    const textEl = wrapper.find("p.text-base");
+    const textEl = wrapper.find(".message-body");
     expect(textEl.classes()).toContain("animate-text-shimmer");
   });
 
   it("does not apply shimmer animation for non-pending status", async () => {
     const wrapper = await mountMessage({ status: "sent" });
-    const textEl = wrapper.find("p.text-base");
+    const textEl = wrapper.find(".message-body");
     expect(textEl.classes()).not.toContain("animate-text-shimmer");
   });
 
@@ -103,7 +103,7 @@ describe("Message", () => {
 
   it("applies error color class for error status", async () => {
     const wrapper = await mountMessage({ status: "error" });
-    const statusSpan = wrapper.find("span");
+    const statusSpan = wrapper.find(".message-status-text");
     expect(statusSpan.classes()).toContain("text-(--ui-error)");
   });
 });

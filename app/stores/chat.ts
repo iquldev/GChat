@@ -1,13 +1,6 @@
 import { defineStore, skipHydrate } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
-import { ref, computed, watch } from "vue";
-import { type ChatMessage, type TextPart } from "@/types/gemini";
-
-export interface Chat {
-  id: number;
-  title: string;
-  content: ChatMessage[];
-}
+import type { ChatMessage, Chat, TextPart } from "@/types/gemini";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = useLocalStorage<Chat[]>("gchat:chats", []);
@@ -111,11 +104,11 @@ export const useChatStore = defineStore("chat", () => {
       });
 
       if (!response.ok) {
-        let errorMsg = `Server error: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMsg = errorData.statusMessage || errorData.message || errorMsg;
-        } catch (e) {}
+        const errorData = await response.json();
+        const errorMsg =
+          errorData.statusMessage ||
+          errorData.message ||
+          `Request failed with status ${response.status}`;
         throw new Error(errorMsg);
       }
 
@@ -145,15 +138,17 @@ export const useChatStore = defineStore("chat", () => {
           }
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+
       const chat = chats.value.find((c) => c.id === targetChatId);
-      const msgInStore = chat?.content.find((m) => m.id === aiMessage.id);
+      const msgInStore: ChatMessage | undefined = chat?.content.find(
+        (m) => m.id === aiMessage.id,
+      );
       if (msgInStore) {
         msgInStore.status = "error";
-        msgInStore.parts = [
-          { text: `Error: ${error.message || "Unknown error"}` },
-        ];
+        msgInStore.parts = [{ text: `Error: ${message}` }];
       }
     }
   };

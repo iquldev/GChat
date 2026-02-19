@@ -1,15 +1,19 @@
 <template>
-  <div class="relative flex items-center w-fit" ref="target">
+  <div ref="target" class="relative flex items-center w-fit">
     <div
+      role="combobox"
+      :aria-expanded="isOpen"
+      aria-haspopup="listbox"
+      aria-controls="selector-listbox"
+      aria-label="Select option"
+      tabindex="0"
+      class="flex items-center pl-4 pr-10 py-2 rounded-full bg-(--ui-background) cursor-pointer text-(--ui-text-primary) md:text-base text-sm hover:opacity-80 transition-all select-none"
       @click="isOpen = !isOpen"
       @keydown.enter.prevent="isOpen = !isOpen"
       @keydown.space.prevent="isOpen = !isOpen"
       @keydown.escape="isOpen = false"
-      role="combobox"
-      :aria-expanded="isOpen"
-      aria-haspopup="listbox"
-      tabindex="0"
-      class="flex items-center pl-4 pr-10 py-2 rounded-full bg-(--ui-background) cursor-pointer text-(--ui-text-primary) md:text-base text-sm hover:opacity-80 transition-all select-none"
+      @keydown.down.prevent="isOpen = true"
+      @keydown.up.prevent="isOpen = true"
     >
       {{ currentLabel }}
       <Icon
@@ -31,6 +35,8 @@
       >
         <div
           v-if="isOpen"
+          id="selector-listbox"
+          role="listbox"
           class="absolute left-0 min-w-full w-max bg-(--ui-background) border border-white/5 rounded-3xl shadow-xl z-50 overflow-hidden backdrop-blur-md"
           :class="direction === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'"
         >
@@ -38,7 +44,6 @@
             <div
               v-for="option in options"
               :key="String(option.value)"
-              @click="selectOption(option.value)"
               class="px-4 py-2 rounded-full cursor-pointer text-(--ui-text-primary) md:text-base text-sm transition-colors whitespace-nowrap hover:bg-(--ui-button-selected)"
               :class="{
                 'bg-white/5':
@@ -46,6 +51,7 @@
                 'bg-black/10':
                   modelValue === option.value && colorMode.value === 'light',
               }"
+              @click="selectOption(option.value)"
             >
               {{ option.label }}
             </div>
@@ -57,10 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
 import { onClickOutside } from "@vueuse/core";
-
-import type { PropType } from "vue";
 
 const props = defineProps({
   options: {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarButton from "~/components/sidebar/sidebarButton.vue";
+import SidebarButton from "~/components/sidebar/SidebarButton.vue";
 
 describe("SidebarButton", () => {
   const mountButton = async (icon = "lucide:settings") => {

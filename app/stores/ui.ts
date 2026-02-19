@@ -10,7 +10,7 @@ export const useUIStore = defineStore("ui", () => {
   const isSettingsOpen = useState("ui:isSettingsOpen", () => false);
 
   const selectedModel = useCookie("ui:selectedModel", {
-    default: () => "gemini-3-flash-preview",
+    default: () => "gemini-2.5-flash",
   });
 
   const isBlurDisabled = useCookie<boolean>("ui:isBlurDisabled", {

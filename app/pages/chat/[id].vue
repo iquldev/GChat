@@ -5,14 +5,14 @@
       class="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-4 py-4"
       @scroll="handleScroll"
     >
-      <Message
+      <ChatMessage
         v-for="message in currentChat?.content"
         :key="message.id"
         :message="message"
       />
     </div>
     <div class="flex justify-center">
-      <NewChat :chatId="chatId" />
+      <NewChat :chat-id="chatId" />
     </div>
   </motion.div>
 </template>
@@ -21,7 +21,6 @@
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 import { motion } from "motion-v";
-import Message from "~/components/chat/message.vue";
 
 const route = useRoute();
 const chatStore = useChatStore();

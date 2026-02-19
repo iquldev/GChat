@@ -14,7 +14,8 @@
     "postinstall": "nuxt prepare",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:all": "pnpm test && pnpm test:e2e"
+    "test:all": "pnpm test && pnpm test:e2e",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@google/genai": "^1.41.0",
@@ -33,9 +34,9 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.90",
+    "@nuxt/eslint": "1.15.1",
     "@nuxt/test-utils": "^4.0.0",
     "@nuxt/ui": "^4.4.0",
-    "@nuxt/eslint": "1.15.1",
     "@nuxtjs/color-mode": "^4.0.0",
     "@nuxtjs/i18n": "^10.2.3",
     "@pinia/nuxt": "^0.11.3",
@@ -46,6 +47,7 @@
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^20.6.1",
     "nuxt-security": "^2.5.1",
+    "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-eslint2": "^5.0.5",
     "vitest": "^4.0.18"

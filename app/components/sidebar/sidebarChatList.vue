@@ -3,20 +3,19 @@
     v-if="!isSidebarExpanded"
     class="md:w-64 w-full flex flex-col gap-2"
   >
-    <sidebarChat
-      v-for="chat in chats"
-      :key="chat.id"
-      :title="chat.title"
-      :is-selected="chat.id === selectedChatId"
-      :id="chat.id"
-      @click="changeSelected(chat.id)"
-    ></sidebarChat>
+    <SidebarChat
+      v-for="chatItem in chats"
+      :id="chatItem.id"
+      :key="chatItem.id"
+      :title="chatItem.title"
+      :is-selected="chatItem.id === selectedChatId"
+      @click="changeSelected(chatItem.id)"
+    />
   </motion.div>
 </template>
 
 <script lang="ts" setup>
 import { motion } from "motion-v";
-import sidebarChat from "./sidebarChat.vue";
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 
@@ -28,7 +27,7 @@ interface chat {
 const chatStore = useChatStore();
 const { selectedChatId } = storeToRefs(chatStore);
 
-const props = defineProps({
+defineProps({
   isSidebarExpanded: {
     type: Boolean,
     required: true,

@@ -12,5 +12,4 @@
 
 <script setup lang="ts">
 import { motion } from "motion-v";
-import NewChat from "~/components/newChat.vue";
 </script>

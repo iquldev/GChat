@@ -22,7 +22,7 @@
           <TransitionGroup
             name="stream"
             tag="p"
-            class="text-base break-words whitespace-pre-wrap"
+            class="text-base break-words whitespace-pre-wrap message-body"
             :class="{ 'animate-text-shimmer': message.status === 'pending' }"
           >
             <span v-for="(part, index) in message.parts" :key="index">
@@ -33,7 +33,9 @@
         <div class="text-sm font-thin text-(--ui-text-second) opacity-70 px-1">
           <p>
             {{ sender }}, {{ formatDate(message.timestamp) }},
-            <span :class="statusColor">{{ status }}</span>
+            <span class="message-status-text" :class="statusColor">{{
+              status
+            }}</span>
           </p>
         </div>
       </div>

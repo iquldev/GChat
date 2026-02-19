@@ -3,6 +3,27 @@ import { test, expect } from "@playwright/test";
 test.describe("Sidebar", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "gchat:chats",
+        JSON.stringify([
+          {
+            id: 123456789,
+            title: "The connections",
+            content: [
+              {
+                id: 1,
+                role: "user",
+                parts: [{ text: "The connections" }],
+                status: "sent",
+                timestamp: new Date().toISOString(),
+              },
+            ],
+          },
+        ]),
+      );
+    });
+    await page.reload();
     await page.waitForLoadState("networkidle");
   });
 

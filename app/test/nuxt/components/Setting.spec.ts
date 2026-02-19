@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended, mockNuxtImport } from "@nuxt/test-utils/runtime";
-import Setting from "~/components/settings/setting.vue";
+import Setting from "~/components/settings/SettingsSetting.vue";
+import Selector from "~/components/UiSelector.vue";
 
 mockNuxtImport("useColorMode", () => {
   return () => ({
@@ -44,7 +45,7 @@ describe("Setting", () => {
       },
     });
 
-    const selector = wrapper.findComponent({ name: "Selector" });
+    const selector = wrapper.findComponent(Selector);
     expect(selector.exists()).toBe(true);
   });
 

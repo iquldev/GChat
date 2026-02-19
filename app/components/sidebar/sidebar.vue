@@ -21,20 +21,20 @@
       :class="isSidebarExpanded ? 'h-fit' : 'h-full min-h-0'"
       layout
     >
-      <sidebarButtons
-        :isSidebarExpanded="isSidebarExpanded"
-        :newChatHandler="newChatHandler"
-        :toggleSidebar="toggleSidebar"
-        :toggleSearch="toggleSearch"
-        :isMobile="isMobile"
+      <SidebarButtons
+        :is-sidebar-expanded="isSidebarExpanded"
+        :new-chat-handler="newChatHandler"
+        :toggle-sidebar="toggleSidebar"
+        :toggle-search="toggleSearch"
+        :is-mobile="isMobile"
       />
       <Transition
         enter-active-class="animate-fade-in"
         leave-active-class="animate-fade-out"
       >
-        <sidebarSearch
-          v-model:searchQuery="searchQuery"
+        <SidebarSearch
           v-if="isSearchActive && !isSidebarExpanded"
+          v-model:search-query="searchQuery"
         />
       </Transition>
       <div
@@ -42,17 +42,17 @@
         class="flex-1 overflow-y-auto scrollbar-hide"
         :class="{ 'max-h-[280px] md:max-h-none': isMobile }"
       >
-        <sidebarChatList
+        <SidebarChatList
           :chats="visibleChats"
-          :changeSelected="handleChangeSelected"
-          :isSidebarExpanded="isSidebarExpanded"
+          :change-selected="handleChangeSelected"
+          :is-sidebar-expanded="isSidebarExpanded"
         />
       </div>
-      <sidebarChatList
+      <SidebarChatList
         v-else
         :chats="visibleChats"
-        :changeSelected="handleChangeSelected"
-        :isSidebarExpanded="isSidebarExpanded"
+        :change-selected="handleChangeSelected"
+        :is-sidebar-expanded="isSidebarExpanded"
       />
     </motion.div>
   </motion.div>
@@ -61,9 +61,6 @@
 <script setup lang="ts">
 import { motion } from "motion-v";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import sidebarButtons from "./sidebarButtons.vue";
-import sidebarSearch from "./sidebarSearch.vue";
-import sidebarChatList from "./sidebarChatList.vue";
 import { useUIStore } from "~/stores/ui";
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";

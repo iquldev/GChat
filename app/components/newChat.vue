@@ -15,9 +15,9 @@
     />
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center gap-2">
-        <Selector
-          :options="options"
+        <UiSelector
           v-model="selectedModel"
+          :options="options"
           :direction="chatId ? 'up' : 'down'"
         />
         <button
@@ -46,8 +46,7 @@
 import { storeToRefs } from "pinia";
 import { useUIStore } from "~/stores/ui";
 import { useChatStore } from "~/stores/chat";
-import { type ChatMessage } from "~/types/gemini";
-import Selector from "~/components/selector.vue";
+import type { ChatMessage } from "~/types/gemini";
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();

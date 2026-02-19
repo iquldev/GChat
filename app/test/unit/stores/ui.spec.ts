@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useUIStore } from "~/stores/ui";
 
@@ -32,7 +32,7 @@ describe("UI Store", () => {
 
   it("has a default selected model", () => {
     const store = useUIStore();
-    expect(store.selectedModel).toBe("gemini-3-flash-preview");
+    expect(store.selectedModel).toBe("gemini-2.5-flash");
   });
 
   it("manages blur disabled state", () => {

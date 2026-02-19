@@ -15,6 +15,12 @@ export interface InlineDataPart {
 
 export type ContentPart = TextPart | InlineDataPart;
 
+export interface Chat {
+  id: number;
+  title: string;
+  content: ChatMessage[];
+}
+
 export interface ChatMessage {
   id: number;
   role: MessageRole;

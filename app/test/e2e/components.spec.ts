@@ -17,29 +17,6 @@ test.describe("Chat Interactions", () => {
     await expect(sendButton).toBeEnabled();
   });
 
-  test("Input field should validate key input", async ({ page }) => {
-    await page.locator("button").first().click();
-    const modal = page.locator("dialog[open]");
-    await expect(modal).toBeVisible({ timeout: 10000 });
-
-    const apiKeyInput = modal.locator('input[placeholder="AIzaSyC..."]');
-    await expect(apiKeyInput).toBeVisible();
-
-    await apiKeyInput.fill("");
-    await apiKeyInput.type("abc@#$123");
-    const filteredValue = await apiKeyInput.inputValue();
-    expect(filteredValue).not.toContain("@");
-    expect(filteredValue).not.toContain("#");
-    expect(filteredValue).not.toContain("$");
-
-    await apiKeyInput.evaluate((el: HTMLInputElement) => {
-      el.value = "a".repeat(50);
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-    const value = await apiKeyInput.inputValue();
-    expect(value.length).toBe(39);
-  });
-
   test("Selector should allow picking options", async ({ page }) => {
     await page.locator("button").first().click();
     const modal = page.locator("dialog[open]");

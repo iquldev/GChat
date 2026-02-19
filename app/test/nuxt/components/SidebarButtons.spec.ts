@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarButtons from "~/components/sidebar/sidebarButtons.vue";
+import SidebarButtons from "~/components/sidebar/SidebarButtons.vue";
 
 describe("SidebarButtons", () => {
   const mountButtons = async (props = {}) => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarChatList from "~/components/sidebar/sidebarChatList.vue";
+import SidebarChatList from "~/components/sidebar/SidebarChatList.vue";
 
 describe("SidebarChatList", () => {
   const mockChats = [

@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 @import "./disable-blur.css";
+@import "./colors.css";
+
+* {
+  font-family: "Google Sans", sans-serif;
+}
+
+body {
+  background-color: var(--ui-background);
+  overflow: hidden;
+}
 
 @layer utilities {
   .animate-fade-in {
@@ -236,23 +246,4 @@
       animation: none !important;
     }
   }
-}
-
-:root {
-  --ui-background: #ffffff;
-  --ui-block-background: #e1e1e1;
-  --ui-text-primary: #000000;
-  --ui-text-second: #2f2f2f;
-  --ui-button-selected: rgba(0, 0, 0, 0.1);
-}
-
-.dark {
-  --ui-background: #0a0a0a;
-  --ui-block-background: #080808;
-  --ui-text-primary: #ffffff;
-  --ui-text-second: #acacac;
-  --ui-button-selected: rgba(255, 255, 255, 0.05);
-  --ui-user-avatar: #baff60;
-  --ui-ai-avatar: #6360ff;
-  --ui-error: #ff5252;
 }

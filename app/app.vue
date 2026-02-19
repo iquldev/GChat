@@ -47,11 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from "~/components/sidebar/sidebar.vue";
-import SettingsModal from "~/components/settings/settingsModal.vue";
 import { useUIStore } from "~/stores/ui";
 import { motion, LayoutGroup, AnimatePresence } from "motion-v";
-import { ref, provide } from "vue";
 
 const isSettingsOpen = ref(false);
 const uiStore = useUIStore();
@@ -62,14 +59,3 @@ const toggleSettings = (value?: boolean) => {
 
 provide("toggleSettings", toggleSettings);
 </script>
-
-<style>
-* {
-  font-family: "Google Sans", sans-serif;
-}
-
-body {
-  background-color: var(--ui-background);
-  overflow: hidden;
-}
-</style>

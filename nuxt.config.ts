@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     "motion-v/nuxt",
     "@nuxt/eslint",
   ],
+  srcDir: "app/",
   i18n: {
     strategy: "no_prefix",
     defaultLocale: "en",
@@ -30,6 +31,11 @@ export default defineNuxtConfig({
   css: ["./app/assets/css/main.css"],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      watch: {
+        ignored: ["**/node_modules/**"],
+      },
+    },
   },
   app: {
     head: {
@@ -43,7 +49,12 @@ export default defineNuxtConfig({
     provider: "google",
   },
   eslint: {
-    checker: true,
+    config: {
+      standalone: true,
+    },
+    checker: {
+      fix: false,
+    },
   },
   runtimeConfig: {
     aiApiKey: process.env.NUXT_AI_API_KEY,

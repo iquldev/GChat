@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { mountSuspended, mockNuxtImport } from "@nuxt/test-utils/runtime";
 import { nextTick, defineComponent } from "vue";
-import SettingsModal from "~/components/settings/settingsModal.vue";
+import { flushPromises } from "@vue/test-utils";
+import SettingsModal from "~/components/settings/SettingsModal.vue";
 
 mockNuxtImport("useColorMode", () => {
   return () => ({
@@ -32,9 +33,9 @@ describe("SettingsModal", () => {
   });
 
   const mountModal = async (isSettingsOpen = false) => {
-    const proto = HTMLDialogElement.prototype as any;
-    proto.showModal = proto.showModal || vi.fn();
-    proto.close = proto.close || vi.fn();
+    const proto = HTMLDialogElement.prototype as unknown as HTMLDialogElement;
+    proto.showModal = vi.fn();
+    proto.close = vi.fn();
 
     const wrapper = await mountSuspended(SettingsModal, {
       props: {
@@ -62,7 +63,7 @@ describe("SettingsModal", () => {
       }
 
       await wrapper.setProps({ isSettingsOpen: true });
-      await nextTick();
+      await flushPromises();
       await nextTick();
     }
 

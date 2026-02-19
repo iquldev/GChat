@@ -21,20 +21,20 @@
           <SidebarButton
             icon="lucide:arrow-left"
             @click="toggleSettings(false)"
-          ></SidebarButton>
+          />
         </div>
         <div class="flex flex-col gap-2">
-          <Setting
+          <SettingsSetting
             v-model="currentLocale"
             :label="$t('settings.language')"
             :options="languages"
           />
-          <Setting
+          <SettingsSetting
             v-model="colorMode.preference"
             :label="$t('settings.theme')"
             :options="themes"
           />
-          <Setting
+          <SettingsSetting
             v-model="isBlurDisabled"
             :label="$t('settings.disableBlur')"
             :options="[
@@ -49,7 +49,6 @@
 </template>
 
 <script setup lang="ts">
-import Setting from "./setting.vue";
 import { useUIStore } from "~/stores/ui";
 import { storeToRefs } from "pinia";
 
@@ -62,13 +61,6 @@ const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
 
 const colorMode = useColorMode();
 const { locale, setLocale, t } = useI18n();
-
-const apiKey = useCookie("gemini_api_key", {
-  maxAge: 60 * 60 * 24 * 30,
-  path: "/",
-  secure: true,
-  sameSite: "strict",
-});
 
 const uiStore = useUIStore();
 const { isBlurDisabled } = storeToRefs(uiStore);
