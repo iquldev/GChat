@@ -1,9 +1,7 @@
-import tailwindcss from "@tailwindcss/vite";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
+  devtools: { enabled: process.env.NODE_ENV === "development" },
   modules: [
     "@pinia/nuxt",
     "@nuxt/test-utils/module",
@@ -28,9 +26,8 @@ export default defineNuxtConfig({
       { code: "ru", language: "ru-RU", file: "ru.json" },
     ],
   },
-  css: ["./app/assets/css/main.css"],
+  css: ["~/assets/css/main.css"],
   vite: {
-    plugins: [tailwindcss()],
     server: {
       watch: {
         ignored: ["**/node_modules/**"],
@@ -58,5 +55,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     aiApiKey: process.env.NUXT_AI_API_KEY,
+  },
+  security: {
+    enabled: process.env.NODE_ENV === "production",
   },
 });
