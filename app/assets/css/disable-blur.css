@@ -34,7 +34,7 @@
 }
 
 .disable-blur .settings-dialog[open] {
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--ui-backdrop-bg);
 }
 
 .disable-blur .page-enter-from,

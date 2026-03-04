@@ -122,11 +122,14 @@ export const useChatStore = defineStore("chat", () => {
       if (userMsgInStore) userMsgInStore.status = "sent";
 
       const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
-      if (msgInStore) msgInStore.status = "received";
+      if (msgInStore) msgInStore.status = "streaming";
 
       while (reader) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (done) {
+          if (msgInStore) msgInStore.status = "received";
+          break;
+        }
 
         const chunk = decoder.decode(value);
         if (msgInStore) {
@@ -143,6 +146,13 @@ export const useChatStore = defineStore("chat", () => {
       const message = error instanceof Error ? error.message : "Unknown error";
 
       const chat = chats.value.find((c) => c.id === targetChatId);
+      const userMsgInStore: ChatMessage | undefined = chat?.content.find(
+        (m) => m.id === userMessage.id,
+      );
+      if (userMsgInStore) {
+        userMsgInStore.status = "error";
+      }
+
       const msgInStore: ChatMessage | undefined = chat?.content.find(
         (m) => m.id === aiMessage.id,
       );

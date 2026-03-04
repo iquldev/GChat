@@ -19,10 +19,20 @@
     "promptPlaceholder": "Введите ваш запрос...",
     "promptLabel": "Чат запрос",
     "addAttachment": "Добавить вложение",
-    "send": "Отправить"
+    "send": "Отправить",
+    "date": {
+      "today": "Сегодня",
+      "yesterday": "Вчера"
+    },
+    "you": "Вы",
+    "ai": "AI"
   },
   "common": {
     "select": "Выбрать...",
     "search": "Поиск..."
+  },
+  "markdown": {
+    "copy": "Копировать",
+    "copied": "Скопировано!"
   }
 }

@@ -19,10 +19,20 @@
     "promptPlaceholder": "Enter your prompt...",
     "promptLabel": "Chat prompt",
     "addAttachment": "Add attachment",
-    "send": "Send"
+    "send": "Send",
+    "date": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
+    "you": "You",
+    "ai": "AI"
   },
   "common": {
     "select": "Select...",
     "search": "Search..."
+  },
+  "markdown": {
+    "copy": "Copy",
+    "copied": "Copied!"
   }
 }

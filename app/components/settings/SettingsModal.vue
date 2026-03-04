@@ -134,7 +134,7 @@ const handleBackdropClick = (event: MouseEvent) => {
 }
 
 .settings-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
+  background: var(--ui-backdrop-bg);
+  backdrop-filter: var(--ui-backdrop-blur);
 }
 </style>

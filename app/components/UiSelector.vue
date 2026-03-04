@@ -1,5 +1,8 @@
 <template>
-  <div ref="target" class="relative flex items-center w-fit">
+  <div
+    ref="target"
+    class="relative flex items-center w-fit border border-default rounded-full"
+  >
     <div
       role="combobox"
       :aria-expanded="isOpen"

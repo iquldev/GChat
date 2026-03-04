@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-(--ui-block-background) px-6 py-4 rounded-4xl flex flex-col gap-4 md:w-[600px] w-full"
+    class="bg-(--ui-block-background) px-6 py-4 rounded-4xl flex flex-col gap-4 md:w-[600px] w-full border border-default"
     :class="{ 'md:w-full': chatId }"
   >
     <textarea
@@ -9,7 +9,7 @@
       rows="1"
       :placeholder="$t('chat.promptPlaceholder')"
       :aria-label="$t('chat.promptLabel')"
-      class="text-(--ui-text-primary) md:text-base text-sm outline-none border-none transition-all resize-none bg-transparent scrollbar-hide md:max-h-[60vh] max-h-[25vh]"
+      class="text-(--ui-text-primary) md:text-base text-sm outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh]"
       :class="{ 'md:h-6': !prompt }"
       @input="autoResize"
     />
@@ -21,7 +21,7 @@
           :direction="chatId ? 'up' : 'down'"
         />
         <button
-          class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all"
+          class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default"
           type="button"
           :aria-label="$t('chat.addAttachment')"
           :title="$t('chat.addAttachment')"
@@ -30,7 +30,7 @@
         </button>
       </div>
       <button
-        class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default"
+        class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default"
         :disabled="!prompt"
         type="button"
         :aria-label="$t('chat.send')"

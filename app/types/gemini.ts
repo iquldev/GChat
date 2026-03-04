@@ -1,6 +1,11 @@
 export type MessageRole = "user" | "model";
 
-export type MessageStatus = "pending" | "sent" | "received" | "error";
+export type MessageStatus =
+  | "pending"
+  | "sent"
+  | "received"
+  | "error"
+  | "streaming";
 
 export interface TextPart {
   text: string;

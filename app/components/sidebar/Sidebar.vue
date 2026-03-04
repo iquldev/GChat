@@ -1,6 +1,6 @@
 <template>
   <motion.div
-    class="bg-(--ui-block-background) rounded-4xl md:p-4 p-6 md:w-fit w-full md:h-full overflow-hidden"
+    class="bg-(--ui-block-background) rounded-4xl md:p-4 p-6 md:w-fit w-full md:h-full overflow-hidden border border-default"
     :class="{
       'rounded-full': isSidebarExpanded,
       'h-fit': isSidebarExpanded,
@@ -39,7 +39,7 @@
       </Transition>
       <div
         v-if="!isSidebarExpanded"
-        class="flex-1 overflow-y-auto scrollbar-hide"
+        class="flex-1 overflow-y-auto custom-scrollbar"
         :class="{ 'max-h-[280px] md:max-h-none': isMobile }"
       >
         <SidebarChatList
@@ -76,9 +76,11 @@ const { changeSelected, removeSelection } = chatStore;
 const isMobile = useBreakpoints(breakpointsTailwind).smallerOrEqual("md");
 
 const visibleChats = computed(() => {
-  return chats.value.filter((chat) => {
-    return chat.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-  });
+  return chats.value
+    .filter((chat) => {
+      return chat.title.toLowerCase().includes(searchQuery.value.toLowerCase());
+    })
+    .sort((a, b) => b.id - a.id);
 });
 
 const router = useRouter();

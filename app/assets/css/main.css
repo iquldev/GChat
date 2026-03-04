@@ -2,6 +2,8 @@
 @import "@nuxt/ui";
 @import "./disable-blur.css";
 @import "./colors.css";
+@import "./markdown.css";
+@import "highlight.js/styles/github-dark.css";
 
 * {
   font-family: "Google Sans", sans-serif;
@@ -155,23 +157,24 @@ body {
       filter: blur(8px);
     }
   }
-  .scrollbar-hide::-webkit-scrollbar {
-    width: 4px;
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-  .scrollbar-hide::-webkit-scrollbar-track {
+  .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
-  .scrollbar-hide::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(var(--ui-primary-rgb), 0.2);
+    border-radius: 10px;
+    transition: background 0.2s;
   }
-  .scrollbar-hide::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--ui-primary-rgb), 0.4);
   }
-  .scrollbar-hide {
-    -ms-overflow-style: auto;
+  .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    scrollbar-color: rgba(var(--ui-primary-rgb), 0.2) transparent;
   }
 
   .animate-text-shimmer {
@@ -208,28 +211,28 @@ body {
   @keyframes streamIn {
     0% {
       opacity: 0;
-      filter: blur(8px);
-      transform: translateY(2px);
+      filter: blur(5px);
+      transform: translateY(3px) scale(0.99);
     }
     100% {
       opacity: 1;
       filter: blur(0);
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
   }
 
-  .blur-disabled .stream-enter-active {
+  .disable-blur .stream-enter-active {
     animation: streamInNoBlur 0.3s cubic-bezier(0.1, 0, 0.2, 1) forwards;
   }
 
   @keyframes streamInNoBlur {
     0% {
       opacity: 0;
-      transform: translateY(2px);
+      transform: translateY(3px) scale(0.99);
     }
     100% {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
   }
 

@@ -17,6 +17,10 @@ mockNuxtImport("useI18n", () => {
     t: (key: string) => {
       const translations: Record<string, string> = {
         "common.search": "Search...",
+        "chat.you": "You",
+        "chat.ai": "AI",
+        "chat.date.today": "Today",
+        "chat.date.yesterday": "Yesterday",
       };
       return translations[key] ?? key;
     },

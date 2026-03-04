@@ -53,14 +53,14 @@ describe("Message", () => {
     expect(container.classes()).toContain("justify-start");
   });
 
-  it('shows ✅ for "sent" status', async () => {
+  it('shows check icon for "sent" status', async () => {
     const wrapper = await mountMessage({ status: "sent" });
-    expect(wrapper.text()).toContain("✅");
+    expect(wrapper.html()).toContain("lucide:check");
   });
 
-  it('shows "Pending..." for "pending" status', async () => {
+  it('shows loader icon for "pending" status', async () => {
     const wrapper = await mountMessage({ status: "pending" });
-    expect(wrapper.text()).toContain("Pending...");
+    expect(wrapper.html()).toContain("lucide:loader");
   });
 
   it('shows model name for "received" status', async () => {
@@ -71,9 +71,9 @@ describe("Message", () => {
     expect(wrapper.text()).toContain("gemini-3-flash");
   });
 
-  it('shows "Error" for "error" status', async () => {
+  it('shows x icon for "error" status', async () => {
     const wrapper = await mountMessage({ status: "error" });
-    expect(wrapper.text()).toContain("Error");
+    expect(wrapper.html()).toContain("lucide:x");
   });
 
   it("applies shimmer animation class for pending status", async () => {
@@ -103,7 +103,6 @@ describe("Message", () => {
 
   it("applies error color class for error status", async () => {
     const wrapper = await mountMessage({ status: "error" });
-    const statusSpan = wrapper.find(".message-status-text");
-    expect(statusSpan.classes()).toContain("text-(--ui-error)");
+    expect(wrapper.html()).toContain("text-(--ui-error)");
   });
 });

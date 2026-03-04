@@ -2,7 +2,7 @@
   <motion.div layout class="h-full w-full flex flex-col overflow-hidden">
     <div
       ref="scrollContainer"
-      class="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-4 py-4"
+      class="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-4 py-4"
       @scroll="handleScroll"
     >
       <ChatMessage

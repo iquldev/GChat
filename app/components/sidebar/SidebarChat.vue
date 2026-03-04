@@ -1,9 +1,9 @@
 <template>
   <motion.div
-    class="flex items-center px-4 py-2 rounded-full hover:cursor-pointer hover:opacity-50 transition-all"
+    class="flex items-center px-4 py-2 rounded-full hover:cursor-pointer hover:opacity-50 transition-all border"
     :class="{
-      'bg-(--ui-background)': isSelected,
-      'text-(--ui-text-second)': !isSelected,
+      'bg-(--ui-background) border-default': isSelected,
+      'text-(--ui-text-second) border-transparent': !isSelected,
     }"
   >
     <p class="truncate">
