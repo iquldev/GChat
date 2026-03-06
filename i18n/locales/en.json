@@ -25,7 +25,9 @@
       "yesterday": "Yesterday"
     },
     "you": "You",
-    "ai": "AI"
+    "ai": "AI",
+    "retry": "Retry",
+    "copy": "Copy"
   },
   "common": {
     "select": "Select...",

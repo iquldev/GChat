@@ -68,10 +68,16 @@ export default defineNuxtConfig({
   },
   security: {
     enabled: process.env.NODE_ENV === "production",
+    nonce: true,
     headers: {
       contentSecurityPolicy: {
         "img-src": ["'self'", "data:", "https:"],
-        "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
+        "script-src": [
+          "'self'",
+          "'nonce-{{nonce}}'",
+          "'strict-dynamic'",
+          "'wasm-unsafe-eval'",
+        ],
       },
     },
     corsHandler: {

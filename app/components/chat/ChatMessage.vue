@@ -97,7 +97,7 @@
             <button
               v-if="message.status === 'error' && message.role === 'model'"
               class="opacity-70 flex items-center justify-center p-1.5 rounded-md hover:bg-(--ui-block-background) hover:opacity-100 transition-all cursor-pointer"
-              title="Повторить"
+              :title="t('chat.retry')"
               @click="$emit('retry')"
             >
               <Icon name="lucide:rotate-cw" class="size-4" />
@@ -105,7 +105,7 @@
             <button
               v-if="message.role === 'model'"
               class="opacity-70 flex items-center justify-center p-1.5 rounded-md hover:bg-(--ui-block-background) hover:opacity-100 transition-all cursor-pointer"
-              title="Копировать"
+              :title="t('chat.copy')"
               @click="copyText"
             >
               <Icon

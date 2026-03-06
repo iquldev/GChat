@@ -87,6 +87,7 @@ const sendRequest = async () => {
 };
 
 const handleEnter = (e: KeyboardEvent) => {
+  if (e.isComposing) return;
   if (!e.shiftKey) {
     e.preventDefault();
     sendRequest();

@@ -190,7 +190,7 @@ export const useChatStore = defineStore("chat", () => {
     )
       return;
 
-    let userMessage = null;
+    let userMessage: ChatMessage | null = null;
     for (let i = aiMessageIndex - 1; i >= 0; i--) {
       const msg = chat.content[i];
       if (msg && msg.role === "user") {
@@ -210,7 +210,10 @@ export const useChatStore = defineStore("chat", () => {
   const renameChat = (id: number, newTitle: string) => {
     const chat = chats.value.find((c) => c.id === id);
     if (chat) {
-      chat.title = newTitle;
+      const trimmed = newTitle.trim();
+      if (trimmed.length > 0) {
+        chat.title = trimmed.slice(0, 30) + (trimmed.length > 30 ? "..." : "");
+      }
     }
   };
 
