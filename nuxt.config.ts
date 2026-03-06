@@ -56,7 +56,31 @@ export default defineNuxtConfig({
   runtimeConfig: {
     aiApiKey: process.env.NUXT_AI_API_KEY,
   },
+  routeRules: {
+    "/api/**": {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 5,
+          interval: 60000,
+        },
+      },
+    },
+  },
   security: {
     enabled: process.env.NODE_ENV === "production",
+    headers: {
+      contentSecurityPolicy: {
+        "img-src": ["'self'", "data:", "https:"],
+        "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
+      },
+    },
+    corsHandler: {
+      origin: "*",
+      methods: ["GET", "POST", "OPTIONS"],
+    },
+    requestSizeLimiter: {
+      maxRequestSizeInBytes: 2000000,
+      maxUploadFileRequestInBytes: 8000000,
+    },
   },
 });

@@ -9,6 +9,7 @@
         v-for="message in currentChat?.content"
         :key="message.id"
         :message="message"
+        @retry="chatStore.retryMessage(chatId, message.id)"
       />
     </div>
     <div class="flex justify-center">

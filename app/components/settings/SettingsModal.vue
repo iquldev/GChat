@@ -12,7 +12,7 @@
     >
       <div
         v-if="isAnimating"
-        class="settings-content bg-(--ui-block-background) flex flex-col gap-4 p-4 pl-6 rounded-4xl"
+        class="settings-content bg-(--ui-block-background) flex flex-col gap-4 p-4 pl-6 rounded-4xl border border-default"
       >
         <div class="flex items-center justify-between">
           <h1 class="font-bold md:text-2xl text-xl">

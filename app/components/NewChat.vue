@@ -12,6 +12,7 @@
       class="text-(--ui-text-primary) md:text-base text-sm outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh]"
       :class="{ 'md:h-6': !prompt }"
       @input="autoResize"
+      @keydown.enter="handleEnter"
     />
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center gap-2">
@@ -84,6 +85,14 @@ const sendRequest = async () => {
     console.error("Failed to send message:", error);
   }
 };
+
+const handleEnter = (e: KeyboardEvent) => {
+  if (!e.shiftKey) {
+    e.preventDefault();
+    sendRequest();
+  }
+};
+
 const autoResize = () => {
   if (textarea.value) {
     textarea.value.style.height = "auto";

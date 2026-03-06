@@ -85,13 +85,18 @@ export const useChatStore = defineStore("chat", () => {
       const payload = {
         model: userMessage.model,
         content: chat.content
-          .filter((m) => m.role === "user" || m.status !== "pending")
+          .filter((m) => {
+            if (m.role === "user") return true;
+            if (m.role === "model" && m.status === "received") return true;
+            return false;
+          })
           .map((m) => ({
             role: m.role,
             parts: m.parts
               .map((p) => ({ text: "text" in p ? p.text : "" }))
               .filter((p) => p.text.length > 0),
-          })),
+          }))
+          .filter((m) => m.parts.length > 0),
       };
 
       const response = await fetch("/api/chat/stream", {
@@ -163,6 +168,52 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
+  const deleteChat = (id: number) => {
+    chats.value = chats.value.filter((chat) => chat.id !== id);
+    if (selectedChatId.value === id) {
+      selectedChatId.value = null;
+    }
+  };
+
+  const retryMessage = (chatId: number, aiMessageId: number) => {
+    const chat = chats.value.find((c) => c.id === chatId);
+    if (!chat) return;
+
+    const aiMessageIndex = chat.content.findIndex((m) => m.id === aiMessageId);
+    if (aiMessageIndex <= 0) return;
+
+    const aiMessage = chat.content[aiMessageIndex];
+    if (
+      !aiMessage ||
+      aiMessage.role !== "model" ||
+      aiMessage.status !== "error"
+    )
+      return;
+
+    let userMessage = null;
+    for (let i = aiMessageIndex - 1; i >= 0; i--) {
+      const msg = chat.content[i];
+      if (msg && msg.role === "user") {
+        userMessage = msg;
+        break;
+      }
+    }
+
+    if (!userMessage) return;
+
+    aiMessage.status = "pending";
+    aiMessage.parts = [{ text: "" }];
+
+    processResponse(chatId, userMessage, aiMessage);
+  };
+
+  const renameChat = (id: number, newTitle: string) => {
+    const chat = chats.value.find((c) => c.id === id);
+    if (chat) {
+      chat.title = newTitle;
+    }
+  };
+
   const changeSelected = (id: number) => {
     selectedChatId.value = id;
   };
@@ -180,5 +231,8 @@ export const useChatStore = defineStore("chat", () => {
     sendMessage,
     changeSelected,
     removeSelection,
+    deleteChat,
+    renameChat,
+    retryMessage,
   };
 });
