@@ -12,7 +12,7 @@
         @retry="chatStore.retryMessage(chatId, message.id)"
       />
     </div>
-    <div class="flex justify-center">
+    <div class="flex justify-center shrink-0">
       <NewChat :chat-id="chatId" />
     </div>
   </motion.div>
@@ -36,12 +36,15 @@ const currentChat = computed(() => {
   return chats.value.find((c) => c.id === chatId.value);
 });
 
-const scrollToBottom = async () => {
-  if (shouldAutoScroll.value && scrollContainer.value) {
+const scrollToBottom = async (behavior: ScrollBehavior = "smooth") => {
+  if (
+    scrollContainer.value &&
+    (shouldAutoScroll.value || behavior === "instant")
+  ) {
     await nextTick();
     scrollContainer.value.scrollTo({
       top: scrollContainer.value.scrollHeight,
-      behavior: "smooth",
+      behavior,
     });
   }
 };
@@ -50,7 +53,7 @@ const handleScroll = () => {
   if (!scrollContainer.value) return;
 
   const { scrollTop, scrollHeight, clientHeight } = scrollContainer.value;
-  const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+  const isAtBottom = scrollHeight - scrollTop - clientHeight < 150;
 
   if (isAtBottom) {
     shouldAutoScroll.value = true;
@@ -64,12 +67,13 @@ watch(
   () => {
     scrollToBottom();
   },
-  { deep: true, immediate: true },
+  { deep: true },
 );
 
-onMounted(() => {
+onMounted(async () => {
   if (route.params.id) {
     changeSelected(Number(route.params.id));
+    scrollToBottom("instant");
   }
 });
 

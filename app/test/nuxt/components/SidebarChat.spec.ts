@@ -6,6 +6,7 @@ describe("SidebarChat", () => {
   const mountChat = async (props = {}) => {
     return await mountSuspended(SidebarChat, {
       props: {
+        id: 1,
         title: "Test Chat Title",
         isSelected: false,
         ...props,
@@ -16,6 +17,12 @@ describe("SidebarChat", () => {
   it("renders the chat title", async () => {
     const wrapper = await mountChat({ title: "My Chat" });
     expect(wrapper.text()).toContain("My Chat");
+  });
+
+  it("renders the delete button", async () => {
+    const wrapper = await mountChat();
+    const button = wrapper.find('button[title="Delete"]');
+    expect(button.exists()).toBe(true);
   });
 
   it("renders title in a truncated paragraph", async () => {
@@ -49,9 +56,10 @@ describe("SidebarChat", () => {
     expect(container.classes()).not.toContain("text-(--ui-text-second)");
   });
 
-  it("has hover cursor pointer class", async () => {
+  it("has hover transition classes", async () => {
     const wrapper = await mountChat();
     const container = wrapper.find("div");
     expect(container.classes()).toContain("hover:cursor-pointer");
+    expect(container.classes()).toContain("transition-all");
   });
 });

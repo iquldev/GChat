@@ -11,9 +11,21 @@ const chatSchema = z.object({
         role: z.enum(["user", "model"]),
         parts: z
           .array(
-            z.object({
-              text: z.string().min(1),
-            }),
+            z
+              .object({
+                text: z.string().optional(),
+                inlineData: z
+                  .object({
+                    mimeType: z.string(),
+                    data: z.string(),
+                  })
+                  .optional(),
+              })
+              .refine(
+                (part) =>
+                  part.text !== undefined || part.inlineData !== undefined,
+                { message: "Part must have either text or inlineData" },
+              ),
           )
           .min(1),
       }),
@@ -32,7 +44,13 @@ export default defineEventHandler(async (event) => {
 
   const formattedContent = content.map((msg) => ({
     role: msg.role,
-    parts: msg.parts.map((part) => ({ text: part.text })),
+    parts: msg.parts.map((part) => {
+      const result: { text?: string; inlineData?: typeof part.inlineData } = {};
+      if (part.inlineData) result.inlineData = part.inlineData;
+      if (part.text) result.text = part.text;
+      if (Object.keys(result).length === 0) result.text = "";
+      return result;
+    }),
   }));
 
   const ai = new GoogleGenAI({ apiKey });

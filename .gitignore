@@ -178,6 +178,7 @@ node_modules
 .ionide
 
 .agent
+.gemini
 plans
 TODO.md
 test-results

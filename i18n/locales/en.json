@@ -27,7 +27,11 @@
     "you": "You",
     "ai": "AI",
     "retry": "Retry",
-    "copy": "Copy"
+    "copy": "Copy",
+    "delete": "Delete",
+    "fileTooLarge": "File is too large (max {max})",
+    "noChats": "No chats yet",
+    "welcome": "Start a new conversation with AI. Your history will appear here."
   },
   "common": {
     "select": "Select...",

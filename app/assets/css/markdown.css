@@ -1,3 +1,9 @@
+@import "highlight.js/styles/github.css";
+
+.dark .markdown-content {
+  @import "highlight.js/styles/github-dark.css";
+}
+
 .markdown-content {
   line-height: 1.6;
   color: var(--ui-text-primary);

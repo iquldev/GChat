@@ -3,10 +3,7 @@
     class="flex w-full px-2 md:px-4"
     :class="role === 'user' ? 'justify-end' : 'justify-start'"
   >
-    <div
-      class="flex gap-4 max-w-[95%] md:max-w-[85%]"
-      :class="role === 'user' ? 'flex-row' : 'flex-row-reverse'"
-    >
+    <div class="flex gap-4 max-w-[95%] md:max-w-[85%]">
       <div
         class="flex flex-col gap-1.5 flex-1 min-w-0"
         :class="role === 'user' ? 'items-end' : 'items-start'"
@@ -41,6 +38,33 @@
                 />
               </div>
             </template>
+            <div
+              v-if="attachments.length > 0"
+              key="attachments"
+              class="flex flex-wrap gap-2"
+            >
+              <template v-for="(att, i) in attachments" :key="'att-' + i">
+                <img
+                  v-if="att?.mimeType.startsWith('image/')"
+                  :src="att.url"
+                  :alt="`Attachment ${i + 1}`"
+                  class="max-w-[200px] h-auto rounded-xl border border-default object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                  @click="fullscreenImage = att.url"
+                />
+                <div
+                  v-else
+                  class="w-[200px] h-[100px] rounded-xl border border-default flex flex-col items-center justify-center bg-(--ui-background) text-sm p-2"
+                >
+                  <Icon
+                    name="lucide:file"
+                    class="w-8 h-8 mb-2 text-(--ui-text-second)"
+                  />
+                  <span class="text-xs text-center font-bold">{{
+                    att?.mimeType.split("/")[1]?.toUpperCase() || "FILE"
+                  }}</span>
+                </div>
+              </template>
+            </div>
             <MarkdownContent
               v-for="(para, index) in paragraphs"
               :key="index"
@@ -116,17 +140,32 @@
           </div>
         </div>
       </div>
-      <div
-        class="hidden md:flex items-center justify-center h-9 w-9 rounded-full shrink-0 mt-1 select-none transition-transform hover:scale-105"
-        :class="
-          role === 'user' ? 'bg-(--ui-user-avatar)' : 'bg-(--ui-ai-avatar)'
-        "
-      >
-        <p class="text-(--ui-background) font-bold text-xs">
-          {{ sender[0] || "?" }}
-        </p>
-      </div>
     </div>
+
+    <Teleport to="body">
+      <div
+        v-if="fullscreenImage"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+        @click.self="fullscreenImage = null"
+      >
+        <button
+          class="absolute top-4 right-4 p-3 md:p-4 bg-(--ui-background) flex items-center justify-center w-fit rounded-full border border-default hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all"
+          @click="fullscreenImage = null"
+        >
+          <Icon name="lucide:x" class="w-6 h-6" />
+        </button>
+        <button
+          class="absolute top-4 right-24 p-3 md:p-4 bg-(--ui-background) flex items-center justify-center w-fit rounded-full border border-default hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all"
+          @click="downloadImage(fullscreenImage)"
+        >
+          <Icon name="lucide:download" class="w-6 h-6" />
+        </button>
+        <img
+          :src="fullscreenImage"
+          class="max-w-full max-h-full object-contain rounded-lg"
+        />
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -152,10 +191,35 @@ const { isBlurDisabled } = storeToRefs(uiStore);
 
 const { locale, t } = useI18n();
 
+const fullscreenImage = ref<string | null>(null);
+
+const downloadImage = (url: string) => {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `attachment-${Date.now()}`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
 const role = computed(() => props.message.role);
 
 const messageText = computed(() => {
   return props.message.parts.map((p) => ("text" in p ? p.text : "")).join("");
+});
+
+const attachments = computed(() => {
+  return props.message.parts
+    .map((p) => {
+      if ("inlineData" in p) {
+        return {
+          mimeType: p.inlineData.mimeType,
+          url: `data:${p.inlineData.mimeType};base64,${p.inlineData.data}`,
+        };
+      }
+      return null;
+    })
+    .filter((a): a is NonNullable<typeof a> => a !== null);
 });
 
 const { copy, copied } = useClipboard();

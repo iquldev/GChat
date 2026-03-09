@@ -42,11 +42,20 @@
         class="flex-1 overflow-y-auto custom-scrollbar"
         :class="{ 'max-h-[280px] md:max-h-none': isMobile }"
       >
-        <SidebarChatList
-          :chats="visibleChats"
-          :change-selected="handleChangeSelected"
-          :is-sidebar-expanded="isSidebarExpanded"
-        />
+        <template v-if="isMounted">
+          <SidebarChatList
+            :chats="visibleChats"
+            :change-selected="handleChangeSelected"
+            :is-sidebar-expanded="isSidebarExpanded"
+          />
+        </template>
+        <div v-else class="flex flex-col gap-2 px-2">
+          <div
+            v-for="i in 5"
+            :key="i"
+            class="h-10 w-full bg-(--ui-text-second)/10 rounded-full animate-pulse"
+          />
+        </div>
       </div>
       <SidebarChatList
         v-else
@@ -74,13 +83,25 @@ const { chats } = storeToRefs(chatStore);
 const { changeSelected, removeSelection } = chatStore;
 
 const isMobile = useBreakpoints(breakpointsTailwind).smallerOrEqual("md");
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 
 const visibleChats = computed(() => {
   return chats.value
     .filter((chat) => {
       return chat.title.toLowerCase().includes(searchQuery.value.toLowerCase());
     })
-    .sort((a, b) => b.id - a.id);
+    .sort((a, b) => {
+      const lastMsgA = a.content[a.content.length - 1];
+      const lastMsgB = b.content[b.content.length - 1];
+      const timeA = lastMsgA ? new Date(lastMsgA.timestamp).getTime() : 0;
+      const timeB = lastMsgB ? new Date(lastMsgB.timestamp).getTime() : 0;
+      if (timeA === 0 && timeB === 0) return b.id - a.id;
+      return timeB - timeA;
+    });
 });
 
 const router = useRouter();

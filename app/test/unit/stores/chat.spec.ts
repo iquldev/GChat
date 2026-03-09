@@ -7,6 +7,8 @@ vi.mock("@vueuse/core", () => ({
   useLocalStorage: vi.fn((key, defaultValue) => ref(defaultValue)),
 }));
 
+vi.stubGlobal("navigateTo", vi.fn());
+
 describe("Chat Store", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -45,14 +47,20 @@ describe("Chat Store", () => {
 
   it("clears selection when selected chat is removed", async () => {
     const store = useChatStore();
-    const chatId = 1;
-    store.changeSelected(chatId);
+    
+    const chatId = store.addChat({
+      id: 1,
+      role: "user",
+      parts: [{ text: "Hello" }],
+      timestamp: new Date().toISOString(),
+      status: "sent",
+      model: "gemini-3-flash-preview",
+    });
 
+    store.changeSelected(chatId);
     expect(store.selectedChatId).toBe(chatId);
 
-    store.chats = store.chats.filter((c) => c.id !== chatId);
-
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    store.deleteChat(chatId);
 
     expect(store.selectedChatId).toBeNull();
   });

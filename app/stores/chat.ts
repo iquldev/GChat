@@ -3,7 +3,7 @@ import { useLocalStorage } from "@vueuse/core";
 import type { ChatMessage, Chat, TextPart } from "@/types/gemini";
 
 export const useChatStore = defineStore("chat", () => {
-  const chats = useLocalStorage<Chat[]>("gchat:chats", []);
+  const chats = useLocalStorage<Chat[]>("gchat:chats", [], { deep: true });
   const selectedChatId = useLocalStorage<number | null>(
     "gchat:selectedChatId",
     null,
@@ -14,16 +14,17 @@ export const useChatStore = defineStore("chat", () => {
   );
 
   watch(
-    chats,
-    (newChats: Chat[]) => {
+    () => chats.value,
+    (newChats) => {
       if (
         selectedChatId.value &&
+        newChats.length > 0 &&
         !newChats.find((chat: Chat) => chat.id === selectedChatId.value)
       ) {
         selectedChatId.value = null;
       }
     },
-    { immediate: true, deep: true },
+    { deep: true },
   );
 
   const addChat = (firstMessage: ChatMessage) => {
@@ -93,8 +94,16 @@ export const useChatStore = defineStore("chat", () => {
           .map((m) => ({
             role: m.role,
             parts: m.parts
-              .map((p) => ({ text: "text" in p ? p.text : "" }))
-              .filter((p) => p.text.length > 0),
+              .map((p) => {
+                if ("text" in p) {
+                  return p.text ? { text: p.text } : null;
+                }
+                if ("inlineData" in p) {
+                  return { inlineData: p.inlineData };
+                }
+                return null;
+              })
+              .filter((p): p is NonNullable<typeof p> => p !== null),
           }))
           .filter((m) => m.parts.length > 0),
       };
@@ -169,9 +178,11 @@ export const useChatStore = defineStore("chat", () => {
   };
 
   const deleteChat = (id: number) => {
+    const wasSelected = selectedChatId.value === id;
     chats.value = chats.value.filter((chat) => chat.id !== id);
-    if (selectedChatId.value === id) {
+    if (wasSelected) {
       selectedChatId.value = null;
+      navigateTo("/");
     }
   };
 
