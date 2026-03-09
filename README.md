@@ -1,5 +1,7 @@
 # 🤖 GChat
 
+<img width="1920" height="962" alt="изображение" src="https://github.com/user-attachments/assets/0ec2e5b6-07d1-4e3a-9474-f7d705e0d8f6" />
+
 GChat is a modern, high-performance chat interface powered by **Google Gemini AI**. Built with **Nuxt 4**, it provides a seamless, multi-lingual, and secure experience for interacting with advanced language models.
 
 [![Nuxt](https://img.shields.io/badge/Nuxt-4.3-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com)
@@ -42,8 +44,8 @@ GChat is a modern, high-performance chat interface powered by **Google Gemini AI
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/gchat.git
-cd gchat
+git clone https://github.com/iquldev/GChat.git
+cd GChat
 
 # Install dependencies
 bun install
