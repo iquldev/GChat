@@ -9,7 +9,7 @@
         :class="role === 'user' ? 'items-end' : 'items-start'"
       >
         <div
-          class="px-5 py-3 rounded-2xl bg-(--ui-block-background) border border-default transition-colors duration-200 shadow-xs"
+          class="px-6 py-4 rounded-2xl bg-(--ui-block-background) border border-default transition-colors duration-200 shadow-xs"
           :class="{
             'disable-blur': isBlurDisabled,
             'no-animation':

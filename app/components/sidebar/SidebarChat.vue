@@ -1,6 +1,6 @@
 <template>
   <motion.div
-    class="group flex items-center justify-between px-4 py-2 rounded-full hover:cursor-pointer transition-all border w-full"
+    class="group flex items-center justify-between px-5 py-2 rounded-full hover:cursor-pointer transition-all border w-full"
     :class="{
       'bg-(--ui-background) border-default': isSelected,
       'text-(--ui-text-second) border-transparent hover:bg-(--ui-background)/50':

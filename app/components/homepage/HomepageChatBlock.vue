@@ -1,8 +1,11 @@
 <template>
-  <motion.div
-    layout
-    class="flex flex-col h-full w-full items-center justify-center gap-8"
-  >
+  <div class="relative h-full w-full flex items-center justify-center">
+    <HomepageBackground />
+
+    <motion.div
+      layout
+      class="flex flex-col h-full w-full items-center justify-center gap-8 z-10"
+    >
     <div class="flex flex-col items-center gap-4">
       <h1 class="text-5xl font-bold text-(--ui-text-primary) select-none">
         GChat
@@ -15,7 +18,8 @@
       </p>
     </div>
     <NewChat />
-  </motion.div>
+    </motion.div>
+  </div>
 </template>
 
 <script setup lang="ts">

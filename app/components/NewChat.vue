@@ -44,13 +44,13 @@
       rows="1"
       :placeholder="$t('chat.promptPlaceholder')"
       :aria-label="$t('chat.promptLabel')"
-      class="text-(--ui-text-primary) md:text-lg text-base outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh]"
+      class="text-(--ui-text-primary) md:text-lg text-base outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh] w-full px-1"
       :class="{ 'md:h-6': !prompt }"
       @input="autoResize"
       @keydown.enter="handleEnter"
       @paste="handlePaste"
     />
-    <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center justify-between gap-2 w-full">
       <div class="flex items-center gap-2">
         <UiSelector
           v-model="selectedModel"
@@ -66,23 +66,23 @@
           @change="handleFileChange"
         />
         <button
-          class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default"
+          class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default shrink-0"
           type="button"
           :aria-label="$t('chat.addAttachment')"
           :title="$t('chat.addAttachment')"
           @click="triggerFileInput"
         >
-          <Icon name="lucide:plus" />
+          <Icon name="lucide:plus" class="size-5" />
         </button>
       </div>
       <button
-        class="p-3 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center w-fit rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default"
+        class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default shrink-0"
         :disabled="!prompt && attachments.length === 0"
         type="button"
         :aria-label="$t('chat.send')"
         @click="sendRequest"
       >
-        <Icon name="lucide:send" />
+        <Icon name="lucide:send" class="size-5" />
       </button>
     </div>
   </motion.div>
