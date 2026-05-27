@@ -76,10 +76,22 @@
         </button>
       </div>
       <button
+        v-if="chatStore.isGenerating"
+        class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default shrink-0"
+        type="button"
+        :aria-label="$t('chat.stop')"
+        :title="$t('chat.stop')"
+        @click="chatStore.stopGeneration"
+      >
+        <Icon name="lucide:square" class="size-5 fill-current" />
+      </button>
+      <button
+        v-else
         class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default shrink-0"
         :disabled="!prompt && attachments.length === 0"
         type="button"
         :aria-label="$t('chat.send')"
+        :title="$t('chat.send')"
         @click="sendRequest"
       >
         <Icon name="lucide:send" class="size-5" />

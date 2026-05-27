@@ -20,6 +20,7 @@
     "promptLabel": "Чат запрос",
     "addAttachment": "Добавить вложение",
     "send": "Отправить",
+    "stop": "Остановить",
     "date": {
       "today": "Сегодня",
       "yesterday": "Вчера"

@@ -9,6 +9,9 @@ export const useChatStore = defineStore("chat", () => {
     null,
   );
 
+  const isGenerating = ref(false);
+  let abortController: AbortController | null = null;
+
   const selectedChat = computed(() =>
     chats.value.find((chat: Chat) => chat.id === selectedChatId.value),
   );
@@ -50,6 +53,8 @@ export const useChatStore = defineStore("chat", () => {
   };
 
   const sendMessage = async (message: ChatMessage, chatId?: number) => {
+    if (isGenerating.value) return;
+
     let targetChatId = chatId;
     if (!targetChatId) {
       targetChatId = addChat(message);
@@ -72,11 +77,22 @@ export const useChatStore = defineStore("chat", () => {
     return targetChatId;
   };
 
+  const stopGeneration = () => {
+    if (abortController) {
+      abortController.abort();
+      abortController = null;
+      isGenerating.value = false;
+    }
+  };
+
   const processResponse = async (
     targetChatId: number,
     userMessage: ChatMessage,
     aiMessage: ChatMessage,
   ) => {
+    isGenerating.value = true;
+    abortController = new AbortController();
+
     try {
       const chat = chats.value.find((c) => c.id === targetChatId);
       if (!chat) throw new Error("Chat not found in store");
@@ -113,6 +129,7 @@ export const useChatStore = defineStore("chat", () => {
           Accept: "text/event-stream",
         },
         body: JSON.stringify(payload),
+        signal: abortController.signal,
       });
 
       if (!response.ok) {
@@ -177,6 +194,13 @@ export const useChatStore = defineStore("chat", () => {
         }
       }
     } catch (error: unknown) {
+      if (error instanceof Error && error.name === "AbortError") {
+        const chat = chats.value.find((c) => c.id === targetChatId);
+        const msgInStore = chat?.content.find((m) => m.id === aiMessage.id);
+        if (msgInStore) msgInStore.status = "received";
+        return;
+      }
+
       console.error(error);
       const message = error instanceof Error ? error.message : "Unknown error";
 
@@ -195,6 +219,9 @@ export const useChatStore = defineStore("chat", () => {
         msgInStore.status = "error";
         msgInStore.parts = [{ text: `Error: ${message}` }];
       }
+    } finally {
+      isGenerating.value = false;
+      abortController = null;
     }
   };
 
@@ -261,8 +288,10 @@ export const useChatStore = defineStore("chat", () => {
     chats: skipHydrate(chats),
     selectedChatId: skipHydrate(selectedChatId),
     selectedChat,
+    isGenerating,
     addChat,
     sendMessage,
+    stopGeneration,
     changeSelected,
     removeSelection,
     deleteChat,

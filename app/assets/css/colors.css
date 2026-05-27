@@ -13,7 +13,8 @@
     --ui-border: rgba(0, 0, 0, 0.06);
 
     /* Code block colors */
-    --ui-code-block-bg: #f8f8f8;
+    --ui-code-inline-bg: rgba(var(--ui-primary-rgb), 0.1);
+    --ui-code-block-bg: rgba(var(--ui-primary-rgb), 0.1);
     --ui-code-block-border: rgba(0, 0, 0, 0.04);
     --ui-code-block-lang-color: rgba(0, 0, 0, 0.4);
     --ui-code-block-pre-bg: rgba(0, 0, 0, 0.03);
@@ -80,7 +81,7 @@
     --ui-border: rgba(255, 255, 255, 0.06);
 
     /* Code block colors */
-    --ui-code-block-bg: #0e0e0e;
+    --ui-code-block-bg: rgba(var(--ui-primary-rgb), 0.1);
     --ui-code-block-border: rgba(255, 255, 255, 0.04);
     --ui-code-block-lang-color: rgba(255, 255, 255, 0.5);
     --ui-code-block-pre-bg: rgba(0, 0, 0, 0.25);

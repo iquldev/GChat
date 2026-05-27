@@ -124,7 +124,7 @@
   font-family:
     "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     monospace;
-  background-color: rgba(var(--ui-primary-rgb), 0.1);
+  background-color: var(--ui-code-inline-bg);
   border-radius: 5px;
   font-size: 0.875em;
   color: var(--ui-primary);
@@ -351,7 +351,7 @@
 }
 
 .markdown-content > pre {
-  background-color: var(--ui-code-block-pre-bg);
+  background-color: var(--ui-code-block-bg);
   padding: 1.25rem;
   border-radius: 6px;
   overflow-x: auto;

@@ -3,22 +3,27 @@
     class="flex w-full px-2 md:px-4"
     :class="role === 'user' ? 'justify-end' : 'justify-start'"
   >
-    <div class="flex gap-4 max-w-[95%] md:max-w-[85%]">
+    <div class="flex gap-4 max-w-[95%] md:max-w-[85%] min-w-0">
       <div
         class="flex flex-col gap-1.5 flex-1 min-w-0"
         :class="role === 'user' ? 'items-end' : 'items-start'"
       >
         <div
-          class="px-6 py-4 rounded-2xl bg-(--ui-block-background) border border-default transition-colors duration-200 shadow-xs"
-          :class="{
-            'disable-blur': isBlurDisabled,
-            'no-animation':
-              message.status !== 'received' &&
-              message.status !== 'streaming' &&
-              message.role === 'model',
-            'border-(--ui-error)/50 bg-(--ui-error)/10':
-              message.status === 'error',
-          }"
+          class="py-4 transition-colors duration-200 break-words overflow-hidden"
+          :class="[
+            role === 'user'
+              ? 'bg-(--ui-block-background) border border-default shadow-xs px-6 rounded-2xl w-full'
+              : 'px-2 md:px-0',
+            {
+              'disable-blur': isBlurDisabled,
+              'no-animation':
+                message.status !== 'received' &&
+                message.status !== 'streaming' &&
+                message.role === 'model',
+              'border-(--ui-error)/50 bg-(--ui-error)/10 rounded-2xl px-6':
+                message.status === 'error',
+            },
+          ]"
         >
           <TransitionGroup
             name="stream"

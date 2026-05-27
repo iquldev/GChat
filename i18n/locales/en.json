@@ -20,6 +20,7 @@
     "promptLabel": "Chat prompt",
     "addAttachment": "Add attachment",
     "send": "Send",
+    "stop": "Stop",
     "date": {
       "today": "Today",
       "yesterday": "Yesterday"
