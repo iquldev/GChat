@@ -5,19 +5,16 @@
     --ui-text-primary: #1a1a1a;
     --ui-text-second: #666666;
     --ui-button-selected: rgba(0, 0, 0, 0.05);
-    --ui-user-avatar: #4caf50;
-    --ui-ai-avatar: #3f51b5;
     --ui-primary: #666666;
-    --ui-primary-rgb: 102, 102, 102;
+    --ui-primary-rgb: rgb(102, 102, 102);
     --ui-error: #d32f2f;
     --ui-border: rgba(0, 0, 0, 0.06);
 
     /* Code block colors */
-    --ui-code-inline-bg: rgba(var(--ui-primary-rgb), 0.1);
-    --ui-code-block-bg: rgba(var(--ui-primary-rgb), 0.1);
+    --ui-code-inline-bg: #f8f8f8;
+    --ui-code-block-bg: #f8f8f8;
     --ui-code-block-border: rgba(0, 0, 0, 0.04);
     --ui-code-block-lang-color: rgba(0, 0, 0, 0.4);
-    --ui-code-block-pre-bg: rgba(0, 0, 0, 0.03);
     --ui-code-pre-color: #24292e;
 
     /* Code block copy button */
@@ -73,18 +70,16 @@
     --ui-text-primary: #ffffff;
     --ui-text-second: #acacac;
     --ui-button-selected: rgba(255, 255, 255, 0.05);
-    --ui-user-avatar: #baff60;
-    --ui-ai-avatar: #6360ff;
     --ui-primary: #acacac;
-    --ui-primary-rgb: 172, 172, 172;
+    --ui-primary-rgb: rgb(172, 172, 172);
     --ui-error: #ff5252;
     --ui-border: rgba(255, 255, 255, 0.06);
 
     /* Code block colors */
-    --ui-code-block-bg: rgba(var(--ui-primary-rgb), 0.1);
+    --ui-code-inline-bg: #0e0e0e;
+    --ui-code-block-bg: #0e0e0e;
     --ui-code-block-border: rgba(255, 255, 255, 0.04);
     --ui-code-block-lang-color: rgba(255, 255, 255, 0.5);
-    --ui-code-block-pre-bg: rgba(0, 0, 0, 0.25);
     --ui-code-pre-color: #e5e7eb;
 
     /* Code block copy button */
@@ -131,5 +126,4 @@
     --ui-blur-1: #c2c2c2;
     --ui-blur-2: #808080;
     --ui-blur-3: #666666;
-}
 }

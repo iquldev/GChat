@@ -5,13 +5,13 @@
     >
       <div
         class="absolute top-0 left-[10%] w-[500px] h-64 bg-(--ui-blur-1) rounded-full mix-blend-multiply filter blur-[100px] animate-blob"
-      ></div>
+      />
       <div
         class="absolute top-0 right-[10%] w-[500px] h-64 bg-(--ui-blur-2) rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"
-      ></div>
+      />
       <div
         class="absolute bottom-10 left-[20%] w-[600px] h-72 bg-(--ui-blur-3) rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-4000"
-      ></div>
+      />
     </div>
   </div>
 </template>
