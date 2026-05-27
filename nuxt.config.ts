@@ -38,36 +38,6 @@ export default defineNuxtConfig({
       sourcemap: false,
       rollupOptions: {
         output: {
-          manualChunks: (id) => {
-            if (id.includes("node_modules/highlight.js")) return "highlight";
-            if (id.includes("node_modules/markdown-it")) return "markdown";
-            if (id.includes("node_modules/dompurify")) return "dompurify";
-            if (id.includes("node_modules/@google/genai")) return "genai";
-
-            if (
-              id.includes("node_modules/motion") ||
-              id.includes("node_modules/motion-v") ||
-              id.includes("node_modules/@motionone")
-            )
-              return "motion";
-
-            if (
-              id.includes("node_modules/vue/") ||
-              id.includes("node_modules/@vue/") ||
-              id.includes("node_modules/vue-router") ||
-              id.includes("node_modules/pinia") ||
-              id.includes("node_modules/@vueuse/")
-            )
-              return "vendor";
-
-            if (
-              id.includes("node_modules/@nuxt/ui") ||
-              id.includes("node_modules/@headlessui") ||
-              id.includes("node_modules/@floating-ui") ||
-              id.includes("node_modules/reka-ui")
-            )
-              return "ui";
-          },
           compact: true,
         },
         treeshake: {
