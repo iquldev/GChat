@@ -40,11 +40,6 @@ export default defineNuxtConfig({
         output: {
           compact: true,
         },
-        treeshake: {
-          moduleSideEffects: false,
-          propertyReadSideEffects: false,
-          tryCatchDeoptimization: false,
-        },
       },
     },
   },
