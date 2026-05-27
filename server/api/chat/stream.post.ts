@@ -1,5 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import { Readable } from "node:stream";
 import { z } from "zod";
 import { systemPrompt } from "~~/server/utils/prompts";
 
@@ -32,9 +31,9 @@ const chatSchema = z.object({
     )
     .min(1),
 });
-
 export default defineEventHandler(async (event) => {
-  const apiKey = useRuntimeConfig().aiApiKey;
+  const config = useRuntimeConfig();
+  const apiKey = config.aiApiKey;
   if (!apiKey)
     throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
 
@@ -54,17 +53,27 @@ export default defineEventHandler(async (event) => {
   }));
 
   const ai = new GoogleGenAI({ apiKey });
-  const modelName = model || "gemini-2.5-flash";
+  const modelName = model || config.defaultAiModel || "gemini-2.5-flash";
+
+  const abortController = new AbortController();
+  event.node.req.on("close", () => {
+    abortController.abort();
+  });
 
   let response;
   try {
-    const result = await ai.models.generateContentStream({
-      model: modelName,
-      config: {
-        systemInstruction: systemPrompt,
+    const result = await ai.models.generateContentStream(
+      {
+        model: modelName,
+        config: {
+          systemInstruction: systemPrompt,
+        },
+        contents: formattedContent,
       },
-      contents: formattedContent,
-    });
+      {
+        signal: abortController.signal,
+      },
+    );
     response = result;
   } catch (e: unknown) {
     console.error("Gemini API Error:", e);
@@ -94,17 +103,30 @@ export default defineEventHandler(async (event) => {
     Connection: "keep-alive",
   });
 
-  const stream = new Readable({ read() {} });
-
-  (async () => {
-    try {
-      for await (const chunk of response) {
-        if (chunk.text) stream.push(chunk.text);
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const chunk of response) {
+          if (abortController.signal.aborted) {
+            break;
+          }
+          if (chunk.text) {
+            controller.enqueue(new TextEncoder().encode(chunk.text));
+          }
+        }
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === "AbortError") {
+          return;
+        }
+        controller.error(e);
+        return;
       }
-      stream.push(null);
-    } catch (e) {
-      stream.destroy(e as Error);
-    }
-  })();
+      controller.close();
+    },
+    cancel() {
+      abortController.abort();
+    },
+  });
+
   return sendStream(event, stream);
 });

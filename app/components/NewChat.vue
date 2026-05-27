@@ -1,6 +1,6 @@
 <template>
   <motion.div
-    class="bg-(--ui-block-background) px-6 py-4 rounded-4xl flex flex-col gap-4 md:w-[600px] w-full border border-default"
+    class="bg-(--ui-block-background) px-6 py-5 rounded-4xl flex flex-col gap-4 md:w-[720px] w-full border border-default shadow-lg"
     :class="{ 'md:w-full': chatId }"
     layout
   >
@@ -44,7 +44,7 @@
       rows="1"
       :placeholder="$t('chat.promptPlaceholder')"
       :aria-label="$t('chat.promptLabel')"
-      class="text-(--ui-text-primary) md:text-base text-sm outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh]"
+      class="text-(--ui-text-primary) md:text-lg text-base outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh]"
       :class="{ 'md:h-6': !prompt }"
       @input="autoResize"
       @keydown.enter="handleEnter"

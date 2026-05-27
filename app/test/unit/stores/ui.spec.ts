@@ -26,7 +26,7 @@ describe("UI Store", () => {
 
   it("updates search query", () => {
     const store = useUIStore();
-    store.setSearchQuery("test query");
+    store.searchQuery = "test query";
     expect(store.searchQuery).toBe("test query");
   });
 

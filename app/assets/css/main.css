@@ -4,8 +4,12 @@
 @import "./colors.css";
 @import "./markdown.css";
 
+html {
+  font-size: 15px;
+}
+
 * {
-  font-family: "Google Sans", sans-serif;
+  font-family: "Geist", sans-serif;
 }
 
 body {

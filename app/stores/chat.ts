@@ -14,17 +14,15 @@ export const useChatStore = defineStore("chat", () => {
   );
 
   watch(
-    () => chats.value,
-    (newChats) => {
+    () => chats.value.length,
+    () => {
       if (
         selectedChatId.value &&
-        newChats.length > 0 &&
-        !newChats.find((chat: Chat) => chat.id === selectedChatId.value)
+        !chats.value.some((chat: Chat) => chat.id === selectedChatId.value)
       ) {
         selectedChatId.value = null;
       }
     },
-    { deep: true },
   );
 
   const addChat = (firstMessage: ChatMessage) => {
@@ -138,21 +136,44 @@ export const useChatStore = defineStore("chat", () => {
       const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
       if (msgInStore) msgInStore.status = "streaming";
 
+      let accumulatedText = "";
+      let lastUpdateTime = 0;
+      let updateTimeout: ReturnType<typeof setTimeout> | null = null;
+
+      const flushUpdate = () => {
+        if (msgInStore) {
+          const lastPart = msgInStore.parts[msgInStore.parts.length - 1];
+          if (lastPart && "text" in lastPart) {
+            lastPart.text = accumulatedText;
+          } else {
+            msgInStore.parts.push({ text: accumulatedText });
+          }
+        }
+      };
+
       while (reader) {
         const { done, value } = await reader.read();
         if (done) {
+          if (updateTimeout) clearTimeout(updateTimeout);
+          flushUpdate();
           if (msgInStore) msgInStore.status = "received";
           break;
         }
 
         const chunk = decoder.decode(value);
-        if (msgInStore) {
-          const lastPart = msgInStore.parts[msgInStore.parts.length - 1];
-          if (lastPart && "text" in lastPart) {
-            lastPart.text += chunk;
-          } else {
-            msgInStore.parts.push({ text: chunk });
-          }
+        accumulatedText += chunk;
+
+        const now = Date.now();
+        if (now - lastUpdateTime > 60) {
+          if (updateTimeout) clearTimeout(updateTimeout);
+          flushUpdate();
+          lastUpdateTime = now;
+        } else if (!updateTimeout) {
+          updateTimeout = setTimeout(() => {
+            flushUpdate();
+            lastUpdateTime = Date.now();
+            updateTimeout = null;
+          }, 60);
         }
       }
     } catch (error: unknown) {
@@ -241,7 +262,6 @@ export const useChatStore = defineStore("chat", () => {
     selectedChatId: skipHydrate(selectedChatId),
     selectedChat,
     addChat,
-    addMessage,
     sendMessage,
     changeSelected,
     removeSelection,

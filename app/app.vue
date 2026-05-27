@@ -7,7 +7,7 @@
       <LayoutGroup>
         <motion.div
           layout
-          class="h-screen p-6 flex flex-col md:flex-row gap-4 will-change-[filter,transform]"
+          class="h-screen p-4 flex flex-col md:flex-row gap-3.5 will-change-[filter,transform]"
           :initial="{
             filter: uiStore.isBlurDisabled ? 'blur(0px)' : 'blur(10px)',
             opacity: 0,

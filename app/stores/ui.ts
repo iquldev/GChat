@@ -25,10 +25,6 @@ export const useUIStore = defineStore("ui", () => {
     isSearchActive.value = !isSearchActive.value;
   };
 
-  const setSearchQuery = (query: string) => {
-    searchQuery.value = query;
-  };
-
   const toggleSettings = (value?: boolean) => {
     isSettingsOpen.value = value !== undefined ? value : !isSettingsOpen.value;
   };
@@ -42,7 +38,6 @@ export const useUIStore = defineStore("ui", () => {
     isBlurDisabled,
     toggleSidebar,
     toggleSearch,
-    setSearchQuery,
     toggleSettings,
   };
 });

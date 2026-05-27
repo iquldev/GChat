@@ -9,7 +9,7 @@
         :class="role === 'user' ? 'items-end' : 'items-start'"
       >
         <div
-          class="px-4 py-2.5 rounded-2xl bg-(--ui-block-background) border border-default transition-colors duration-200 shadow-xs"
+          class="px-5 py-3 rounded-2xl bg-(--ui-block-background) border border-default transition-colors duration-200 shadow-xs"
           :class="{
             'disable-blur': isBlurDisabled,
             'no-animation':
@@ -23,7 +23,7 @@
           <TransitionGroup
             name="stream"
             tag="div"
-            class="flex flex-col gap-[0.85rem] text-[15px] leading-relaxed wrap-break-word message-body"
+            class="flex flex-col gap-[0.85rem] md:text-[17px] text-[15px] leading-relaxed wrap-break-word message-body"
             :class="{ 'animate-text-shimmer': message.status === 'pending' }"
           >
             <template

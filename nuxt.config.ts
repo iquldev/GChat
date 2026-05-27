@@ -42,9 +42,6 @@ export default defineNuxtConfig({
       ],
     },
   },
-  fonts: {
-    provider: "google",
-  },
   eslint: {
     config: {
       standalone: true,
@@ -55,6 +52,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     aiApiKey: process.env.NUXT_AI_API_KEY,
+    defaultAiModel: "gemini-2.5-flash",
   },
   routeRules: {
     "/api/**": {

@@ -21,10 +21,8 @@
     "@google/genai": "^1.44.0",
     "@nuxt/fonts": "^0.14.0",
     "@vueuse/core": "^14.2.1",
-    "axios": "^1.13.6",
     "dompurify": "^3.3.2",
     "highlight.js": "^11.11.1",
-    "lodash.debounce": "^4.0.8",
     "markdown-it": "^14.1.1",
     "markdown-it-link-attributes": "^4.0.1",
     "markdown-it-task-lists": "^2.1.1",
@@ -32,7 +30,6 @@
     "nuxt": "^4.3.1",
     "pinia": "^3.0.4",
     "vue": "^3.5.30",
-    "vue-router": "^5.0.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -46,7 +43,6 @@
     "@pinia/testing": "^1.0.3",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.2.1",
-    "@types/lodash.debounce": "^4.0.9",
     "@types/dompurify": "^3.2.0",
     "@types/lodash": "^4.17.24",
     "@types/markdown-it": "^14.1.2",
