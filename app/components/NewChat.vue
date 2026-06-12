@@ -91,10 +91,10 @@
             <button
                 v-else
                 class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default shrink-0"
-                :disabled="!prompt && attachments.length === 0"
+                :disabled="(!prompt && attachments.length === 0) || !selectedModel"
                 type="button"
                 :aria-label="$t('chat.send')"
-                :title="$t('chat.send')"
+                :title="!selectedModel ? $t('chat.noModelSelected') : $t('chat.send')"
                 @click="sendRequest"
             >
                 <Icon name="lucide:send" class="size-5" />
@@ -204,6 +204,7 @@ const removeAttachment = (index: number) => {
 
 const sendRequest = async () => {
     if (!prompt.value && attachments.value.length === 0) return;
+    if (!selectedModel.value) return;
 
     const requestParts: ContentPart[] = [];
     if (prompt.value) {

@@ -22,6 +22,7 @@
     "addAttachment": "Add attachment",
     "send": "Send",
     "stop": "Stop",
+    "noModelSelected": "Please select a model first",
     "date": {
       "today": "Today",
       "yesterday": "Yesterday"
