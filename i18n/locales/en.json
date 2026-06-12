@@ -1,7 +1,8 @@
 {
   "settings": {
     "title": "Settings",
-    "apiKey": "Gemini API Key",
+    "customModel": "Custom model",
+    "apiKey": "OpenRouter API Key",
     "language": "Language",
     "theme": "Theme",
     "disableBlur": "Disable Blur",

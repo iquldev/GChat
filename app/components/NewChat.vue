@@ -56,8 +56,9 @@
             <div class="flex items-center gap-2">
                 <UiSelector
                     v-model="selectedModel"
-                    :options="options"
+                    :options="modelOptions"
                     :direction="chatId ? 'up' : 'down'"
+                    has-custom-model
                 />
                 <input
                     ref="fileInput"
@@ -106,14 +107,14 @@
 import { storeToRefs } from "pinia";
 import { useUIStore } from "~/stores/ui";
 import { useChatStore } from "~/stores/chat";
-import type { ChatMessage, ContentPart } from "~/types/gemini";
+import type { ChatMessage, ContentPart } from "~/types/openrouter";
 import { motion } from "motion-v";
 
 const { t } = useI18n();
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();
-const { selectedModel } = storeToRefs(uiStore);
+const { selectedModel, modelOptions } = storeToRefs(uiStore);
 
 const props = defineProps<{
     chatId?: number;
@@ -266,11 +267,4 @@ watch(prompt, (newVal) => {
     }
 });
 
-const options = [
-    { label: "Gemini 3 Flash", value: "gemini-3-flash-preview" },
-    { label: "Gemini 3 Pro", value: "gemini-3-pro-preview" },
-    { label: "Gemini 2.5 Flash", value: "gemini-2.5-flash" },
-    { label: "Gemini 2.5 Flash Lite", value: "gemini-2.5-flash-lite" },
-    { label: "Gemini 2.5 Pro", value: "gemini-2.5-pro" },
-];
 </script>

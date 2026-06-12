@@ -198,7 +198,7 @@
 
 <script setup lang="ts">
 import { useClipboard } from "@vueuse/core";
-import type { ChatMessage } from "~/types/gemini";
+import type { ChatMessage } from "~/types/openrouter";
 import { useUIStore } from "~/stores/ui";
 import { storeToRefs } from "pinia";
 import { formatChatMessageDate } from "~/utils/formatters";

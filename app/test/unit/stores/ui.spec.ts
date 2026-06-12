@@ -32,7 +32,7 @@ describe("UI Store", () => {
 
   it("has a default selected model", () => {
     const store = useUIStore();
-    expect(store.selectedModel).toBe("gemini-2.5-flash");
+    expect(store.selectedModel).toBe("openrouter/free");
   });
 
   it("manages blur disabled state", () => {

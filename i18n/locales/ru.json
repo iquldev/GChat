@@ -1,7 +1,8 @@
 {
   "settings": {
     "title": "Настройки",
-    "apiKey": "Gemini API Ключ",
+    "customModel": "Своя модель",
+    "apiKey": "OpenRouter API Ключ",
     "language": "Язык",
     "theme": "Тема",
     "disableBlur": "Отключить блюр",

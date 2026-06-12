@@ -27,7 +27,7 @@ describe("Chat Store", () => {
       parts: [{ text: "Hello" }],
       timestamp: new Date().toISOString(),
       status: "sent",
-      model: "gemini-3-flash-preview",
+      model: "openrouter/free",
     });
 
     store.changeSelected(chatId);
@@ -54,7 +54,7 @@ describe("Chat Store", () => {
       parts: [{ text: "Hello" }],
       timestamp: new Date().toISOString(),
       status: "sent",
-      model: "gemini-3-flash-preview",
+      model: "openrouter/free",
     });
 
     store.changeSelected(chatId);

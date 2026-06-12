@@ -1,6 +1,6 @@
 import { defineStore, skipHydrate } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
-import type { ChatMessage, Chat, TextPart } from "@/types/gemini";
+import type { ChatMessage, Chat, TextPart } from "@/types/openrouter";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = useLocalStorage<Chat[]>("gchat:chats", [], { deep: true });

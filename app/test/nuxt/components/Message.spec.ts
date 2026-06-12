@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import Message from "~/components/chat/ChatMessage.vue";
-import type { ChatMessage } from "~/types/gemini";
+import type { ChatMessage } from "~/types/openrouter";
 
 describe("Message", () => {
   const createMessage = (
@@ -12,7 +12,7 @@ describe("Message", () => {
     parts: [{ text: "Hello world" }],
     status: "sent",
     timestamp: "2026-01-15T12:30:00.000Z",
-    model: "gemini-3-flash-preview",
+    model: "openrouter/free",
     ...overrides,
   });
 
@@ -66,9 +66,9 @@ describe("Message", () => {
   it('shows model name for "received" status', async () => {
     const wrapper = await mountMessage({
       status: "received",
-      model: "gemini-3-flash-preview",
+      model: "openrouter/free",
     });
-    expect(wrapper.text()).toContain("gemini-3-flash");
+    expect(wrapper.text()).toContain("openrouter/free");
   });
 
   it('shows x icon for "error" status', async () => {

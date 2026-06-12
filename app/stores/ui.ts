@@ -1,19 +1,31 @@
-import { defineStore } from "pinia";
-import { useCookie, useState } from "#app";
+import { defineStore } from 'pinia';
+import { useCookie, useState, useRuntimeConfig } from '#app';
 
-export const useUIStore = defineStore("ui", () => {
-  const isSidebarExpanded = useCookie("ui:isSidebarExpanded", {
+export interface UIModelOption {
+  label: string;
+  value: string;
+}
+
+export const useUIStore = defineStore('ui', () => {
+  const config = useRuntimeConfig();
+  const defaultModel = config.public.defaultAiModel as string;
+
+  const isSidebarExpanded = useCookie('ui:isSidebarExpanded', {
     default: () => false,
   });
-  const isSearchActive = useState("ui:isSearchActive", () => false);
-  const searchQuery = useState("ui:searchQuery", () => "");
-  const isSettingsOpen = useState("ui:isSettingsOpen", () => false);
+  const isSearchActive = useState('ui:isSearchActive', () => false);
+  const searchQuery = useState('ui:searchQuery', () => '');
+  const isSettingsOpen = useState('ui:isSettingsOpen', () => false);
 
-  const selectedModel = useCookie("ui:selectedModel", {
-    default: () => "gemini-2.5-flash",
+  const selectedModel = useCookie('ui:selectedModel', {
+    default: () => defaultModel,
   });
 
-  const isBlurDisabled = useCookie<boolean>("ui:isBlurDisabled", {
+  const modelOptions = useState<UIModelOption[]>('ui:modelOptions', () => [
+    { label: defaultModel, value: defaultModel },
+  ]);
+
+  const isBlurDisabled = useCookie<boolean>('ui:isBlurDisabled', {
     default: () => false,
   });
 
@@ -35,6 +47,7 @@ export const useUIStore = defineStore("ui", () => {
     searchQuery,
     isSettingsOpen,
     selectedModel,
+    modelOptions,
     isBlurDisabled,
     toggleSidebar,
     toggleSearch,
