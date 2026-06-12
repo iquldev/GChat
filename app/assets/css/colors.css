@@ -127,3 +127,14 @@
     --ui-blur-2: #808080;
     --ui-blur-3: #666666;
 }
+
+.oled-mode {
+    --ui-background: #000000;
+    --ui-block-background: #000000;
+    --ui-border: rgba(255, 255, 255, 0.1);
+}
+
+.oled-mode .bg-default,
+.oled-mode .bg-primary {
+    background-color: #000000;
+}

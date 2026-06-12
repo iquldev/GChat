@@ -4,10 +4,13 @@ import type { OpenRouterMessage } from '~~/app/types/openrouter';
 
 const chatSchema = z.object({
   model: z.string().optional(),
+  temperature: z.number().min(0).max(2).optional(),
+  max_tokens: z.number().min(1).optional(),
+  hasCustomSystemPrompt: z.boolean().optional(),
   content: z
     .array(
       z.object({
-        role: z.enum(['user', 'model']),
+        role: z.enum(['user', 'model', 'assistant', 'system']),
         parts: z
           .array(
             z
@@ -34,7 +37,11 @@ const chatSchema = z.object({
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const apiKey = config.openrouterApiKey;
+
+  const authHeader = getHeader(event, 'Authorization');
+  const apiKey =
+    authHeader ? authHeader.replace('Bearer ', '') : config.openrouterApiKey;
+
   if (!apiKey) {
     throw createError({
       statusCode: 401,
@@ -42,19 +49,24 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { content, model } = await readValidatedBody(event, (body) =>
-    chatSchema.parse(body),
-  );
+  const { content, model, temperature, max_tokens, hasCustomSystemPrompt } =
+    await readValidatedBody(event, (body) => chatSchema.parse(body));
 
-  const messages: OpenRouterMessage[] = [
-    {
+  const messages: OpenRouterMessage[] = [];
+
+  if (!hasCustomSystemPrompt) {
+    messages.push({
       role: 'system',
       content: systemPrompt,
-    },
-  ];
+    });
+  }
 
   for (const msg of content) {
-    const role = msg.role === 'model' ? 'assistant' : 'user';
+    const role =
+      msg.role === 'model' ? 'assistant'
+      : msg.role === 'assistant' ? 'assistant'
+      : msg.role === 'system' ? 'system'
+      : 'user';
 
     const hasAttachments = msg.parts.some((p) => p.inlineData);
 
@@ -101,6 +113,8 @@ export default defineEventHandler(async (event) => {
         model: modelName,
         messages,
         stream: true,
+        temperature: temperature ?? 0.7,
+        max_tokens: max_tokens ?? 2048,
       }),
       signal: abortController.signal,
     });
@@ -171,12 +185,43 @@ export default defineEventHandler(async (event) => {
             if (trimmed.startsWith('data: ')) {
               try {
                 const parsed = JSON.parse(trimmed.slice(6));
-                const contentChunk = parsed.choices?.[0]?.delta?.content;
-                if (contentChunk) {
-                  controller.enqueue(new TextEncoder().encode(contentChunk));
+
+                if (parsed.error) {
+                  console.error('[stream] Model error chunk:', parsed.error);
+                  controller.error(
+                    new Error(parsed.error.message || 'Model stream error'),
+                  );
+                  return;
                 }
+
+                const delta = parsed.choices?.[0]?.delta;
+
+                if (!delta || (!delta.content && delta.content !== ''))
+                  continue;
+
+                const contentChunk = delta.content;
+
+                if (!contentChunk) continue;
+
+                const isSafetyMetadata =
+                  /^(User|Model|Assistant)\s+Safety:\s+\w+\s*$/i.test(
+                    contentChunk.trim(),
+                  );
+                if (isSafetyMetadata) {
+                  console.warn(
+                    '[stream] Filtered safety metadata chunk:',
+                    JSON.stringify(contentChunk),
+                  );
+                  continue;
+                }
+
+                controller.enqueue(new TextEncoder().encode(contentChunk));
               } catch (err) {
-                console.warn('Failed to parse SSE line:', trimmed, err);
+                console.warn(
+                  '[stream] Failed to parse SSE line:',
+                  trimmed,
+                  err,
+                );
               }
             }
           }

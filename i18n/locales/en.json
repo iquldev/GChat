@@ -1,11 +1,35 @@
 {
   "settings": {
     "title": "Settings",
+    "categories": {
+      "ai": "AI Settings",
+      "interface": "Interface",
+      "data": "Data Management"
+    },
     "customModel": "Custom model",
+    "customModelId": "Custom Model ID",
     "apiKey": "OpenRouter API Key",
     "language": "Language",
     "theme": "Theme",
     "disableBlur": "Disable Blur",
+    "temperature": "Temperature",
+    "maxTokens": "Max Tokens",
+    "systemPrompt": "System Prompt",
+    "enterToSend": "Enter to Send",
+    "soundEnabled": "Sound Notifications",
+    "oledMode": "OLED Mode (Pure Black)",
+    "clearHistory": "Clear All History",
+    "exportHistory": "Export History",
+    "exportSub": "Download JSON file",
+    "importHistory": "Import History",
+    "importSub": "Upload JSON file",
+    "dataDescription": "Manage your local chat data. Export your history to a JSON file or import it back.",
+    "confirmClear": "Are you sure you want to clear all history?",
+    "placeholders": {
+      "customModelId": "e.g. anthropic/claude-3-opus",
+      "apiKey": "sk-or-v1-...",
+      "systemPrompt": "You are a helpful assistant..."
+    },
     "options": {
       "on": "On",
       "off": "Off"

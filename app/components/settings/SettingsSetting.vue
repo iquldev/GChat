@@ -1,41 +1,87 @@
 <template>
-  <div class="flex items-center justify-between md:gap-12 gap-8">
-    <p class="text-(--ui-text-second) md:text-base text-sm">{{ label }}</p>
-    <UiSelector
-      v-if="options && options.length > 0"
-      v-model="modelValue"
-      :options="options"
+  <div
+    class="flex flex-col gap-3 p-4 rounded-3xl border border-default bg-(--ui-background)/30"
+    :class="{ 'flex-row items-center justify-between': type !== 'textarea' }"
+  >
+    <div class="flex flex-col gap-0.5">
+      <p class="text-sm font-semibold text-(--ui-text-primary)">
+        {{ label }}
+      </p>
+      <p v-if="description" class="text-xs text-(--ui-text-second)">
+        {{ description }}
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Select -->
+      <UiSelector
+        v-if="type === 'select' && options"
+        v-model="modelValue"
+        :options="options"
+        direction="down"
+      />
+
+      <!-- Toggle -->
+      <button
+        v-else-if="type === 'toggle'"
+        class="relative inline-flex items-center h-7 w-12 rounded-full transition-all cursor-pointer border border-default outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-(--ui-background)"
+        :class="
+          modelValue ? 'bg-(--ui-text-primary)' : 'bg-(--ui-button-selected)'
+        "
+        type="button"
+        @click="modelValue = !modelValue"
+      >
+        <span
+          class="inline-block size-5 transform rounded-full transition-transform duration-200 shadow-sm"
+          :class="[
+            modelValue ?
+              'translate-x-6 bg-(--ui-background)'
+            : 'translate-x-1 bg-(--ui-text-second)',
+          ]"
+        />
+      </button>
+
+      <!-- Number -->
+      <input
+        v-else-if="type === 'number'"
+        v-model.number="modelValue"
+        type="number"
+        class="w-24 px-4 py-1.5 rounded-full border border-default bg-(--ui-background) text-sm text-center outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+      />
+
+      <!-- Text -->
+      <input
+        v-else-if="type === 'text'"
+        v-model="modelValue"
+        type="text"
+        :placeholder="placeholder"
+        class="md:w-96 w-full px-4 py-1.5 rounded-full border border-default bg-(--ui-background) text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+      />
+
+      <slot name="action" />
+    </div>
+
+    <!-- Textarea -->
+    <textarea
+      v-if="type === 'textarea'"
+      v-model="modelValue as string"
+      :placeholder="placeholder"
+      rows="4"
+      class="w-full px-4 py-3 rounded-2xl border border-default bg-(--ui-background) text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none font-sans"
     />
-    <InputField v-else v-model="stringValue" :placeholder="placeholder" />
   </div>
 </template>
 
-<script setup lang="ts" generic="T extends string | boolean | number">
-withDefaults(
-  defineProps<{
-    label: string;
-    placeholder?: string;
-    options?: { label: string; value: T }[];
-  }>(),
-  {
-    placeholder: "",
-    options: () => [],
-  },
-);
+<script setup lang="ts">
+interface SettingProps {
+  label: string;
+  description?: string;
+  placeholder?: string;
+  type?: 'select' | 'text' | 'number' | 'textarea' | 'toggle';
+  options?: { label: string; value: string | number | boolean }[];
+}
 
-const modelValue = defineModel<T>();
+defineProps<SettingProps>();
 
-const stringValue = computed({
-  get: () => String(modelValue.value ?? ""),
-  set: (val: string) => {
-    const currentType = typeof modelValue.value;
-    if (currentType === "number") {
-      modelValue.value = Number(val) as T;
-    } else if (currentType === "boolean") {
-      modelValue.value = (val === "true") as T;
-    } else {
-      modelValue.value = val as T;
-    }
-  },
-});
+const modelValue = defineModel<string | number | boolean>();
 </script>

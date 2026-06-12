@@ -21,12 +21,48 @@ export const useUIStore = defineStore('ui', () => {
     default: () => defaultModel,
   });
 
-  const modelOptions = useState<UIModelOption[]>('ui:modelOptions', () => [
-    { label: defaultModel, value: defaultModel },
-  ]);
-
   const isBlurDisabled = useCookie<boolean>('ui:isBlurDisabled', {
     default: () => false,
+  });
+
+  const aiTemperature = useCookie<number>('ui:aiTemperature', {
+    default: () => 0.7,
+  });
+
+  const aiMaxTokens = useCookie<number>('ui:aiMaxTokens', {
+    default: () => 2048,
+  });
+
+  const customSystemPrompt = useCookie<string>('ui:customSystemPrompt', {
+    default: () => '',
+  });
+
+  const customModelId = useCookie<string>('ui:customModelId', {
+    default: () => '',
+  });
+
+  const enterToSend = useCookie<boolean>('ui:enterToSend', {
+    default: () => true,
+  });
+
+  const userApiKey = useCookie<string>('ui:userApiKey', {
+    default: () => '',
+  });
+
+  const soundEnabled = useCookie<boolean>('ui:soundEnabled', {
+    default: () => false,
+  });
+
+  const isOledMode = useCookie<boolean>('ui:isOledMode', {
+    default: () => false,
+  });
+
+  const modelOptions = computed<UIModelOption[]>(() => {
+    const options = [{ label: defaultModel, value: defaultModel }];
+    if (customModelId.value && customModelId.value !== defaultModel) {
+      options.push({ label: customModelId.value, value: customModelId.value });
+    }
+    return options;
   });
 
   const toggleSidebar = () => {
@@ -49,6 +85,14 @@ export const useUIStore = defineStore('ui', () => {
     selectedModel,
     modelOptions,
     isBlurDisabled,
+    aiTemperature,
+    aiMaxTokens,
+    customSystemPrompt,
+    customModelId,
+    enterToSend,
+    userApiKey,
+    soundEnabled,
+    isOledMode,
     toggleSidebar,
     toggleSearch,
     toggleSettings,

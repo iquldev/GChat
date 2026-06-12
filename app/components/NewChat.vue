@@ -249,9 +249,17 @@ const sendRequest = async () => {
 
 const handleEnter = (e: KeyboardEvent) => {
     if (e.isComposing) return;
-    if (!e.shiftKey) {
-        e.preventDefault();
-        sendRequest();
+    
+    if (uiStore.enterToSend) {
+        if (!e.shiftKey) {
+            e.preventDefault();
+            sendRequest();
+        }
+    } else {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            sendRequest();
+        }
     }
 };
 

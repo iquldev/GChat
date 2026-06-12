@@ -1,7 +1,10 @@
 <template>
   <div
-    class="bg-(--ui-background) min-h-screen"
-    :class="{ 'disable-blur': uiStore.isBlurDisabled }"
+    class="bg-(--ui-background) min-h-screen transition-colors duration-300"
+    :class="{
+      'disable-blur': uiStore.isBlurDisabled,
+      'oled-mode': uiStore.isOledMode,
+    }"
   >
     <ClientOnly>
       <LayoutGroup>

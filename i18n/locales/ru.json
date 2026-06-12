@@ -1,11 +1,35 @@
 {
   "settings": {
     "title": "Настройки",
+    "categories": {
+      "ai": "Настройки ИИ",
+      "interface": "Интерфейс",
+      "data": "Управление данными"
+    },
     "customModel": "Своя модель",
+    "customModelId": "ID своей модели",
     "apiKey": "OpenRouter API Ключ",
     "language": "Язык",
     "theme": "Тема",
     "disableBlur": "Отключить блюр",
+    "temperature": "Температура",
+    "maxTokens": "Макс. токенов",
+    "systemPrompt": "Системный промпт",
+    "enterToSend": "Отправка по Enter",
+    "soundEnabled": "Звуковые уведомления",
+    "oledMode": "OLED режим (чистый чёрный)",
+    "clearHistory": "Очистить всю историю",
+    "exportHistory": "Экспортировать историю",
+    "exportSub": "Скачать JSON файл",
+    "importHistory": "Импортировать историю",
+    "importSub": "Загрузить JSON файл",
+    "dataDescription": "Управляйте вашими локальными данными. Экспортируйте историю в JSON или импортируйте её обратно.",
+    "confirmClear": "Вы уверены, что хотите очистить всю историю?",
+    "placeholders": {
+      "customModelId": "напр. anthropic/claude-3-opus",
+      "apiKey": "sk-or-v1-...",
+      "systemPrompt": "Ты полезный помощник..."
+    },
     "options": {
       "on": "Вкл",
       "off": "Выкл"
