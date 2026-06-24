@@ -4,101 +4,105 @@
     :class="{ 'md:w-full': chatId }"
     layout
   >
-    <div class="bg-(--ui-block-background) px-6 py-5 rounded-4xl flex flex-col gap-4 w-full">
-    <div v-if="attachments.length > 0" class="flex flex-wrap gap-2">
-      <div
-        v-for="(att, index) in attachments"
-        :key="index"
-        class="relative group w-16 h-16 rounded-xl overflow-hidden border border-default shrink-0"
-      >
-        <img
-          v-if="att.mimeType.startsWith('image/')"
-          :src="att.previewUrl"
-          class="w-full h-full object-cover"
-        />
+    <div
+      class="bg-(--ui-block-background) px-6 py-5 rounded-4xl flex flex-col gap-4 w-full"
+    >
+      <div v-if="attachments.length > 0" class="flex flex-wrap gap-2">
         <div
-          v-else
-          class="w-full h-full flex flex-col items-center justify-center bg-(--ui-background) text-xs truncate p-1"
-          :title="att.name"
+          v-for="(att, index) in attachments"
+          :key="index"
+          class="relative group w-16 h-16 rounded-xl overflow-hidden border border-default shrink-0"
         >
-          <Icon
-            name="lucide:file"
-            class="w-6 h-6 mb-1 text-(--ui-text-second)"
+          <img
+            v-if="att.mimeType.startsWith('image/')"
+            :src="att.previewUrl"
+            class="w-full h-full object-cover"
           />
-          <span
-            class="w-full text-center truncate px-1 text-[10px] font-bold"
-            >{{ att.name.split('.').pop()?.toUpperCase() || 'FILE' }}</span
+          <div
+            v-else
+            class="w-full h-full flex flex-col items-center justify-center bg-(--ui-background) text-xs truncate p-1"
+            :title="att.name"
           >
+            <Icon
+              name="lucide:file"
+              class="w-6 h-6 mb-1 text-(--ui-text-second)"
+            />
+            <span
+              class="w-full text-center truncate px-1 text-[10px] font-bold"
+              >{{ att.name.split('.').pop()?.toUpperCase() || 'FILE' }}</span
+            >
+          </div>
+          <button
+            type="button"
+            class="absolute top-1 right-1 p-1 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+            @click="removeAttachment(index)"
+          >
+            <Icon name="lucide:x" class="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+
+      <textarea
+        ref="textarea"
+        v-model="prompt"
+        rows="1"
+        :placeholder="$t('chat.promptPlaceholder')"
+        :aria-label="$t('chat.promptLabel')"
+        style="overflow: hidden"
+        class="text-(--ui-text-primary) md:text-lg text-base outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh] w-full px-1"
+        :class="{ 'md:h-6': !prompt }"
+        @input="autoResize"
+        @keydown.enter="handleEnter"
+        @paste="handlePaste"
+      />
+      <div class="flex items-center justify-between gap-2 w-full">
+        <div class="flex items-center gap-2">
+          <UiSelector
+            v-model="selectedModel"
+            :options="modelOptions"
+            :direction="chatId ? 'up' : 'down'"
+            has-custom-model
+          />
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*,application/pdf"
+            multiple
+            class="hidden"
+            @change="handleFileChange"
+          />
+          <button
+            class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default shrink-0"
+            type="button"
+            :aria-label="$t('chat.addAttachment')"
+            :title="$t('chat.addAttachment')"
+            @click="triggerFileInput"
+          >
+            <Icon name="lucide:plus" class="size-5" />
+          </button>
         </div>
         <button
-          type="button"
-          class="absolute top-1 right-1 p-1 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-          @click="removeAttachment(index)"
-        >
-          <Icon name="lucide:x" class="w-3 h-3" />
-        </button>
-      </div>
-    </div>
-    <textarea
-      ref="textarea"
-      v-model="prompt"
-      rows="1"
-      :placeholder="$t('chat.promptPlaceholder')"
-      :aria-label="$t('chat.promptLabel')"
-      class="text-(--ui-text-primary) md:text-lg text-base outline-none border-none transition-all resize-none bg-transparent custom-scrollbar md:max-h-[60vh] max-h-[25vh] w-full px-1"
-      :class="{ 'md:h-6': !prompt }"
-      @input="autoResize"
-      @keydown.enter="handleEnter"
-      @paste="handlePaste"
-    />
-    <div class="flex items-center justify-between gap-2 w-full">
-      <div class="flex items-center gap-2">
-        <UiSelector
-          v-model="selectedModel"
-          :options="modelOptions"
-          :direction="chatId ? 'up' : 'down'"
-          has-custom-model
-        />
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/*,application/pdf"
-          multiple
-          class="hidden"
-          @change="handleFileChange"
-        />
-        <button
+          v-if="chatStore.isGenerating"
           class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default shrink-0"
           type="button"
-          :aria-label="$t('chat.addAttachment')"
-          :title="$t('chat.addAttachment')"
-          @click="triggerFileInput"
+          :aria-label="$t('chat.stop')"
+          :title="$t('chat.stop')"
+          @click="chatStore.stopGeneration"
         >
-          <Icon name="lucide:plus" class="size-5" />
+          <Icon name="lucide:square" class="size-5 fill-current" />
+        </button>
+        <button
+          v-else
+          class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default shrink-0"
+          :disabled="(!prompt && attachments.length === 0) || !selectedModel"
+          type="button"
+          :aria-label="$t('chat.send')"
+          :title="!selectedModel ? $t('chat.noModelSelected') : $t('chat.send')"
+          @click="sendRequest"
+        >
+          <Icon name="lucide:send" class="size-5" />
         </button>
       </div>
-      <button
-        v-if="chatStore.isGenerating"
-        class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all border border-default shrink-0"
-        type="button"
-        :aria-label="$t('chat.stop')"
-        :title="$t('chat.stop')"
-        @click="chatStore.stopGeneration"
-      >
-        <Icon name="lucide:square" class="size-5 fill-current" />
-      </button>
-      <button
-        v-else
-        class="size-11 bg-(--ui-background) text-(--ui-text-second) flex items-center justify-center rounded-full hover:opacity-50 hover:cursor-pointer active:opacity-50 active:scale-90 transition-all disabled:opacity-50 disabled:cursor-default border border-default shrink-0"
-        :disabled="(!prompt && attachments.length === 0) || !selectedModel"
-        type="button"
-        :aria-label="$t('chat.send')"
-        :title="!selectedModel ? $t('chat.noModelSelected') : $t('chat.send')"
-        @click="sendRequest"
-      >
-        <Icon name="lucide:send" class="size-5" />
-      </button>
-    </div>
     </div>
   </motion.div>
 </template>
@@ -109,6 +113,7 @@ import { useUIStore } from '~/stores/ui';
 import { useChatStore } from '~/stores/chat';
 import type { ChatMessage, ContentPart } from '~/types/openrouter';
 import { motion } from 'motion-v';
+import { nextTick, onMounted } from 'vue';
 
 const { t } = useI18n();
 
@@ -118,10 +123,35 @@ const { selectedModel, modelOptions } = storeToRefs(uiStore);
 
 const props = defineProps<{
   chatId?: number;
+  prompt?: string;
 }>();
 
-const prompt = ref('');
+const emit = defineEmits<{
+  (e: 'update:prompt', value: string): void;
+}>();
+
+const prompt = ref(props.prompt ?? '');
 const textarea = ref<HTMLTextAreaElement | null>(null);
+
+watch(
+  () => props.prompt,
+  (p) => {
+    if (p !== prompt.value) prompt.value = p ?? '';
+  },
+);
+watch(prompt, async (v) => {
+  emit('update:prompt', v ?? '');
+  await nextTick();
+  if (!v) {
+    if (textarea.value) textarea.value.style.height = '';
+  } else {
+    autoResize();
+  }
+});
+
+onMounted(() => {
+  if (prompt.value) autoResize();
+});
 
 interface Attachment {
   name: string;
@@ -269,10 +299,4 @@ const autoResize = () => {
     textarea.value.style.height = textarea.value.scrollHeight + 'px';
   }
 };
-
-watch(prompt, (newVal) => {
-  if (!newVal) {
-    if (textarea.value) textarea.value.style.height = '';
-  }
-});
 </script>

@@ -58,7 +58,33 @@
     "delete": "Delete",
     "fileTooLarge": "File is too large (max {max})",
     "noChats": "No chats yet",
-    "welcome": "Start a new conversation with AI. Your history will appear here."
+    "welcome": "Start a new conversation with AI. Your history will appear here.",
+    "examples": {
+      "python": {
+        "label": "Write Python code...",
+        "prompt": "Write Python code that reads a CSV and returns a DataFrame with an example of usage.",
+        "title": "Write Python code",
+        "aria": "Example: Python code"
+      },
+      "tz": {
+        "label": "Create a task brief...",
+        "prompt": "Help me create a frontend developer test assignment with tasks for Vue/Nuxt and evaluation criteria.",
+        "title": "Create a task brief",
+        "aria": "Example: test assignment"
+      },
+      "cicd": {
+        "label": "Setup CI/CD...",
+        "prompt": "Provide a short guide to set up CI/CD using GitHub Actions with tests and deployment steps.",
+        "title": "Explain CI/CD",
+        "aria": "Example: CI/CD guide"
+      },
+      "ml": {
+        "label": "ML study plan...",
+        "prompt": "Prepare a detailed 3-month study plan for machine learning: resources, exercises and projects.",
+        "title": "ML study plan",
+        "aria": "Example: ML plan"
+      }
+    }
   },
   "common": {
     "select": "Select...",
