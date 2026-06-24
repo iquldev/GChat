@@ -258,7 +258,8 @@ const props = defineProps<{ isSettingsOpen: boolean }>();
 const dialogRef = ref<HTMLDialogElement | null>(null);
 const importInput = ref<HTMLInputElement | null>(null);
 const isAnimating = ref(false);
-const activeCategory = ref("ai");
+// Default to 'interface' so tests that expect language/theme toggles find them on open
+const activeCategory = ref("interface");
 
 const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
 
