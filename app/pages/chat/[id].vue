@@ -22,6 +22,7 @@
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 import { motion } from "motion-v";
+import NewChat from '~/components/compose/NewChatForm.vue';
 
 const route = useRoute();
 const chatStore = useChatStore();
