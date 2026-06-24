@@ -1,6 +1,6 @@
 # 🤖 GChat
 
-<img width="1920" height="1048" src="https://github.com/user-attachments/assets/ff37c925-d747-4c0e-b4eb-ce47426003dd" />
+<img width="1920" height="1048" alt="Screenshot From 2026-06-24 13-39-11" src="https://github.com/user-attachments/assets/cd8c7684-d5a6-42b9-906d-66e731752ff3" />
 
 GChat is a modern, high-performance chat interface powered by **OpenRouter API**, giving you access to hundreds of AI models in one place. Built with **Nuxt 4**, it provides real-time streaming, multi-lingual support, and security out of the box.
 
