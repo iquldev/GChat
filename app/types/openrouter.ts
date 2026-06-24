@@ -1,4 +1,4 @@
-export type MessageRole = "user" | "model";
+export type MessageRole = "user" | "model" | "assistant" | "system";
 
 export type MessageStatus =
   | "pending"
@@ -14,7 +14,7 @@ export interface TextPart {
 export interface InlineDataPart {
   inlineData: {
     mimeType: string;
-    data: string;
+    data: string; // base64
   };
 }
 
@@ -32,18 +32,27 @@ export interface ChatMessage {
   parts: ContentPart[];
   timestamp: string;
   status: MessageStatus;
-  model: string;
+  model?: string; // optional for system-like messages
 }
+
+// OpenRouter message item shapes
+export interface OpenRouterTextItem {
+  type: "text";
+  text: string;
+}
+
+export interface OpenRouterImageItem {
+  type: "image_url";
+  image_url: {
+    url: string;
+  };
+}
+
+export type OpenRouterContent = string | Array<OpenRouterTextItem | OpenRouterImageItem>;
 
 export interface OpenRouterMessage {
   role: "user" | "assistant" | "system";
-  content: string | Array<{
-    type: "text" | "image_url";
-    text?: string;
-    image_url?: {
-      url: string;
-    };
-  }>;
+  content: OpenRouterContent;
 }
 
 export interface OpenRouterRequest {
@@ -52,15 +61,19 @@ export interface OpenRouterRequest {
   stream?: boolean;
 }
 
+export interface OpenRouterStreamChunkChoiceDelta {
+  content?: string;
+  role?: string;
+}
+
+export interface OpenRouterStreamChunkChoice {
+  delta?: OpenRouterStreamChunkChoiceDelta;
+  finish_reason?: string | null;
+  index: number;
+}
+
 export interface OpenRouterStreamChunk {
-  choices?: {
-    delta?: {
-      content?: string;
-      role?: string;
-    };
-    finish_reason?: string | null;
-    index: number;
-  }[];
+  choices?: OpenRouterStreamChunkChoice[];
   error?: {
     code: number;
     message: string;
