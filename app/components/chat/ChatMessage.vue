@@ -133,10 +133,4 @@ const statusColor = computed(() => {
     return "";
 });
 
-const formatDate = (dateString: string) => {
-    return formatChatMessageDate(dateString, locale.value, {
-        today: t("chat.date.today"),
-        yesterday: t("chat.date.yesterday"),
-    });
-};
 </script>

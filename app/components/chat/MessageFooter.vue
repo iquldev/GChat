@@ -30,14 +30,16 @@
 <script setup lang="ts">
 import type { ChatMessage } from '~/types/openrouter';
 import Timestamp from '../ui/Timestamp.vue';
-const props = defineProps({
-  message: { type: Object as () => ChatMessage, required: true },
-  role: { type: String as () => string, required: true },
-  sender: { type: String, required: true },
-  status: { type: String, required: true },
-  statusColor: { type: String, required: true },
-  copied: { type: Boolean, required: true },
-});
+defineEmits<['retry'|'copy']>();
 
-const { locale, t } = useI18n();
+defineProps<{ 
+  message: ChatMessage;
+  role: string;
+  sender: string;
+  status: string;
+  statusColor: string;
+  copied: boolean;
+}>();
+
+const { t } = useI18n();
 </script>

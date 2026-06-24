@@ -79,13 +79,13 @@
 import MarkdownRenderer from './MarkdownRenderer.vue';
 import type { ChatMessage } from '~/types/openrouter';
 
-const props = defineProps({
-  message: { type: Object as () => ChatMessage, required: true },
-  paragraphs: { type: Array as PropType<string[]>, required: true },
-  attachments: { type: Array as PropType<any[]>, required: true },
-  isBlurDisabled: { type: Boolean, required: true },
-  role: { type: String as () => string, required: true },
-});
+defineProps<{
+  message: ChatMessage;
+  paragraphs: string[];
+  attachments: { mimeType: string; url: string }[];
+  isBlurDisabled: boolean;
+  role: string;
+}>();
 
 const fullscreenImage = ref<string | null>(null);
 

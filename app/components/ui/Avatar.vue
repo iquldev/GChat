@@ -9,8 +9,8 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  src: { type: String, required: false },
-  alt: { type: String, required: false },
+  src: { type: String, required: false, default: '' },
+  alt: { type: String, required: false, default: '' },
   size: { type: String, default: 'md' }, // 'sm' | 'md' | 'lg'
 });
 
