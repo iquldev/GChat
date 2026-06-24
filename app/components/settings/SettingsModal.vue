@@ -15,53 +15,11 @@
                 class="bg-(--ui-block-background) flex md:flex-row flex-col w-[min(900px,95vw)] md:h-150 h-[80vh] rounded-4xl border border-default overflow-hidden shadow-2xl"
             >
                 <!-- Sidebar -->
-                <aside
-                    class="md:w-64 w-full flex flex-col border-r border-default bg-(--ui-background)/50"
-                >
-                    <div
-                        class="flex items-center gap-3 p-6 border-b border-default"
-                    >
-                        <Icon
-                            name="lucide:settings"
-                            class="size-6 text-(--ui-text-primary)"
-                        />
-                        <h1 class="font-bold text-xl">
-                            {{ $t("settings.title") }}
-                        </h1>
-                    </div>
-
-                    <nav
-                        class="flex-1 p-3 flex flex-col gap-1 overflow-y-auto custom-scrollbar"
-                    >
-                        <button
-                            v-for="cat in categories"
-                            :key="cat.id"
-                            class="flex items-center gap-3 px-4 py-2.5 rounded-full transition-all text-sm font-medium cursor-pointer border"
-                            :class="
-                                activeCategory === cat.id
-                                    ? 'bg-(--ui-background) border-default text-(--ui-text-primary)'
-                                    : 'border-transparent text-(--ui-text-second) hover:bg-(--ui-button-selected)'
-                            "
-                            @click="activeCategory = cat.id"
-                        >
-                            <Icon :name="cat.icon" class="size-4 shrink-0" />
-                            <span>{{ cat.label }}</span>
-                        </button>
-                    </nav>
-
-                    <div class="p-3 border-t border-default">
-                        <button
-                            class="flex items-center gap-3 w-full px-4 py-2.5 rounded-full text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all cursor-pointer"
-                            @click="confirmClearAll"
-                        >
-                            <Icon
-                                name="lucide:trash-2"
-                                class="size-4 shrink-0"
-                            />
-                            <span>{{ $t("settings.clearHistory") }}</span>
-                        </button>
-                    </div>
-                </aside>
+                <SettingsSidebar
+                  v-model:active-category="activeCategory"
+                  :categories="categories"
+                  @clear="confirmClearAll"
+                />
 
                 <!-- Main Content -->
                 <main
@@ -292,6 +250,7 @@ import { useUIStore } from "~/stores/ui";
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 import IconButton from "~/components/ui/IconButton.vue";
+import SettingsSidebar from './SettingsSidebar.vue';
 import SettingItem from './SettingItem.vue';
 
 const props = defineProps<{ isSettingsOpen: boolean }>();
