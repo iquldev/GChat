@@ -73,6 +73,8 @@
 </template>
 
 <script setup lang="ts">
+import ModelSelector from '~/components/compose/ModelSelector.vue';
+
 interface SettingProps {
   label: string;
   description?: string;
@@ -80,8 +82,6 @@ interface SettingProps {
   type?: 'select' | 'text' | 'number' | 'textarea' | 'toggle';
   options?: { label: string; value: string | number | boolean }[];
 }
-
-import ModelSelector from '~/components/compose/ModelSelector.vue';
 
 defineProps<SettingProps>();
 

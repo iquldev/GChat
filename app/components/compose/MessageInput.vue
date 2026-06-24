@@ -8,9 +8,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  placeholder: { type: String, required: true },
-});
+defineProps<{ placeholder: string }>();
 
 const modelValue = defineModel<string>({ default: '' });
 </script>
