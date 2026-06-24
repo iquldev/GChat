@@ -14,7 +14,7 @@
 
     <div class="flex items-center gap-2">
       <!-- Select -->
-      <UiSelector
+      <ModelSelector
         v-if="type === 'select' && options"
         v-model="modelValue"
         :options="options"
@@ -80,6 +80,8 @@ interface SettingProps {
   type?: 'select' | 'text' | 'number' | 'textarea' | 'toggle';
   options?: { label: string; value: string | number | boolean }[];
 }
+
+import ModelSelector from '~/components/compose/ModelSelector.vue';
 
 defineProps<SettingProps>();
 

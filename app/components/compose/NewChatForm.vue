@@ -57,7 +57,7 @@
       />
       <div class="flex items-center justify-between gap-2 w-full">
         <div class="flex items-center gap-2">
-          <UiSelector
+          <ModelSelector
             v-model="selectedModel"
             :options="modelOptions"
             :direction="chatId ? 'up' : 'down'"
@@ -114,6 +114,7 @@ import { useChatStore } from '~/stores/chat';
 import type { ChatMessage, ContentPart } from '~/types/openrouter';
 import { motion } from 'motion-v';
 import { nextTick, onMounted } from 'vue';
+import ModelSelector from '~/components/compose/ModelSelector.vue';
 
 const { t } = useI18n();
 

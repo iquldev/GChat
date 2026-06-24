@@ -28,7 +28,6 @@ import { useClipboard } from "@vueuse/core";
 import type { ChatMessage } from "~/types/openrouter";
 import { useUIStore } from "~/stores/ui";
 import { storeToRefs } from "pinia";
-import { formatChatMessageDate } from "~/utils/formatters";
 import MessageContent from './MessageContent.vue';
 import MessageFooter from './MessageFooter.vue';
 
@@ -44,7 +43,7 @@ defineEmits(["retry"]);
 const uiStore = useUIStore();
 const { isBlurDisabled } = storeToRefs(uiStore);
 
-const { locale, t } = useI18n();
+const { t } = useI18n();
 
 
 const role = computed(() => props.message.role);

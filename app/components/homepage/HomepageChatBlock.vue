@@ -27,7 +27,8 @@
 import { motion } from 'motion-v';
 import { useChatStore } from '~/stores/chat';
 import { ref } from 'vue';
-import PromptExamples from '~/components/PromptExamples.vue';
+import PromptExamples from '~/components/compose/PromptExamplesPanel.vue';
+import NewChat from '~/components/compose/NewChatForm.vue';
 
 const chatStore = useChatStore();
 const homepagePrompt = ref('');
