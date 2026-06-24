@@ -11,27 +11,28 @@
       filter: { duration: 0.4 },
     }"
   >
-    <SidebarButton icon="lucide:settings" @click="toggleSettings(true)" />
-    <SidebarButton icon="lucide:search" @click="toggleSearch" />
-    <SidebarButton icon="lucide:message-square-plus" @click="newChatHandler" />
+    <IconButton icon="lucide:settings" @click="toggleSettings(true)" />
+    <IconButton icon="lucide:search" @click="toggleSearch" />
+    <IconButton icon="lucide:message-square-plus" @click="newChatHandler" />
     <client-only>
-      <SidebarButton
+      <IconButton
         v-if="isMobile"
         :icon="isSidebarExpanded ? 'lucide:arrow-up' : 'lucide:arrow-down'"
         @click="toggleSidebar"
       />
-      <SidebarButton v-else icon="lucide:sidebar" @click="toggleSidebar" />
+      <IconButton v-else icon="lucide:sidebar" @click="toggleSidebar" />
       <template #fallback>
-        <SidebarButton icon="lucide:sidebar" @click="toggleSidebar" />
+        <IconButton icon="lucide:sidebar" @click="toggleSidebar" />
       </template>
     </client-only>
   </motion.div>
 </template>
 
-<script lang="ts" setup>
-import { motion } from "motion-v";
+<script setup lang="ts">
+import { motion } from 'motion-v';
+import IconButton from '../ui/IconButton.vue';
 
-const toggleSettings = inject("toggleSettings") as (value?: boolean) => void;
+const toggleSettings = inject('toggleSettings') as (value?: boolean) => void;
 
 defineProps<{
   isSidebarExpanded: boolean;

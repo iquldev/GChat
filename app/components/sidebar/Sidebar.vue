@@ -21,7 +21,7 @@
       :class="isSidebarExpanded ? 'h-fit' : 'h-full min-h-0'"
       layout
     >
-      <SidebarButtons
+      <SidebarActions
         :is-sidebar-expanded="isSidebarExpanded"
         :new-chat-handler="newChatHandler"
         :toggle-sidebar="toggleSidebar"
@@ -43,7 +43,7 @@
         :class="{ 'max-h-[280px] md:max-h-none': isMobile }"
       >
         <template v-if="isMounted">
-          <SidebarChatList
+          <ChatList
             :chats="visibleChats"
             :change-selected="handleChangeSelected"
             :is-sidebar-expanded="isSidebarExpanded"
@@ -57,7 +57,7 @@
           />
         </div>
       </div>
-      <SidebarChatList
+      <ChatList
         v-else
         :chats="visibleChats"
         :change-selected="handleChangeSelected"
@@ -73,6 +73,10 @@ import { useBreakpoints, breakpointsTailwind } from '@vueuse/core';
 import { useUIStore } from '~/stores/ui';
 import { useChatStore } from '~/stores/chat';
 import { storeToRefs } from 'pinia';
+
+// Explicit local component imports to ensure runtime resolution
+import ChatList from './ChatList.vue';
+import SidebarActions from './SidebarActions.vue';
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();

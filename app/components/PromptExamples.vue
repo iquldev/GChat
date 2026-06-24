@@ -6,9 +6,9 @@
         :key="item.key"
         type="button"
         class="pl-4 pr-4 py-2 rounded-full bg-(--ui-background) text-(--ui-text-primary) md:text-base text-sm border border-default flex items-center gap-2 hover:opacity-80 transition-all cursor-pointer"
-        @click="$emit('update:prompt', $t(item.promptKey))"
         :title="$t(item.titleKey)"
         :aria-label="$t(item.ariaKey)"
+        @click="$emit('update:prompt', $t(item.promptKey))"
       >
         <Icon :name="item.icon" class="w-4 h-4 text-(--ui-text-second)" />
         <span>{{ $t(item.labelKey) }}</span>
