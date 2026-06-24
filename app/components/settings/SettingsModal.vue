@@ -95,17 +95,17 @@
                             >
                                 <!-- AI Category -->
                                 <template v-if="activeCategory === 'ai'">
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="aiTemperature"
                                         :label="$t('settings.temperature')"
                                         type="number"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="aiMaxTokens"
                                         :label="$t('settings.maxTokens')"
                                         type="number"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="customModelId"
                                         :label="$t('settings.customModelId')"
                                         type="text"
@@ -115,7 +115,7 @@
                                             )
                                         "
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="userApiKey"
                                         :label="$t('settings.apiKey')"
                                         type="text"
@@ -123,7 +123,7 @@
                                             $t('settings.placeholders.apiKey')
                                         "
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="customSystemPrompt"
                                         :label="$t('settings.systemPrompt')"
                                         type="textarea"
@@ -139,34 +139,34 @@
                                 <template
                                     v-else-if="activeCategory === 'interface'"
                                 >
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="currentLocale"
                                         :label="$t('settings.language')"
                                         type="select"
                                         :options="languages"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="colorMode.preference"
                                         :label="$t('settings.theme')"
                                         type="select"
                                         :options="themes"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="isBlurDisabled"
                                         :label="$t('settings.disableBlur')"
                                         type="toggle"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="isOledMode"
                                         :label="$t('settings.oledMode')"
                                         type="toggle"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="enterToSend"
                                         :label="$t('settings.enterToSend')"
                                         type="toggle"
                                     />
-                                    <SettingsSetting
+                                    <SettingItem
                                         v-model="soundEnabled"
                                         :label="$t('settings.soundEnabled')"
                                         type="toggle"
@@ -292,7 +292,7 @@ import { useUIStore } from "~/stores/ui";
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 import IconButton from "~/components/ui/IconButton.vue";
-import SettingsSetting from './SettingsSetting.vue';
+import SettingItem from './SettingItem.vue';
 
 const props = defineProps<{ isSettingsOpen: boolean }>();
 
