@@ -1,11 +1,11 @@
-import { defineStore, skipHydrate } from 'pinia';
-import { useLocalStorage } from '@vueuse/core';
-import type { ChatMessage, Chat, TextPart } from '@/types/openrouter';
+import { defineStore, skipHydrate } from "pinia";
+import { useLocalStorage } from "@vueuse/core";
+import type { ChatMessage, Chat, TextPart } from "@/types/openrouter";
 
-export const useChatStore = defineStore('chat', () => {
-  const chats = useLocalStorage<Chat[]>('gchat:chats', [], { deep: true });
+export const useChatStore = defineStore("chat", () => {
+  const chats = useLocalStorage<Chat[]>("gchat:chats", [], { deep: true });
   const selectedChatId = useLocalStorage<number | null>(
-    'gchat:selectedChatId',
+    "gchat:selectedChatId",
     null,
   );
 
@@ -30,14 +30,14 @@ export const useChatStore = defineStore('chat', () => {
 
   const addChat = (firstMessage: ChatMessage) => {
     const newId = Date.now();
-    const textPart = firstMessage.parts.find((p) => 'text' in p) as
+    const textPart = firstMessage.parts.find((p) => "text" in p) as
       | TextPart
       | undefined;
-    const titleText = textPart?.text || 'New Chat';
+    const titleText = textPart?.text || "New Chat";
 
     const newChat: Chat = {
       id: newId,
-      title: titleText.slice(0, 30) + (titleText.length > 30 ? '...' : ''),
+      title: titleText.slice(0, 30) + (titleText.length > 30 ? "..." : ""),
       content: [JSON.parse(JSON.stringify(firstMessage))],
     };
 
@@ -64,10 +64,10 @@ export const useChatStore = defineStore('chat', () => {
 
     const aiMessage: ChatMessage = {
       id: Date.now() + 1,
-      role: 'model',
-      parts: [{ text: '' }],
+      role: "model",
+      parts: [{ text: "" }],
       timestamp: new Date().toISOString(),
-      status: 'pending',
+      status: "pending",
       model: message.model,
     };
     addMessage(targetChatId, aiMessage);
@@ -97,25 +97,25 @@ export const useChatStore = defineStore('chat', () => {
 
     try {
       const chat = chats.value.find((c) => c.id === targetChatId);
-      if (!chat) throw new Error('Chat not found in store');
+      if (!chat) throw new Error("Chat not found in store");
 
       const messages = chat.content
         .filter((m) => {
-          if (m.role === 'user') return true;
-          if (m.role === 'model' && m.status === 'received') return true;
+          if (m.role === "user") return true;
+          if (m.role === "model" && m.status === "received") return true;
           return false;
         })
         .map((m) => ({
-          role: (m.role === 'model' ? 'assistant' : m.role) as
-            | 'user'
-            | 'assistant'
-            | 'system',
+          role: (m.role === "model" ? "assistant" : m.role) as
+            | "user"
+            | "assistant"
+            | "system",
           parts: m.parts
             .map((p) => {
-              if ('text' in p) {
+              if ("text" in p) {
                 return p.text ? { text: p.text } : null;
               }
-              if ('inlineData' in p) {
+              if ("inlineData" in p) {
                 return { inlineData: p.inlineData };
               }
               return null;
@@ -126,7 +126,7 @@ export const useChatStore = defineStore('chat', () => {
 
       if (uiStore.customSystemPrompt) {
         messages.unshift({
-          role: 'system',
+          role: "system",
           parts: [{ text: uiStore.customSystemPrompt }],
         });
       }
@@ -140,16 +140,16 @@ export const useChatStore = defineStore('chat', () => {
       };
 
       const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        Accept: 'text/event-stream',
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
       };
 
       if (uiStore.userApiKey) {
-        headers['Authorization'] = `Bearer ${uiStore.userApiKey}`;
+        headers["Authorization"] = `Bearer ${uiStore.userApiKey}`;
       }
 
-      const response = await fetch('/api/chat/stream', {
-        method: 'POST',
+      const response = await fetch("/api/chat/stream", {
+        method: "POST",
         headers,
         body: JSON.stringify(payload),
         signal: abortController.signal,
@@ -165,25 +165,25 @@ export const useChatStore = defineStore('chat', () => {
       }
 
       if (!response.body) {
-        throw new Error('Response body is not available');
+        throw new Error("Response body is not available");
       }
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
       const userMsgInStore = chat.content.find((m) => m.id === userMessage.id);
-      if (userMsgInStore) userMsgInStore.status = 'sent';
+      if (userMsgInStore) userMsgInStore.status = "sent";
 
       const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
-      if (msgInStore) msgInStore.status = 'streaming';
+      if (msgInStore) msgInStore.status = "streaming";
 
-      let accumulatedText = '';
+      let accumulatedText = "";
       let lastUpdateTime = 0;
       let updateTimeout: ReturnType<typeof setTimeout> | null = null;
 
       const flushUpdate = () => {
         if (msgInStore) {
           const lastPart = msgInStore.parts[msgInStore.parts.length - 1];
-          if (lastPart && 'text' in lastPart) {
+          if (lastPart && "text" in lastPart) {
             lastPart.text = accumulatedText;
           } else {
             msgInStore.parts.push({ text: accumulatedText });
@@ -196,17 +196,22 @@ export const useChatStore = defineStore('chat', () => {
         if (done) {
           if (updateTimeout) clearTimeout(updateTimeout);
           flushUpdate();
-          if (msgInStore) msgInStore.status = 'received';
+          if (msgInStore) msgInStore.status = "received";
 
           if (uiStore.soundEnabled) {
             try {
               const AudioContextClass =
-                window.AudioContext || (window as any).webkitAudioContext;
+                window.AudioContext ||
+                (
+                  window as Window & {
+                    webkitAudioContext?: typeof AudioContext;
+                  }
+                ).webkitAudioContext;
               if (AudioContextClass) {
                 const context = new AudioContextClass();
                 const oscillator = context.createOscillator();
                 const gain = context.createGain();
-                oscillator.type = 'sine';
+                oscillator.type = "sine";
                 oscillator.frequency.setValueAtTime(880, context.currentTime);
                 gain.gain.setValueAtTime(0.1, context.currentTime);
                 gain.gain.exponentialRampToValueAtTime(
@@ -221,7 +226,7 @@ export const useChatStore = defineStore('chat', () => {
                 setTimeout(() => context.close(), 200);
               }
             } catch (e) {
-              console.error('Failed to play notification sound:', e);
+              console.error("Failed to play notification sound:", e);
             }
           }
           break;
@@ -244,29 +249,29 @@ export const useChatStore = defineStore('chat', () => {
         }
       }
     } catch (error: unknown) {
-      if (error instanceof Error && error.name === 'AbortError') {
+      if (error instanceof Error && error.name === "AbortError") {
         const chat = chats.value.find((c) => c.id === targetChatId);
         const msgInStore = chat?.content.find((m) => m.id === aiMessage.id);
-        if (msgInStore) msgInStore.status = 'received';
+        if (msgInStore) msgInStore.status = "received";
         return;
       }
 
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
 
       const chat = chats.value.find((c) => c.id === targetChatId);
       const userMsgInStore: ChatMessage | undefined = chat?.content.find(
         (m) => m.id === userMessage.id,
       );
       if (userMsgInStore) {
-        userMsgInStore.status = 'error';
+        userMsgInStore.status = "error";
       }
 
       const msgInStore: ChatMessage | undefined = chat?.content.find(
         (m) => m.id === aiMessage.id,
       );
       if (msgInStore) {
-        msgInStore.status = 'error';
+        msgInStore.status = "error";
         msgInStore.parts = [{ text: `Error: ${message}` }];
       }
     } finally {
@@ -280,7 +285,7 @@ export const useChatStore = defineStore('chat', () => {
     chats.value = chats.value.filter((chat) => chat.id !== id);
     if (wasSelected) {
       selectedChatId.value = null;
-      navigateTo('/');
+      navigateTo("/");
     }
   };
 
@@ -294,15 +299,15 @@ export const useChatStore = defineStore('chat', () => {
     const aiMessage = chat.content[aiMessageIndex];
     if (
       !aiMessage ||
-      aiMessage.role !== 'model' ||
-      aiMessage.status !== 'error'
+      aiMessage.role !== "model" ||
+      aiMessage.status !== "error"
     )
       return;
 
     let userMessage: ChatMessage | null = null;
     for (let i = aiMessageIndex - 1; i >= 0; i--) {
       const msg = chat.content[i];
-      if (msg && msg.role === 'user') {
+      if (msg && msg.role === "user") {
         userMessage = msg;
         break;
       }
@@ -310,8 +315,8 @@ export const useChatStore = defineStore('chat', () => {
 
     if (!userMessage) return;
 
-    aiMessage.status = 'pending';
-    aiMessage.parts = [{ text: '' }];
+    aiMessage.status = "pending";
+    aiMessage.parts = [{ text: "" }];
 
     processResponse(chatId, userMessage, aiMessage);
   };
@@ -321,7 +326,7 @@ export const useChatStore = defineStore('chat', () => {
     if (chat) {
       const trimmed = newTitle.trim();
       if (trimmed.length > 0) {
-        chat.title = trimmed.slice(0, 30) + (trimmed.length > 30 ? '...' : '');
+        chat.title = trimmed.slice(0, 30) + (trimmed.length > 30 ? "..." : "");
       }
     }
   };
@@ -337,16 +342,16 @@ export const useChatStore = defineStore('chat', () => {
   const clearAllChats = () => {
     chats.value = [];
     selectedChatId.value = null;
-    navigateTo('/');
+    navigateTo("/");
   };
 
   const exportChats = () => {
     const data = JSON.stringify(chats.value, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
+    const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `gchat-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `gchat-export-${new Date().toISOString().split("T")[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -360,7 +365,7 @@ export const useChatStore = defineStore('chat', () => {
           chats.value = [...chats.value, ...imported];
         }
       } catch (error) {
-        console.error('Failed to import chats:', error);
+        console.error("Failed to import chats:", error);
       }
     };
     reader.readAsText(file);

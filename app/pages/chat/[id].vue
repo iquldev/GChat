@@ -1,5 +1,5 @@
 <template>
-  <motion.div layout class="h-full w-full flex flex-col overflow-hidden">
+  <motion.div layout class="h-full w-full flex flex-col overflow-hidden p-4">
     <div
       ref="scrollContainer"
       class="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-4 py-4"

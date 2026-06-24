@@ -68,11 +68,11 @@
 </template>
 
 <script setup lang="ts">
-import { motion } from "motion-v";
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import { useUIStore } from "~/stores/ui";
-import { useChatStore } from "~/stores/chat";
-import { storeToRefs } from "pinia";
+import { motion } from 'motion-v';
+import { useBreakpoints, breakpointsTailwind } from '@vueuse/core';
+import { useUIStore } from '~/stores/ui';
+import { useChatStore } from '~/stores/chat';
+import { storeToRefs } from 'pinia';
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();
@@ -82,7 +82,7 @@ const { toggleSidebar, toggleSearch } = uiStore;
 const { chats } = storeToRefs(chatStore);
 const { changeSelected, removeSelection } = chatStore;
 
-const isMobile = useBreakpoints(breakpointsTailwind).smallerOrEqual("md");
+const isMobile = useBreakpoints(breakpointsTailwind).smallerOrEqual('md');
 const isMounted = ref(false);
 
 onMounted(() => {
@@ -113,6 +113,6 @@ const handleChangeSelected = (id: number) => {
 
 const newChatHandler = async () => {
   await removeSelection();
-  router.push("/");
+  router.push('/');
 };
 </script>

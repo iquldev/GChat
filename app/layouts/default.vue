@@ -10,7 +10,7 @@
       <LayoutGroup>
         <motion.div
           layout
-          class="h-screen p-4 flex flex-col md:flex-row gap-3.5 will-change-[filter,transform]"
+          class="h-screen flex flex-col md:flex-row gap-3.5 will-change-[filter,transform]"
           :initial="{
             filter: uiStore.isBlurDisabled ? 'blur(0px)' : 'blur(10px)',
             opacity: 0,
@@ -18,7 +18,10 @@
           :animate="{ filter: 'blur(0px)', opacity: 1 }"
           :transition="{ duration: 0.6, ease: 'easeOut' }"
         >
-          <Sidebar class="shrink-0" />
+          <div class="shrink-0 p-4">
+            <Sidebar />
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               :key="$route.path"
@@ -52,8 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { useUIStore } from "~/stores/ui";
-import { motion, LayoutGroup, AnimatePresence } from "motion-v";
+import { useUIStore } from '~/stores/ui';
+import { motion, LayoutGroup, AnimatePresence } from 'motion-v';
 
 const isSettingsOpen = ref(false);
 const uiStore = useUIStore();
@@ -62,5 +65,5 @@ const toggleSettings = (value?: boolean) => {
   isSettingsOpen.value = value !== undefined ? value : !isSettingsOpen.value;
 };
 
-provide("toggleSettings", toggleSettings);
+provide('toggleSettings', toggleSettings);
 </script>
