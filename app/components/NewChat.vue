@@ -1,9 +1,10 @@
 <template>
   <motion.div
-    class="bg-(--ui-block-background)/80 backdrop-blur-sm px-6 py-5 rounded-4xl flex flex-col gap-4 md:w-180 w-full border border-default shadow-lg"
+    class="rounded-4xl flex flex-col gap-4 md:w-180 w-full border border-default shadow-lg"
     :class="{ 'md:w-full': chatId }"
     layout
   >
+    <div class="bg-(--ui-block-background) px-6 py-5 rounded-4xl flex flex-col gap-4 w-full">
     <div v-if="attachments.length > 0" class="flex flex-wrap gap-2">
       <div
         v-for="(att, index) in attachments"
@@ -97,6 +98,7 @@
       >
         <Icon name="lucide:send" class="size-5" />
       </button>
+    </div>
     </div>
   </motion.div>
 </template>
