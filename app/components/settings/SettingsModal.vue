@@ -292,6 +292,7 @@ import { useUIStore } from "~/stores/ui";
 import { useChatStore } from "~/stores/chat";
 import { storeToRefs } from "pinia";
 import IconButton from "~/components/ui/IconButton.vue";
+import SettingsSetting from './SettingsSetting.vue';
 
 const props = defineProps<{ isSettingsOpen: boolean }>();
 
