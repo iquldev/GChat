@@ -9,7 +9,7 @@ export const formatChatMessageDate = (
   dateString: string | Date,
   locale = "en-US",
   translations: { today: string; yesterday: string },
-) => {
+): string => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return "";
 

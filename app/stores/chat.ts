@@ -1,5 +1,7 @@
 import { defineStore, skipHydrate } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
+import { ref, computed, watch, type Ref } from "vue";
+import { useUIStore } from "@/stores/ui";
 import type { ChatMessage, Chat, TextPart } from "@/types/openrouter";
 
 export const useChatStore = defineStore("chat", () => {
@@ -9,10 +11,10 @@ export const useChatStore = defineStore("chat", () => {
     null,
   );
 
-  const isGenerating = ref(false);
+  const isGenerating: Ref<boolean> = ref(false);
   let abortController: AbortController | null = null;
 
-  const selectedChat = computed(() =>
+  const selectedChat = computed<Chat | undefined>(() =>
     chats.value.find((chat: Chat) => chat.id === selectedChatId.value),
   );
 
@@ -28,7 +30,7 @@ export const useChatStore = defineStore("chat", () => {
     },
   );
 
-  const addChat = (firstMessage: ChatMessage) => {
+  const addChat = (firstMessage: ChatMessage): number => {
     const newId = Date.now();
     const textPart = firstMessage.parts.find((p) => "text" in p) as
       | TextPart
@@ -45,14 +47,17 @@ export const useChatStore = defineStore("chat", () => {
     return newId;
   };
 
-  const addMessage = (chatId: number, message: ChatMessage) => {
+  const addMessage = (chatId: number, message: ChatMessage): void => {
     const chat = chats.value.find((c) => c.id === chatId);
     if (chat) {
       chat.content.push(message);
     }
   };
 
-  const sendMessage = async (message: ChatMessage, chatId?: number) => {
+  const sendMessage = async (
+    message: ChatMessage,
+    chatId?: number,
+  ): Promise<number | undefined> => {
     if (isGenerating.value) return;
 
     let targetChatId = chatId;
@@ -89,7 +94,7 @@ export const useChatStore = defineStore("chat", () => {
     targetChatId: number,
     userMessage: ChatMessage,
     aiMessage: ChatMessage,
-  ) => {
+  ): Promise<void> => {
     isGenerating.value = true;
     abortController = new AbortController();
 
