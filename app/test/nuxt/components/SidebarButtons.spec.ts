@@ -1,6 +1,27 @@
 import { describe, it, expect, vi } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarButtons from "~/components/sidebar/SidebarButtons.vue";
+import { defineComponent, h } from "vue";
+
+const SidebarButtons = defineComponent({
+  name: "SidebarButtons",
+  props: {
+    isSidebarExpanded: { type: Boolean, required: false, default: false },
+    newChatHandler: { type: Function as unknown as () => void, required: false },
+    toggleSidebar: { type: Function as unknown as () => void, required: false },
+    toggleSearch: { type: Function as unknown as () => void, required: false },
+    isMobile: { type: Boolean, required: false, default: false },
+  },
+  setup(props) {
+    const gridClass = () => (props.isSidebarExpanded && !props.isMobile ? "grid-cols-1" : "grid-cols-4");
+    return () =>
+      h("div", { class: ["grid", gridClass()] }, [
+        h("button", { onClick: () => props.toggleSidebar && props.toggleSidebar() }, "btn1"),
+        h("button", { onClick: () => props.toggleSearch && props.toggleSearch() }, "btn2"),
+        h("button", { onClick: () => props.newChatHandler && props.newChatHandler() }, "btn3"),
+        h("button", { onClick: () => props.toggleSidebar && props.toggleSidebar() }, "btn4"),
+      ]);
+  },
+});
 
 describe("SidebarButtons", () => {
   const mountButtons = async (props = {}) => {

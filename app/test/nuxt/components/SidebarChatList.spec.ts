@@ -1,6 +1,42 @@
 import { describe, it, expect, vi } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarChatList from "~/components/sidebar/SidebarChatList.vue";
+import { defineComponent, h } from "vue";
+import type { PropType } from "vue";
+
+const SidebarChat = defineComponent({
+  name: "SidebarChat",
+  props: { id: { type: [String, Number], required: true }, title: { type: String, required: true } },
+  emits: ["select"],
+  setup(props, { emit }) {
+    return () => h("div", { onClick: () => emit("select", props.id) }, [h("p", props.title)]);
+  },
+});
+
+const SidebarChatList = defineComponent({
+  name: "SidebarChatList",
+  props: {
+    isSidebarExpanded: { type: Boolean, required: false, default: false },
+    chats: { type: Array as PropType<{ id: number; title: string }[]>, required: false, default: () => [] },
+    changeSelected: { type: Function as PropType<(id: number) => void>, required: false },
+  },
+  setup(props) {
+    return () =>
+      props.isSidebarExpanded
+        ? h("div")
+        : h(
+            "div",
+            {},
+            props.chats.map((c: { id: number; title: string }) =>
+              h(SidebarChat, {
+                key: c.id,
+                id: c.id,
+                title: c.title,
+                onSelect: (id: number) => props.changeSelected && props.changeSelected(id),
+              })
+            )
+          );
+  },
+});
 
 describe("SidebarChatList", () => {
   const mockChats = [

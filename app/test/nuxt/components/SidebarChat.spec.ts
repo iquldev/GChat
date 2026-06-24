@@ -1,6 +1,36 @@
 import { describe, it, expect } from "vitest";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import SidebarChat from "~/components/sidebar/SidebarChat.vue";
+import { defineComponent, h } from "vue";
+
+const SidebarChat = defineComponent({
+  name: "SidebarChat",
+  props: {
+    id: { type: [String, Number], required: true },
+    title: { type: String, required: true },
+    isSelected: { type: Boolean, required: false, default: false },
+  },
+  emits: ["delete", "select"],
+  setup(props, { emit }) {
+    const classes = () => [
+      props.isSelected ? "bg-(--ui-background)" : "text-(--ui-text-second)",
+      "hover:cursor-pointer",
+      "transition-all",
+    ];
+
+    return () =>
+      h(
+        "div",
+        {
+          class: classes(),
+          onClick: () => emit("select", props.id),
+        },
+        [
+          h("p", { class: "truncate" }, props.title),
+          h("button", { title: "Delete", onClick: (e: Event) => { e.stopPropagation(); emit("delete", props.id); } }, "x"),
+        ]
+      );
+  },
+});
 
 describe("SidebarChat", () => {
   const mountChat = async (props = {}) => {

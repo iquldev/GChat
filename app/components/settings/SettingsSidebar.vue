@@ -34,10 +34,10 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+const _props = defineProps<{
   categories: { id: string; label: string; icon: string }[];
   activeCategory: string;
 }>();
 
-const emits = defineEmits<{ (e: 'update:activeCategory', value: string): void; (e: 'clear'): void }>();
+const _emits = defineEmits<{ (e: 'update:activeCategory', value: string): void; (e: 'clear'): void }>();
 </script>

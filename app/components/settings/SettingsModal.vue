@@ -252,6 +252,7 @@ import { storeToRefs } from "pinia";
 import IconButton from "~/components/ui/IconButton.vue";
 import SettingsSidebar from './SettingsSidebar.vue';
 import SettingItem from './SettingItem.vue';
+import { getCurrentInstance } from 'vue';
 
 const props = defineProps<{ isSettingsOpen: boolean }>();
 
@@ -305,10 +306,8 @@ const themes = computed(() => [
     { label: localize("settings.themes.dark","Dark"), value: "dark" },
 ]);
 
-import { getCurrentInstance } from 'vue';
-
 const localize = (key: string, fallback: string) => {
-    const res = t(key as any);
+    const res = t(key);
     if (typeof res === 'string' && !res.includes('settings.')) return res;
     const inst = getCurrentInstance();
     const globalT = inst?.appContext.config.globalProperties.$t as unknown as (

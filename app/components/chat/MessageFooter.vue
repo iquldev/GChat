@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import type { ChatMessage } from '~/types/openrouter';
 import Timestamp from '../ui/Timestamp.vue';
-defineEmits<{ (e: 'retry'): void; (e: 'copy'): void }>();
+defineEmits<{ (e: 'retry' | 'copy'): void }>();
 
 defineProps<{ 
   message: ChatMessage;
