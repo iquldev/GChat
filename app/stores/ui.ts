@@ -98,3 +98,5 @@ export const useUIStore = defineStore('ui', () => {
     toggleSettings,
   };
 });
+
+export type UIStore = ReturnType<typeof useUIStore>;
