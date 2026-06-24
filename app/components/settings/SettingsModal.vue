@@ -304,9 +304,20 @@ const themes = computed(() => [
     { label: localize("settings.themes.dark","Dark"), value: "dark" },
 ]);
 
+import { getCurrentInstance } from 'vue';
+
 const localize = (key: string, fallback: string) => {
     const res = t(key as any);
-    return typeof res === 'string' && !res.includes('settings.') ? res : fallback;
+    if (typeof res === 'string' && !res.includes('settings.')) return res;
+    const inst = getCurrentInstance();
+    const globalT = inst?.appContext.config.globalProperties.$t as unknown as (
+        k: string,
+    ) => string;
+    if (globalT) {
+        const g = globalT(key);
+        if (typeof g === 'string' && !g.includes('settings.')) return g;
+    }
+    return fallback;
 };
 
 const currentLocale = computed({
