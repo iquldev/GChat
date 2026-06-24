@@ -11,7 +11,7 @@
       {{ title }}
     </p>
     <button
-      class="opacity-0 group-hover:opacity-100 size-8 flex items-center justify-center rounded-full border border-(--ui-code-copy-border) bg-(--ui-code-copy-bg) text-(--ui-text-second) hover:bg-(--ui-code-copy-hover-bg) hover:border-(--ui-code-copy-hover-border) hover:scale-108 active:scale-90 transition-all ml-2 cursor-pointer shrink-0 shadow-sm"
+      class="opacity-100 md:opacity-0 md:group-hover:opacity-100 size-8 flex items-center justify-center rounded-full border border-(--ui-code-copy-border) bg-(--ui-code-copy-bg) text-(--ui-text-second) hover:bg-(--ui-code-copy-hover-bg) hover:border-(--ui-code-copy-hover-border) hover:scale-108 active:scale-90 transition-all ml-2 cursor-pointer shrink-0 shadow-sm"
       :title="$t('chat.delete')"
       @click.stop="chatStore.deleteChat(id)"
     >
