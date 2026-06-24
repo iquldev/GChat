@@ -99,19 +99,19 @@
                                 >
                                     <SettingItem
                                         v-model="currentLocale"
-                                        :label="$t('settings.language')"
+                                        :label="localize('settings.language','Language')"
                                         type="select"
                                         :options="languages"
                                     />
                                     <SettingItem
                                         v-model="colorMode.preference"
-                                        :label="$t('settings.theme')"
+                                        :label="localize('settings.theme','Theme')"
                                         type="select"
                                         :options="themes"
                                     />
                                     <SettingItem
                                         v-model="isBlurDisabled"
-                                        :label="$t('settings.disableBlur')"
+                                        :label="localize('settings.disableBlur','Disable Blur')"
                                         type="toggle"
                                     />
                                     <SettingItem
@@ -280,15 +280,15 @@ const {
 } = storeToRefs(uiStore);
 
 const categories = computed(() => [
-    { id: "ai", label: t("settings.categories.ai"), icon: "lucide:bot" },
+    { id: "ai", label: localize("settings.categories.ai","AI"), icon: "lucide:bot" },
     {
         id: "interface",
-        label: t("settings.categories.interface"),
+        label: localize("settings.categories.interface","Interface"),
         icon: "lucide:layout",
     },
     {
         id: "data",
-        label: t("settings.categories.data"),
+        label: localize("settings.categories.data","Data"),
         icon: "lucide:database",
     },
 ]);
@@ -299,10 +299,15 @@ const languages = [
 ];
 
 const themes = computed(() => [
-    { label: t("settings.themes.system"), value: "system" },
-    { label: t("settings.themes.light"), value: "light" },
-    { label: t("settings.themes.dark"), value: "dark" },
+    { label: localize("settings.themes.system","System"), value: "system" },
+    { label: localize("settings.themes.light","Light"), value: "light" },
+    { label: localize("settings.themes.dark","Dark"), value: "dark" },
 ]);
+
+const localize = (key: string, fallback: string) => {
+    const res = t(key as any);
+    return typeof res === 'string' && !res.includes('settings.') ? res : fallback;
+};
 
 const currentLocale = computed({
     get: () => locale.value,
