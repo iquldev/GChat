@@ -12,7 +12,7 @@
 import MarkdownIt from "markdown-it";
 import markdownItLinkAttributes from "markdown-it-link-attributes";
 import markdownItTaskLists from "markdown-it-task-lists";
-import DOMPurify from "dompurify";
+import createDOMPurify from "dompurify";
 import hljs from "highlight.js";
 
 const props = defineProps<{
@@ -61,6 +61,8 @@ md.use(markdownItTaskLists, {
   labelAfter: true,
 });
 
+const DOMPurifyInstance = createDOMPurify(typeof window !== 'undefined' ? (window as unknown as Window) : undefined as any);
+
 const renderedMarkdown = computed(() => {
   const rawContent = props.content || "";
   if (!rawContent.trim()) return "";
@@ -69,7 +71,7 @@ const renderedMarkdown = computed(() => {
   rawHtml = rawHtml.replace(/<table>/g, '<div class="table-wrapper"><table>');
   rawHtml = rawHtml.replace(/<\/table>/g, "</table></div>");
   rawHtml = rawHtml.replace(/<code[^>]*>\s*<\/code>/g, "");
-  return DOMPurify.sanitize(rawHtml, {
+  return DOMPurifyInstance.sanitize(rawHtml, {
     // Ensure common content tags (including headings) are preserved in tests/envs
     ALLOWED_TAGS: [
       "h1",
