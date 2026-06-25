@@ -115,6 +115,10 @@ export default defineEventHandler(async (event) => {
         stream: true,
         temperature: temperature ?? 0.7,
         max_tokens: max_tokens ?? 2048,
+        tools: [
+          { type: 'openrouter:datetime' },
+          { type: 'openrouter:web_fetch' },
+        ],
       }),
       signal: abortController.signal,
     });
@@ -163,6 +167,7 @@ export default defineEventHandler(async (event) => {
       }
 
       try {
+        let emittedModel = false;
         while (true) {
           if (abortController.signal.aborted) {
             break;
@@ -192,6 +197,12 @@ export default defineEventHandler(async (event) => {
                     new Error(parsed.error.message || 'Model stream error'),
                   );
                   return;
+                }
+
+                if (!emittedModel && parsed.model) {
+                  const modelToken = `[MODEL:${parsed.model}]`;
+                  controller.enqueue(new TextEncoder().encode(modelToken));
+                  emittedModel = true;
                 }
 
                 const delta = parsed.choices?.[0]?.delta;

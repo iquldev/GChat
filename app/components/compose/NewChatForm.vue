@@ -63,6 +63,7 @@
             :direction="chatId ? 'up' : 'down'"
             has-custom-model
           />
+
           <input
             ref="fileInput"
             type="file"

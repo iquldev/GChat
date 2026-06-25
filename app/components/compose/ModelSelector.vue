@@ -58,19 +58,6 @@
             >
               {{ option.label }}
             </div>
-            <template v-if="hasCustomModel">
-              <div class="h-px bg-white/10 dark:bg-white/10 my-1" />
-              <div
-                class="px-4 py-2 rounded-full cursor-pointer text-(--ui-text-primary) md:text-base text-sm transition-colors whitespace-nowrap hover:bg-(--ui-button-selected) flex items-center gap-2"
-                @click="openCustomSettings"
-              >
-                <Icon
-                  name="lucide:settings"
-                  class="w-4 h-4 text-(--ui-text-second)"
-                />
-                <span>{{ $t('settings.customModel') }}</span>
-              </div>
-            </template>
           </div>
         </div>
       </Transition>
@@ -92,10 +79,6 @@ const props = defineProps({
     type: String as PropType<'up' | 'down'>,
     default: 'down',
   },
-  hasCustomModel: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const modelValue = defineModel<string | number | boolean>();
@@ -104,9 +87,6 @@ const target = ref<HTMLElement | null>(null);
 const { t } = useI18n();
 
 const colorMode = useColorMode();
-const toggleSettings = inject('toggleSettings') as
-  | ((value?: boolean) => void)
-  | undefined;
 
 onClickOutside(target, () => {
   isOpen.value = false;
@@ -122,12 +102,5 @@ const currentLabel = computed(() => {
 const selectOption = (value: string | number | boolean) => {
   modelValue.value = value;
   isOpen.value = false;
-};
-
-const openCustomSettings = () => {
-  isOpen.value = false;
-  if (toggleSettings) {
-    toggleSettings(true);
-  }
 };
 </script>

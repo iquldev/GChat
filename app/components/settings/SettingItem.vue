@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-3 p-4 rounded-3xl border border-default bg-(--ui-background)/30"
+    class="flex flex-col gap-3 p-4 rounded-2xl border border-default bg-(--ui-background)/30"
     :class="{ 'flex-row items-center justify-between': type !== 'textarea' }"
   >
     <div class="flex flex-col gap-0.5">
@@ -29,6 +29,9 @@
           modelValue ? 'bg-(--ui-text-primary)' : 'bg-(--ui-button-selected)'
         "
         type="button"
+        role="switch"
+        :aria-checked="!!modelValue"
+        :aria-pressed="!!modelValue"
         @click="modelValue = !modelValue"
       >
         <span
@@ -46,7 +49,7 @@
         v-else-if="type === 'number'"
         v-model.number="modelValue"
         type="number"
-        class="w-24 px-4 py-1.5 rounded-full border border-default bg-(--ui-background) text-sm text-center outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+        class="w-24 px-4 py-1.5 rounded-xl border border-default bg-(--ui-background) text-sm text-center outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
       />
 
       <!-- Text -->
@@ -55,7 +58,7 @@
         v-model="modelValue"
         type="text"
         :placeholder="placeholder"
-        class="md:w-96 w-full px-4 py-1.5 rounded-full border border-default bg-(--ui-background) text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+        class="md:w-96 w-full px-4 py-1.5 rounded-xl border border-default bg-(--ui-background) text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
       />
 
       <slot name="action" />
@@ -67,7 +70,7 @@
       v-model="modelValue as string"
       :placeholder="placeholder"
       rows="4"
-      class="w-full px-4 py-3 rounded-2xl border border-default bg-(--ui-background) text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none font-sans"
+      class="w-full px-4 py-3 rounded-xl border border-default bg-(--ui-background) text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none font-sans"
     />
   </div>
 </template>

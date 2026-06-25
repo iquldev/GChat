@@ -172,6 +172,10 @@ export const useChatStore = defineStore("chat", () => {
       if (!response.body) {
         throw new Error("Response body is not available");
       }
+
+      // If server provided model in response headers, use it (server may override requested model)
+      const serverModel = response.headers.get('x-model') || response.headers.get('X-Model');
+
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -179,7 +183,12 @@ export const useChatStore = defineStore("chat", () => {
       if (userMsgInStore) userMsgInStore.status = "sent";
 
       const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
-      if (msgInStore) msgInStore.status = "streaming";
+      if (msgInStore) {
+        msgInStore.status = "streaming";
+        if (serverModel) {
+          msgInStore.model = serverModel;
+        }
+      }
 
       let accumulatedText = "";
       let lastUpdateTime = 0;
@@ -237,7 +246,18 @@ export const useChatStore = defineStore("chat", () => {
           break;
         }
 
-        const chunk = decoder.decode(value);
+        let chunk = decoder.decode(value);
+
+        // Detect model control token emitted by server like [MODEL:...]
+        const modelRegex = /\[MODEL:([^\]]+)\]/g;
+        let m: RegExpExecArray | null;
+        while ((m = modelRegex.exec(chunk)) !== null) {
+          const modelName = m[1];
+          if (msgInStore) msgInStore.model = modelName;
+        }
+        // Remove any model tokens from the chunk before appending
+        chunk = chunk.replace(/\[MODEL:[^\]]+\]/g, '');
+
         accumulatedText += chunk;
 
         const now = Date.now();

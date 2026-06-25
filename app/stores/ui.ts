@@ -53,6 +53,7 @@ export const useUIStore = defineStore('ui', () => {
     default: () => false,
   });
 
+
   const isOledMode = useCookie<boolean>('ui:isOledMode', {
     default: () => false,
   });

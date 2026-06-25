@@ -1,28 +1,49 @@
 {
   "settings": {
     "title": "Settings",
+    "subtitle": "Adjust application appearance and behavior",
     "categories": {
+      "general": "Appearance",
       "ai": "AI Settings",
       "interface": "Interface",
       "data": "Data Management"
     },
+    "categoriesDesc": {
+      "generalDesc": "Appearance and general app behavior.",
+      "aiDesc": "Control AI generation settings and model options.",
+      "dataDesc": "Export, import and clear your local chat data."
+    },
     "customModel": "Custom model",
     "customModelId": "Custom Model ID",
+    "customModelIdDesc": "Optional model identifier to override the default model.",
     "apiKey": "OpenRouter API Key",
+    "apiKeyDesc": "Manage your OpenRouter API key used for AI requests. Stored locally.",
+    "apiKeyPrompt": "Enter your OpenRouter API key",
+    "manage": "Manage",
+    "add": "Add",
     "language": "Language",
     "theme": "Theme",
+    "themeDesc": "Choose theme; 'System' follows your OS preference.",
     "disableBlur": "Disable Blur",
+    "disableBlurDesc": "Disable UI background blur for improved performance.",
     "temperature": "Temperature",
+    "temperatureDesc": "Controls randomness; lower is deterministic, higher is creative.",
     "maxTokens": "Max Tokens",
+    "maxTokensDesc": "Maximum tokens per response. Lower reduces length.",
     "systemPrompt": "System Prompt",
+    "systemPromptDesc": "A system prompt prepended to each request. Leave empty for default behavior.",
     "enterToSend": "Enter to Send",
+    "enterToSendDesc": "Send messages with Enter. Shift+Enter creates a newline.",
     "soundEnabled": "Sound Notifications",
+    "soundEnabledDesc": "Play a sound when AI finishes generating a response.",
     "oledMode": "OLED Mode (Pure Black)",
     "clearHistory": "Clear All History",
+    "clearSub": "This will remove all locally stored chats. This cannot be undone.",
     "exportHistory": "Export History",
     "exportSub": "Download JSON file",
     "importHistory": "Import History",
     "importSub": "Upload JSON file",
+    "dataTitle": "Local data",
     "dataDescription": "Manage your local chat data. Export your history to a JSON file or import it back.",
     "confirmClear": "Are you sure you want to clear all history?",
     "placeholders": {
@@ -38,7 +59,8 @@
       "system": "System",
       "light": "Light",
       "dark": "Dark"
-    }
+    },
+    "aiIntro": "Fine-tune how the AI responds for better control."
   },
   "chat": {
     "promptPlaceholder": "Enter your prompt...",
