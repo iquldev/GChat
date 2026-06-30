@@ -35,7 +35,44 @@ const chatSchema = z.object({
     .min(1),
 });
 
+const userLimits = new Map<string, number[]>();
+const LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+const MAX_REQUESTS = 100;
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  let timestamps = userLimits.get(userId) || [];
+  
+  // Keep only timestamps within the 1-hour window
+  timestamps = timestamps.filter((t) => now - t < LIMIT_WINDOW);
+  
+  if (timestamps.length >= MAX_REQUESTS) {
+    userLimits.set(userId, timestamps);
+    return true;
+  }
+  
+  timestamps.push(now);
+  userLimits.set(userId, timestamps);
+  return false;
+}
+
 export default defineEventHandler(async (event) => {
+  if (!event.context.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized: You must be logged in to interact with the AI.',
+    });
+  }
+
+  const userId = String(event.context.user._id);
+
+  if (checkRateLimit(userId)) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: 'Rate limit exceeded: Max 100 requests per hour.',
+    });
+  }
+
   const config = useRuntimeConfig();
 
   const authHeader = getHeader(event, 'Authorization');

@@ -19,10 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { useChatStore } from "~/stores/chat";
-import { storeToRefs } from "pinia";
-import { motion } from "motion-v";
+import { useChatStore } from '~/stores/chat';
+import { storeToRefs } from 'pinia';
+import { motion } from 'motion-v';
 import NewChat from '~/components/compose/NewChatForm.vue';
+
+definePageMeta({
+  layout: 'default',
+});
 
 const route = useRoute();
 const chatStore = useChatStore();
@@ -37,10 +41,10 @@ const currentChat = computed(() => {
   return chats.value.find((c) => c.id === chatId.value);
 });
 
-const scrollToBottom = async (behavior: ScrollBehavior = "smooth") => {
+const scrollToBottom = async (behavior: ScrollBehavior = 'smooth') => {
   if (
     scrollContainer.value &&
-    (shouldAutoScroll.value || behavior === "instant")
+    (shouldAutoScroll.value || behavior === 'instant')
   ) {
     await nextTick();
     scrollContainer.value.scrollTo({
@@ -74,7 +78,7 @@ watch(
 onMounted(async () => {
   if (route.params.id) {
     changeSelected(Number(route.params.id));
-    scrollToBottom("instant");
+    scrollToBottom('instant');
   }
 });
 

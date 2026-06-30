@@ -64,8 +64,15 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     openrouterApiKey: process.env.NUXT_OPENROUTER_API_KEY,
+    mongodbUri: process.env.NUXT_MONGODB_URI,
+    authGithubClientId: process.env.NUXT_GITHUB_CLIENT_ID,
+    authGithubClientSecret: process.env.NUXT_GITHUB_CLIENT_SECRET,
+    authGoogleClientId: process.env.NUXT_GOOGLE_CLIENT_ID,
+    authGoogleClientSecret: process.env.NUXT_GOOGLE_CLIENT_SECRET,
+    betterAuthSecret: process.env.NUXT_BETTER_AUTH_SECRET,
     public: {
       defaultAiModel: process.env.NUXT_DEFAULT_AI_MODEL || 'openrouter/free',
+      authUrl: process.env.NUXT_PUBLIC_AUTH_URL,
     },
   },
   routeRules: {

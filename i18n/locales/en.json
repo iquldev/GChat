@@ -6,12 +6,14 @@
       "general": "Appearance",
       "ai": "AI Settings",
       "interface": "Interface",
-      "data": "Data Management"
+      "data": "Data Management",
+      "profile": "Profile"
     },
     "categoriesDesc": {
       "generalDesc": "Appearance and general app behavior.",
       "aiDesc": "Control AI generation settings and model options.",
-      "dataDesc": "Export, import and clear your local chat data."
+      "dataDesc": "Export, import and clear your local chat data.",
+      "profileDesc": "Manage your profile and account settings."
     },
     "customModel": "Custom model",
     "customModelId": "Custom Model ID",
@@ -60,7 +62,9 @@
       "light": "Light",
       "dark": "Dark"
     },
-    "aiIntro": "Fine-tune how the AI responds for better control."
+    "aiIntro": "Fine-tune how the AI responds for better control.",
+    "logout": "Log Out",
+    "logoutSub": "Sign out of your account"
   },
   "chat": {
     "promptPlaceholder": "Enter your prompt...",
@@ -115,5 +119,11 @@
   "markdown": {
     "copy": "Copy",
     "copied": "Copied!"
+  },
+  "auth": {
+    "title": "Welcome to GChat",
+    "subtitle": "Sign in to GChat to continue your conversations with AI.",
+    "loginWith": "Continue with",
+    "footerInfo": "By continuing, you agree to our Terms of Service and Privacy Policy."
   }
 }

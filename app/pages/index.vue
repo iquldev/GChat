@@ -9,6 +9,10 @@
 import { useChatStore } from '~/stores/chat';
 import HomepageHero from '~/components/homepage/HomepageHero.vue';
 
+definePageMeta({
+  layout: 'default',
+});
+
 const chatStore = useChatStore();
 
 onMounted(() => {

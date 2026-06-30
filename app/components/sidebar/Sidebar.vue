@@ -63,6 +63,40 @@
         :change-selected="handleChangeSelected"
         :is-sidebar-expanded="isSidebarExpanded"
       />
+
+      <div
+        v-if="session?.value?.data?.user"
+        class="border-t border-default pt-4 flex flex-col gap-2"
+      >
+        <div
+          class="flex items-center gap-3 px-2 py-1.5 rounded-2xl hover:bg-(--ui-button-selected) transition cursor-pointer"
+          @click="toggleSettings(true)"
+        >
+          <img
+            v-if="session?.value?.data?.user?.image"
+            :src="session?.value?.data?.user?.image"
+            class="w-8 h-8 rounded-full object-cover ring-1 ring-(--ui-primary)/50"
+            alt="Avatar"
+          />
+          <div
+            v-else
+            class="w-8 h-8 rounded-full bg-linear-to-tr from-blue-500 to-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-sm"
+          >
+            {{
+              session?.value?.data?.user?.name?.slice(0, 2).toUpperCase() || 'U'
+            }}
+          </div>
+
+          <div v-if="!isSidebarExpanded" class="flex-1 min-w-0 text-left">
+            <p class="text-sm font-semibold truncate text-(--ui-text-primary)">
+              {{ session?.value?.data?.user?.name || 'User' }}
+            </p>
+            <p class="text-[10px] text-(--ui-text-second) truncate">
+              {{ session?.value?.data?.user?.email }}
+            </p>
+          </div>
+        </div>
+      </div>
     </motion.div>
   </motion.div>
 </template>
@@ -74,12 +108,14 @@ import { useUIStore } from '~/stores/ui';
 import { useChatStore } from '~/stores/chat';
 import { storeToRefs } from 'pinia';
 
-// Explicit local component imports to ensure runtime resolution
+import { createAuthClient } from 'better-auth/client';
+
 import ChatList from './ChatList.vue';
 import SidebarActions from './SidebarActions.vue';
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();
+const toggleSettings = inject('toggleSettings') as (value?: boolean) => void;
 
 const { isSidebarExpanded, isSearchActive, searchQuery } = storeToRefs(uiStore);
 const { toggleSidebar, toggleSearch } = uiStore;
@@ -88,6 +124,11 @@ const { changeSelected, removeSelection } = chatStore;
 
 const isMobile = useBreakpoints(breakpointsTailwind).smallerOrEqual('md');
 const isMounted = ref(false);
+
+const authClient = createAuthClient();
+const session = authClient.useSession;
+
+const router = useRouter();
 
 onMounted(() => {
   isMounted.value = true;
@@ -107,8 +148,6 @@ const visibleChats = computed(() => {
       return timeB - timeA;
     });
 });
-
-const router = useRouter();
 
 const handleChangeSelected = (id: number) => {
   changeSelected(id);

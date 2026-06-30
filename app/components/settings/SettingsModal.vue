@@ -40,9 +40,9 @@
 
             <div class="flex items-center gap-3">
               <IconButton
+                v-if="activeCategory !== 'general'"
                 icon="lucide:chevron-left"
                 class="p-2"
-                v-if="activeCategory !== 'general'"
                 @click="activeCategory = 'general'"
               />
               <IconButton
@@ -150,7 +150,7 @@
                     </button>
 
                     <button
-                      class="md:col-span-2 flex items-center justify-between gap-3 p-4 rounded-2xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) transition text-(--ui-error) cursor-pointer"
+                      class="md:col-span-2 flex items-center justify-between gap-3 p-4 rounded-2xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) transition text-error cursor-pointer"
                       @click="confirmClearAll"
                     >
                       <div class="flex items-center gap-3">
@@ -165,6 +165,63 @@
                         </div>
                       </div>
                       <Icon name="lucide:trash" class="size-5" />
+                    </button>
+                  </div>
+                </section>
+
+                <!-- Profile -->
+                <section
+                  v-else-if="activeCategory === 'profile'"
+                  class="space-y-6"
+                >
+                  <div
+                    class="p-5 rounded-3xl border border-default bg-(--ui-block-background) flex items-center gap-4 animate-fade-in"
+                  >
+                    <img
+                      v-if="currentUser?.image"
+                      :src="currentUser.image"
+                      class="w-16 h-16 rounded-full object-cover ring-2 ring-primary"
+                      alt="Avatar"
+                    />
+                    <div
+                      v-else
+                      class="w-16 h-16 rounded-full bg-linear-to-tr from-blue-500 to-violet-600 text-white flex items-center justify-center font-bold text-xl shadow-lg"
+                    >
+                      {{ currentUser?.name?.slice(0, 2).toUpperCase() || 'U' }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3
+                        class="text-xl font-bold text-(--ui-text-primary) truncate"
+                      >
+                        {{ currentUser?.name }}
+                      </h3>
+                      <p class="text-xs text-(--ui-text-second) mt-0.5">
+                        Connected via
+                        <span class="capitalize font-medium">
+                          {{ currentUser?.email.split('@')[1] }}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="grid gap-4 md:grid-cols-2">
+                    <button
+                      class="flex items-center gap-4 p-5 rounded-3xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) hover:border-(--ui-error)/30 transition text-error cursor-pointer group"
+                      @click="handleLogout"
+                    >
+                      <div
+                        class="p-3 rounded-2xl bg-red-500/10 text-red-500 group-hover:bg-red-500/20 transition"
+                      >
+                        <Icon name="lucide:log-out" class="size-6" />
+                      </div>
+                      <div class="text-left flex-1 min-w-0">
+                        <div class="font-bold text-base leading-tight">
+                          {{ $t('settings.logout') }}
+                        </div>
+                        <div class="text-xs text-(--ui-text-second) mt-1">
+                          {{ $t('settings.logoutSub') }}
+                        </div>
+                      </div>
                     </button>
                   </div>
                 </section>
@@ -189,6 +246,7 @@
 import { useUIStore } from '~/stores/ui';
 import { useChatStore } from '~/stores/chat';
 import { storeToRefs } from 'pinia';
+import { authClient } from '~/lib/auth-client';
 import IconButton from '~/components/ui/IconButton.vue';
 import SettingsSidebar from './SettingsSidebar.vue';
 import SettingItem from './SettingItem.vue';
@@ -208,7 +266,24 @@ const { locale, setLocale, t } = useI18n();
 
 const uiStore = useUIStore();
 const chatStore = useChatStore();
+
+const currentUser = computed(
+  () => authClient.useSession().value?.data?.user ?? null,
+);
+
 const { isBlurDisabled, enterToSend, soundEnabled } = storeToRefs(uiStore);
+
+const handleLogout = async () => {
+  toggleSettings(false);
+
+  await authClient.signOut({
+    fetchOptions: {
+      onSuccess: () => {
+        navigateTo('/login');
+      },
+    },
+  });
+};
 
 const categories = computed(() => [
   {
@@ -222,6 +297,15 @@ const categories = computed(() => [
     label: localize('settings.categories.data', 'Data & Privacy'),
     icon: 'lucide:database',
     description: t('settings.categoriesDesc.dataDesc'),
+  },
+  {
+    id: 'profile',
+    label: localize('settings.categories.profile', 'Profile'),
+    icon: 'lucide:user',
+    description: localize(
+      'settings.categoriesDesc.profileDesc',
+      'Manage your profile and account settings.',
+    ),
   },
 ]);
 
