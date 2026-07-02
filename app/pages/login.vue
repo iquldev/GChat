@@ -1,10 +1,6 @@
 <template>
   <div>
-    <AuthBlock
-      :title="t('auth.title')"
-      :providers="providers"
-      :on-auth="onAuth"
-    />
+    <AuthBlock :title="t('auth.title')" :providers="providers" @auth="onAuth" />
   </div>
 </template>
 

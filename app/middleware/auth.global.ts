@@ -33,7 +33,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
       });
   }
 
-  const { session } = await sessionFetchPromise;
+  const result = await sessionFetchPromise;
+  const session = result?.session;
   const isAuthenticated = !!session;
 
   if (!isAuthenticated && to.path !== '/login') {

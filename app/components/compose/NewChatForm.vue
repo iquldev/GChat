@@ -254,7 +254,7 @@ const sendRequest = async () => {
   }
 
   const userMessage: ChatMessage = {
-    id: Date.now(),
+    id: String(Date.now()),
     role: 'user',
     parts: requestParts,
     timestamp: new Date().toISOString(),
