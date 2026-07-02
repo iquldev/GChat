@@ -72,10 +72,18 @@ export default defineNuxtConfig({
     betterAuthSecret: process.env.NUXT_BETTER_AUTH_SECRET,
     public: {
       defaultAiModel: process.env.NUXT_DEFAULT_AI_MODEL || 'openrouter/free',
-      authUrl: process.env.NUXT_PUBLIC_AUTH_URL,
+      authUrl: process.env.NUXT_PUBLIC_AUTH_URL || '',
     },
   },
   routeRules: {
+    '/api/auth/**': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 30,
+          interval: 60000,
+        },
+      },
+    },
     '/api/**': {
       security: {
         rateLimiter: {

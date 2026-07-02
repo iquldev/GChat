@@ -124,7 +124,7 @@ const chatStore = useChatStore();
 const { selectedModel, modelOptions } = storeToRefs(uiStore);
 
 const props = defineProps<{
-  chatId?: number;
+  chatId?: string;
   prompt?: string;
 }>();
 

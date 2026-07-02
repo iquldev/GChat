@@ -1,7 +1,8 @@
-import type { IUser } from '~~/server/models/User';
+import type { auth } from '~~/server/lib/auth';
 
 declare module 'h3' {
   interface H3EventContext {
-    user?: IUser;
+    user?: typeof auth.$Infer.Session.user;
+    session?: typeof auth.$Infer.Session.session;
   }
 }

@@ -1,33 +1,33 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { setActivePinia, createPinia } from "pinia";
-import { ref } from "vue";
-import { useChatStore } from "~/stores/chat";
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { setActivePinia, createPinia } from 'pinia';
+import { ref } from 'vue';
+import { useChatStore } from '~/stores/chat';
 
-vi.mock("@vueuse/core", () => ({
+vi.mock('@vueuse/core', () => ({
   useLocalStorage: vi.fn((key, defaultValue) => ref(defaultValue)),
 }));
 
-vi.stubGlobal("navigateTo", vi.fn());
+vi.stubGlobal('navigateTo', vi.fn());
 
-describe("Chat Store", () => {
+describe('Chat Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
 
-  it("initializes with an empty chat list", () => {
+  it('initializes with an empty chat list', () => {
     const store = useChatStore();
     expect(store.chats.length).toBe(0);
   });
 
-  it("selects a chat by ID", () => {
+  it('selects a chat by ID', async () => {
     const store = useChatStore();
-    const chatId = store.addChat({
-      id: 1,
-      role: "user",
-      parts: [{ text: "Hello" }],
+    const chatId = await store.addChat({
+      id: '1',
+      role: 'user',
+      parts: [{ text: 'Hello' }],
       timestamp: new Date().toISOString(),
-      status: "sent",
-      model: "openrouter/free",
+      status: 'sent',
+      model: 'openrouter/free',
     });
 
     store.changeSelected(chatId);
@@ -36,25 +36,25 @@ describe("Chat Store", () => {
     expect(store.selectedChat?.id).toBe(chatId);
   });
 
-  it("removes selection", () => {
+  it('removes selection', () => {
     const store = useChatStore();
-    store.changeSelected(1);
+    store.changeSelected('1');
     store.removeSelection();
 
     expect(store.selectedChatId).toBeNull();
     expect(store.selectedChat).toBeUndefined();
   });
 
-  it("clears selection when selected chat is removed", async () => {
+  it('clears selection when selected chat is removed', async () => {
     const store = useChatStore();
-    
-    const chatId = store.addChat({
-      id: 1,
-      role: "user",
-      parts: [{ text: "Hello" }],
+
+    const chatId = await store.addChat({
+      id: '1',
+      role: 'user',
+      parts: [{ text: 'Hello' }],
       timestamp: new Date().toISOString(),
-      status: "sent",
-      model: "openrouter/free",
+      status: 'sent',
+      model: 'openrouter/free',
     });
 
     store.changeSelected(chatId);

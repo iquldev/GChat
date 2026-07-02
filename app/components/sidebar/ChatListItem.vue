@@ -3,7 +3,8 @@
     class="group flex items-center justify-between px-5 py-2 rounded-full hover:cursor-pointer transition-all border w-full"
     :class="{
       'bg-(--ui-background) border-default': isSelected,
-      'text-(--ui-text-second) border-transparent hover:bg-(--ui-background)/50': !isSelected,
+      'text-(--ui-text-second) border-transparent hover:bg-(--ui-background)/50':
+        !isSelected,
     }"
   >
     <p class="truncate flex-1">{{ title }}</p>
@@ -24,7 +25,7 @@ import { useChatStore } from '~/stores/chat';
 const chatStore = useChatStore();
 
 defineProps<{
-  id: number;
+  id: string;
   title: string;
   isSelected?: boolean;
 }>();

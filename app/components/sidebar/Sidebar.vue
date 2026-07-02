@@ -65,7 +65,7 @@
       />
 
       <div
-        v-if="session?.value?.data?.user"
+        v-if="session?.data?.user"
         class="border-t border-default pt-4 flex flex-col gap-2"
       >
         <div
@@ -73,8 +73,8 @@
           @click="toggleSettings(true)"
         >
           <img
-            v-if="session?.value?.data?.user?.image"
-            :src="session?.value?.data?.user?.image"
+            v-if="session?.data?.user?.image"
+            :src="session?.data?.user?.image"
             class="w-8 h-8 rounded-full object-cover ring-1 ring-(--ui-primary)/50"
             alt="Avatar"
           />
@@ -82,17 +82,15 @@
             v-else
             class="w-8 h-8 rounded-full bg-linear-to-tr from-blue-500 to-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-sm"
           >
-            {{
-              session?.value?.data?.user?.name?.slice(0, 2).toUpperCase() || 'U'
-            }}
+            {{ session?.data?.user?.name?.slice(0, 2).toUpperCase() || 'U' }}
           </div>
 
           <div v-if="!isSidebarExpanded" class="flex-1 min-w-0 text-left">
             <p class="text-sm font-semibold truncate text-(--ui-text-primary)">
-              {{ session?.value?.data?.user?.name || 'User' }}
+              {{ session?.data?.user?.name || 'User' }}
             </p>
             <p class="text-[10px] text-(--ui-text-second) truncate">
-              {{ session?.value?.data?.user?.email }}
+              {{ session?.data?.user?.email }}
             </p>
           </div>
         </div>
@@ -108,7 +106,7 @@ import { useUIStore } from '~/stores/ui';
 import { useChatStore } from '~/stores/chat';
 import { storeToRefs } from 'pinia';
 
-import { createAuthClient } from 'better-auth/client';
+import { authClient } from '~/lib/auth-client';
 
 import ChatList from './ChatList.vue';
 import SidebarActions from './SidebarActions.vue';
@@ -125,8 +123,7 @@ const { changeSelected, removeSelection } = chatStore;
 const isMobile = useBreakpoints(breakpointsTailwind).smallerOrEqual('md');
 const isMounted = ref(false);
 
-const authClient = createAuthClient();
-const session = authClient.useSession;
+const session = authClient.useSession();
 
 const router = useRouter();
 
@@ -144,12 +141,15 @@ const visibleChats = computed(() => {
       const lastMsgB = b.content[b.content.length - 1];
       const timeA = lastMsgA ? new Date(lastMsgA.timestamp).getTime() : 0;
       const timeB = lastMsgB ? new Date(lastMsgB.timestamp).getTime() : 0;
-      if (timeA === 0 && timeB === 0) return b.id - a.id;
+      if (timeA === 0 && timeB === 0) {
+        return Number(b.id) - Number(a.id);
+      }
+
       return timeB - timeA;
     });
 });
 
-const handleChangeSelected = (id: number) => {
+const handleChangeSelected = (id: string) => {
   changeSelected(id);
   router.push(`/chat/${id}`);
 };

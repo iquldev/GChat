@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { createAuthClient } from 'better-auth/vue';
+import { signIn } from '~/lib/auth-client';
 
 definePageMeta({
   layout: 'blank',
@@ -17,10 +17,8 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const authClient = createAuthClient();
-
 const onAuth = async (provider: string) => {
-  const data = await authClient.signIn.social({
+  const data = await signIn.social({
     provider,
     callbackURL: '/',
   });

@@ -1,85 +1,267 @@
-import { defineStore, skipHydrate } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
-import { ref, computed, watch, type Ref } from "vue";
-import { useUIStore } from "@/stores/ui";
-import type { ChatMessage, Chat, TextPart } from "@/types/openrouter";
+import { defineStore } from 'pinia';
+import { ref, computed, watch } from 'vue';
+import { useUIStore } from '@/stores/ui';
+import { authClient } from '@/lib/auth-client';
+import type { ChatMessage, Chat, TextPart } from '@/types/openrouter';
 
-export const useChatStore = defineStore("chat", () => {
-  const chats = useLocalStorage<Chat[]>("gchat:chats", [], { deep: true });
-  const selectedChatId = useLocalStorage<number | null>(
-    "gchat:selectedChatId",
-    null,
-  );
+export const useChatStore = defineStore('chat', () => {
+  const chats = ref<Chat[]>([]);
+  const selectedChatId = ref<string | null>(null);
+  const isGenerating = ref(false);
 
-  const isGenerating: Ref<boolean> = ref(false);
   let abortController: AbortController | null = null;
+  const uiStore = useUIStore();
+
+  const initSession = async () => {
+    const { data: sessionData } = await authClient.useSession(useFetch);
+
+    watch(
+      sessionData,
+      async (newSession) => {
+        if (newSession) {
+          await fetchUserChats();
+        } else {
+          chats.value = [];
+          selectedChatId.value = null;
+        }
+      },
+      { immediate: true },
+    );
+  };
+
+  initSession();
 
   const selectedChat = computed<Chat | undefined>(() =>
-    chats.value.find((chat: Chat) => chat.id === selectedChatId.value),
+    chats.value.find((chat) => chat.id === selectedChatId.value),
   );
 
   watch(
-    () => chats.value.length,
-    () => {
+    chats,
+    (newChats) => {
       if (
         selectedChatId.value &&
-        !chats.value.some((chat: Chat) => chat.id === selectedChatId.value)
+        !newChats.some((c) => c.id === selectedChatId.value)
       ) {
         selectedChatId.value = null;
       }
     },
+    { deep: true },
   );
 
-  const addChat = (firstMessage: ChatMessage): number => {
-    const newId = Date.now();
-    const textPart = firstMessage.parts.find((p) => "text" in p) as
+  const fetchUserChats = async () => {
+    chats.value = [];
+    selectedChatId.value = null;
+
+    try {
+      chats.value = await $fetch<Chat[]>('/api/chats');
+    } catch (err) {
+      console.error('Error loading chats:', err);
+    }
+  };
+
+  const addChat = async (firstMessage: ChatMessage): Promise<string> => {
+    const textPart = firstMessage.parts.find((p) => 'text' in p) as
       | TextPart
       | undefined;
-    const titleText = textPart?.text || "New Chat";
+    const titleText = textPart?.text || 'New Chat';
+    const title = titleText.slice(0, 30) + (titleText.length > 30 ? '...' : '');
 
+    const tempId = `temp_${Date.now()}`;
     const newChat: Chat = {
-      id: newId,
-      title: titleText.slice(0, 30) + (titleText.length > 30 ? "..." : ""),
+      id: tempId,
+      title,
       content: [JSON.parse(JSON.stringify(firstMessage))],
     };
 
     chats.value = [...chats.value, newChat];
-    return newId;
-  };
 
-  const addMessage = (chatId: number, message: ChatMessage): void => {
-    const chat = chats.value.find((c) => c.id === chatId);
-    if (chat) {
-      chat.content.push(message);
+    try {
+      const savedChat = await $fetch<Chat>('/api/chats', {
+        method: 'POST',
+        body: { title, firstMessage },
+      });
+
+      const chatIndex = chats.value.findIndex((c) => c.id === tempId);
+      if (chatIndex !== -1) {
+        chats.value[chatIndex]!.id = savedChat.id;
+      }
+      selectedChatId.value = savedChat.id;
+      return savedChat.id;
+    } catch (err) {
+      console.error('Save error:', err);
+      chats.value = chats.value.filter((c) => c.id !== tempId);
+      throw err;
     }
   };
 
-  const sendMessage = async (
-    message: ChatMessage,
-    chatId?: number,
-  ): Promise<number | undefined> => {
+  const addMessage = async (chatId: string, message: ChatMessage) => {
+    const chat = chats.value.find((c) => c.id === chatId);
+    if (!chat) return;
+
+    chat.content.push(message);
+
+    try {
+      await $fetch(`/api/chats/${chatId}/messages`, {
+        method: 'POST',
+        body: { message },
+      });
+    } catch (err) {
+      console.error('Save failed:', err);
+      const idx = chat.content.findIndex((m) => m.id === message.id);
+      if (idx !== -1) chat.content.splice(idx, 1);
+      throw err;
+    }
+  };
+
+  const saveMessageToBackend = async (chatId: string, message: ChatMessage) => {
+    try {
+      await $fetch(`/api/chats/${chatId}/messages`, {
+        method: 'POST',
+        body: { message },
+      });
+    } catch (err) {
+      console.error('Save failed:', err);
+      throw err;
+    }
+  };
+
+  const sendMessage = async (message: ChatMessage, chatId?: string) => {
     if (isGenerating.value) return;
 
-    let targetChatId = chatId;
-    if (!targetChatId) {
-      targetChatId = addChat(message);
+    let targetChatId: string;
+    if (chatId) {
+      targetChatId = chatId;
+      await addMessage(targetChatId, message);
     } else {
-      addMessage(targetChatId, message);
+      targetChatId = await addChat(message);
     }
 
     const aiMessage: ChatMessage = {
       id: Date.now() + 1,
-      role: "model",
-      parts: [{ text: "" }],
+      role: 'model',
+      parts: [{ text: '' }],
       timestamp: new Date().toISOString(),
-      status: "pending",
+      status: 'pending',
       model: message.model,
     };
-    addMessage(targetChatId, aiMessage);
+
+    const chat = chats.value.find((c) => c.id === targetChatId);
+    if (chat) chat.content.push(aiMessage);
 
     processResponse(targetChatId, message, aiMessage);
-
     return targetChatId;
+  };
+
+  const processResponse = async (
+    targetChatId: string,
+    userMessage: ChatMessage,
+    aiMessage: ChatMessage,
+  ) => {
+    isGenerating.value = true;
+    abortController = new AbortController();
+
+    try {
+      const chat = chats.value.find((c) => c.id === targetChatId);
+      if (!chat) throw new Error('Chat not found in store');
+
+      const messages = chat.content
+        .filter(
+          (m) =>
+            m.role === 'user' ||
+            (m.role === 'model' && m.status === 'received'),
+        )
+        .map((m) => ({
+          role: m.role === 'model' ? 'assistant' : m.role,
+          parts: m.parts.filter((p) => 'text' in p || 'inlineData' in p),
+        }));
+
+      if (uiStore.customSystemPrompt) {
+        messages.unshift({
+          role: 'system',
+          parts: [{ text: uiStore.customSystemPrompt }],
+        });
+      }
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+      };
+      if (uiStore.userApiKey) {
+        headers['Authorization'] = `Bearer ${uiStore.userApiKey}`;
+      }
+
+      const response = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: userMessage.model,
+          temperature: uiStore.aiTemperature,
+          max_tokens: uiStore.aiMaxTokens,
+          content: messages,
+          hasCustomSystemPrompt: !!uiStore.customSystemPrompt,
+        }),
+        signal: abortController.signal,
+      });
+
+      if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+      if (!response.body) throw new Error('Response body is not available');
+
+      const serverModel =
+        response.headers.get('x-model') || response.headers.get('X-Model');
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      const userMsg = chat.content.find((m) => m.id === userMessage.id);
+      if (userMsg) userMsg.status = 'sent';
+
+      const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
+      if (msgInStore) {
+        msgInStore.status = 'streaming';
+        if (serverModel) msgInStore.model = serverModel;
+      }
+
+      let accumulatedText = '';
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) {
+          if (msgInStore) {
+            msgInStore.status = 'received';
+            await saveMessageToBackend(targetChatId, msgInStore);
+          }
+          playNotificationSound();
+          break;
+        }
+
+        let chunk = decoder.decode(value);
+
+        const modelMatch = /\[MODEL:([^\]]+)\]/.exec(chunk);
+        if (modelMatch && msgInStore) {
+          msgInStore.model = modelMatch[1];
+        }
+        chunk = chunk.replace(/\[MODEL:[^\]]+\]/g, '');
+
+        accumulatedText += chunk;
+
+        if (msgInStore) {
+          msgInStore.parts = [{ text: accumulatedText }];
+        }
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        const chat = chats.value.find((c) => c.id === targetChatId);
+        const msgInStore = chat?.content.find((m) => m.id === aiMessage.id);
+        if (msgInStore) {
+          msgInStore.status = 'received';
+          await saveMessageToBackend(targetChatId, msgInStore);
+        }
+        return;
+      }
+      handleStreamError(targetChatId, userMessage.id, aiMessage.id, error);
+    } finally {
+      isGenerating.value = false;
+      abortController = null;
+    }
   };
 
   const stopGeneration = () => {
@@ -90,315 +272,151 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
-  const processResponse = async (
-    targetChatId: number,
-    userMessage: ChatMessage,
-    aiMessage: ChatMessage,
-  ): Promise<void> => {
-    isGenerating.value = true;
-    abortController = new AbortController();
-
-    const uiStore = useUIStore();
-
-    try {
-      const chat = chats.value.find((c) => c.id === targetChatId);
-      if (!chat) throw new Error("Chat not found in store");
-
-      const messages = chat.content
-        .filter((m) => {
-          if (m.role === "user") return true;
-          if (m.role === "model" && m.status === "received") return true;
-          return false;
-        })
-        .map((m) => ({
-          role: (m.role === "model" ? "assistant" : m.role) as
-            | "user"
-            | "assistant"
-            | "system",
-          parts: m.parts
-            .map((p) => {
-              if ("text" in p) {
-                return p.text ? { text: p.text } : null;
-              }
-              if ("inlineData" in p) {
-                return { inlineData: p.inlineData };
-              }
-              return null;
-            })
-            .filter((p): p is NonNullable<typeof p> => p !== null),
-        }))
-        .filter((m) => m.parts.length > 0);
-
-      if (uiStore.customSystemPrompt) {
-        messages.unshift({
-          role: "system",
-          parts: [{ text: uiStore.customSystemPrompt }],
-        });
-      }
-
-      const payload = {
-        model: userMessage.model,
-        temperature: uiStore.aiTemperature,
-        max_tokens: uiStore.aiMaxTokens,
-        content: messages,
-        hasCustomSystemPrompt: !!uiStore.customSystemPrompt,
-      };
-
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        Accept: "text/event-stream",
-      };
-
-      if (uiStore.userApiKey) {
-        headers["Authorization"] = `Bearer ${uiStore.userApiKey}`;
-      }
-
-      const response = await fetch("/api/chat/stream", {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-        signal: abortController.signal,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        const errorMsg =
-          errorData.statusMessage ||
-          errorData.message ||
-          `Request failed with status ${response.status}`;
-        throw new Error(errorMsg);
-      }
-
-      if (!response.body) {
-        throw new Error("Response body is not available");
-      }
-
-      // If server provided model in response headers, use it (server may override requested model)
-      const serverModel = response.headers.get('x-model') || response.headers.get('X-Model');
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      const userMsgInStore = chat.content.find((m) => m.id === userMessage.id);
-      if (userMsgInStore) userMsgInStore.status = "sent";
-
-      const msgInStore = chat.content.find((m) => m.id === aiMessage.id);
-      if (msgInStore) {
-        msgInStore.status = "streaming";
-        if (serverModel) {
-          msgInStore.model = serverModel;
-        }
-      }
-
-      let accumulatedText = "";
-      let lastUpdateTime = 0;
-      let updateTimeout: ReturnType<typeof setTimeout> | null = null;
-
-      const flushUpdate = () => {
-        if (msgInStore) {
-          const lastPart = msgInStore.parts[msgInStore.parts.length - 1];
-          if (lastPart && "text" in lastPart) {
-            lastPart.text = accumulatedText;
-          } else {
-            msgInStore.parts.push({ text: accumulatedText });
-          }
-        }
-      };
-
-      while (reader) {
-        const { done, value } = await reader.read();
-        if (done) {
-          if (updateTimeout) clearTimeout(updateTimeout);
-          flushUpdate();
-          if (msgInStore) msgInStore.status = "received";
-
-          if (uiStore.soundEnabled) {
-            try {
-              const AudioContextClass =
-                window.AudioContext ||
-                (
-                  window as Window & {
-                    webkitAudioContext?: typeof AudioContext;
-                  }
-                ).webkitAudioContext;
-              if (AudioContextClass) {
-                const context = new AudioContextClass();
-                const oscillator = context.createOscillator();
-                const gain = context.createGain();
-                oscillator.type = "sine";
-                oscillator.frequency.setValueAtTime(880, context.currentTime);
-                gain.gain.setValueAtTime(0.1, context.currentTime);
-                gain.gain.exponentialRampToValueAtTime(
-                  0.01,
-                  context.currentTime + 0.1,
-                );
-                oscillator.connect(gain);
-                gain.connect(context.destination);
-                oscillator.start();
-                oscillator.stop(context.currentTime + 0.1);
-
-                setTimeout(() => context.close(), 200);
-              }
-            } catch (e) {
-              console.error("Failed to play notification sound:", e);
-            }
-          }
-          break;
-        }
-
-        let chunk = decoder.decode(value);
-
-        // Detect model control token emitted by server like [MODEL:...]
-        const modelRegex = /\[MODEL:([^\]]+)\]/g;
-        let m: RegExpExecArray | null;
-        while ((m = modelRegex.exec(chunk)) !== null) {
-          const modelName = m[1];
-          if (msgInStore) msgInStore.model = modelName;
-        }
-        // Remove any model tokens from the chunk before appending
-        chunk = chunk.replace(/\[MODEL:[^\]]+\]/g, '');
-
-        accumulatedText += chunk;
-
-        const now = Date.now();
-        if (now - lastUpdateTime > 60) {
-          if (updateTimeout) clearTimeout(updateTimeout);
-          flushUpdate();
-          lastUpdateTime = now;
-        } else if (!updateTimeout) {
-          updateTimeout = setTimeout(() => {
-            flushUpdate();
-            lastUpdateTime = Date.now();
-            updateTimeout = null;
-          }, 60);
-        }
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error && error.name === "AbortError") {
-        const chat = chats.value.find((c) => c.id === targetChatId);
-        const msgInStore = chat?.content.find((m) => m.id === aiMessage.id);
-        if (msgInStore) msgInStore.status = "received";
-        return;
-      }
-
-      console.error(error);
-      const message = error instanceof Error ? error.message : "Unknown error";
-
-      const chat = chats.value.find((c) => c.id === targetChatId);
-      const userMsgInStore: ChatMessage | undefined = chat?.content.find(
-        (m) => m.id === userMessage.id,
-      );
-      if (userMsgInStore) {
-        userMsgInStore.status = "error";
-      }
-
-      const msgInStore: ChatMessage | undefined = chat?.content.find(
-        (m) => m.id === aiMessage.id,
-      );
-      if (msgInStore) {
-        msgInStore.status = "error";
-        msgInStore.parts = [{ text: `Error: ${message}` }];
-      }
-    } finally {
-      isGenerating.value = false;
-      abortController = null;
-    }
-  };
-
-  const deleteChat = (id: number) => {
+  const deleteChat = async (id: string) => {
     const wasSelected = selectedChatId.value === id;
+    const deletedChat = chats.value.find((chat) => chat.id === id);
+    const prevChats = chats.value.slice();
     chats.value = chats.value.filter((chat) => chat.id !== id);
+
     if (wasSelected) {
       selectedChatId.value = null;
-      navigateTo("/");
+      navigateTo('/');
+    }
+
+    try {
+      await $fetch(`/api/chats/${id}`, { method: 'DELETE' });
+    } catch (err) {
+      console.error('Error deleting chat:', err);
+      if (deletedChat) chats.value = prevChats;
+      if (wasSelected) selectedChatId.value = id;
+      throw err;
     }
   };
 
-  const retryMessage = (chatId: number, aiMessageId: number) => {
+  const renameChat = async (id: string, newTitle: string) => {
+    const chat = chats.value.find((c) => c.id === id);
+    const trimmed = newTitle.trim();
+    if (!chat || trimmed.length === 0) return;
+
+    const oldTitle = chat.title;
+    chat.title = trimmed.slice(0, 30) + (trimmed.length > 30 ? '...' : '');
+
+    try {
+      await $fetch(`/api/chats/${id}`, {
+        method: 'PATCH',
+        body: { title: chat.title },
+      });
+    } catch (err) {
+      console.error('Error renaming chat:', err);
+      chat.title = oldTitle;
+      throw err;
+    }
+  };
+
+  const clearAllChats = async () => {
+    const prevChats = chats.value.slice();
+    const prevSelected = selectedChatId.value;
+    const chatIds = chats.value.map((chat) => chat.id);
+
+    try {
+      await Promise.all(
+        chatIds.map((id) => $fetch(`/api/chats/${id}`, { method: 'DELETE' })),
+      );
+      chats.value = [];
+      selectedChatId.value = null;
+      navigateTo('/');
+    } catch (err) {
+      console.error('Error clearing chats:', err);
+      chats.value = prevChats;
+      selectedChatId.value = prevSelected;
+      if (prevSelected) navigateTo(`/chat/${prevSelected}`);
+      throw err;
+    }
+  };
+
+  const handleStreamError = (
+    chatId: string,
+    userMsgId: string | number,
+    aiMsgId: string | number,
+    error: unknown,
+  ) => {
+    console.error(error);
+    const errMsg = error instanceof Error ? error.message : 'Unknown error';
+    const chat = chats.value.find((c) => c.id === chatId);
+
+    if (chat) {
+      const userMsg = chat.content.find((m) => m.id === userMsgId);
+      if (userMsg) userMsg.status = 'error';
+
+      const aiMsg = chat.content.find((m) => m.id === aiMsgId);
+      if (aiMsg) {
+        aiMsg.status = 'error';
+        aiMsg.parts = [{ text: `Error: ${errMsg}` }];
+      }
+    }
+  };
+
+  interface ExtendedWindow extends Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+
+  const playNotificationSound = () => {
+    if (!uiStore.soundEnabled) return;
+    try {
+      const AudioCtx =
+        window.AudioContext || (window as ExtendedWindow).webkitAudioContext;
+      if (!AudioCtx) return;
+
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+
+      setTimeout(() => ctx.close(), 200);
+    } catch (e) {
+      console.error('Sound error:', e);
+    }
+  };
+
+  const retryMessage = (chatId: string, aiMessageId: string | number) => {
+    if (isGenerating.value) return;
+
     const chat = chats.value.find((c) => c.id === chatId);
     if (!chat) return;
 
-    const aiMessageIndex = chat.content.findIndex((m) => m.id === aiMessageId);
-    if (aiMessageIndex <= 0) return;
+    const aiIndex = chat.content.findIndex((m) => m.id === aiMessageId);
+    if (aiIndex <= 0) return;
 
-    const aiMessage = chat.content[aiMessageIndex];
-    if (
-      !aiMessage ||
-      aiMessage.role !== "model" ||
-      aiMessage.status !== "error"
-    )
-      return;
+    const aiMessage = chat.content[aiIndex];
+    const userMessage = chat.content[aiIndex - 1];
 
-    let userMessage: ChatMessage | null = null;
-    for (let i = aiMessageIndex - 1; i >= 0; i--) {
-      const msg = chat.content[i];
-      if (msg && msg.role === "user") {
-        userMessage = msg;
-        break;
-      }
-    }
+    if (!aiMessage || !userMessage || userMessage.role !== 'user') return;
 
-    if (!userMessage) return;
-
-    aiMessage.status = "pending";
-    aiMessage.parts = [{ text: "" }];
+    aiMessage.status = 'pending';
+    aiMessage.parts = [{ text: '' }];
 
     processResponse(chatId, userMessage, aiMessage);
   };
 
-  const renameChat = (id: number, newTitle: string) => {
-    const chat = chats.value.find((c) => c.id === id);
-    if (chat) {
-      const trimmed = newTitle.trim();
-      if (trimmed.length > 0) {
-        chat.title = trimmed.slice(0, 30) + (trimmed.length > 30 ? "..." : "");
-      }
-    }
-  };
-
-  const changeSelected = (id: number) => {
+  const changeSelected = (id: string) => {
     selectedChatId.value = id;
   };
-
   const removeSelection = () => {
     selectedChatId.value = null;
   };
 
-  const clearAllChats = () => {
-    chats.value = [];
-    selectedChatId.value = null;
-    navigateTo("/");
-  };
-
-  const exportChats = () => {
-    const data = JSON.stringify(chats.value, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `gchat-export-${new Date().toISOString().split("T")[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const importChats = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const imported = JSON.parse(e.target?.result as string);
-        if (Array.isArray(imported)) {
-          chats.value = [...chats.value, ...imported];
-        }
-      } catch (error) {
-        console.error("Failed to import chats:", error);
-      }
-    };
-    reader.readAsText(file);
-  };
-
   return {
-    chats: skipHydrate(chats),
-    selectedChatId: skipHydrate(selectedChatId),
+    chats,
+    selectedChatId,
     selectedChat,
     isGenerating,
     addChat,
@@ -410,7 +428,5 @@ export const useChatStore = defineStore("chat", () => {
     renameChat,
     retryMessage,
     clearAllChats,
-    exportChats,
-    importChats,
   };
 });

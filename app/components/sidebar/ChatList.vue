@@ -22,11 +22,7 @@ import { motion } from 'motion-v';
 import { useChatStore } from '~/stores/chat';
 import { storeToRefs } from 'pinia';
 import ChatListItem from './ChatListItem.vue';
-
-interface Chat {
-  id: number;
-  title: string;
-}
+import type { Chat } from '~/types/openrouter';
 
 const chatStore = useChatStore();
 const { selectedChatId } = storeToRefs(chatStore);
@@ -41,7 +37,7 @@ defineProps({
     required: true,
   },
   changeSelected: {
-    type: Function as PropType<(id: number) => void>,
+    type: Function as PropType<(id: string) => void>,
     required: true,
   },
 });

@@ -1,11 +1,11 @@
-export type MessageRole = "user" | "model" | "assistant" | "system";
+export type MessageRole = 'user' | 'model' | 'assistant' | 'system';
 
 export type MessageStatus =
-  | "pending"
-  | "sent"
-  | "received"
-  | "error"
-  | "streaming";
+  | 'pending'
+  | 'sent'
+  | 'received'
+  | 'error'
+  | 'streaming';
 
 export interface TextPart {
   text: string;
@@ -21,13 +21,13 @@ export interface InlineDataPart {
 export type ContentPart = TextPart | InlineDataPart;
 
 export interface Chat {
-  id: number;
+  id: string;
   title: string;
   content: ChatMessage[];
 }
 
 export interface ChatMessage {
-  id: number;
+  id: string;
   role: MessageRole;
   parts: ContentPart[];
   timestamp: string;
@@ -37,21 +37,23 @@ export interface ChatMessage {
 
 // OpenRouter message item shapes
 export interface OpenRouterTextItem {
-  type: "text";
+  type: 'text';
   text: string;
 }
 
 export interface OpenRouterImageItem {
-  type: "image_url";
+  type: 'image_url';
   image_url: {
     url: string;
   };
 }
 
-export type OpenRouterContent = string | Array<OpenRouterTextItem | OpenRouterImageItem>;
+export type OpenRouterContent =
+  | string
+  | Array<OpenRouterTextItem | OpenRouterImageItem>;
 
 export interface OpenRouterMessage {
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: OpenRouterContent;
 }
 

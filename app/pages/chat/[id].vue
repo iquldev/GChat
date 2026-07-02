@@ -33,7 +33,7 @@ const chatStore = useChatStore();
 const { chats } = storeToRefs(chatStore);
 const { changeSelected } = chatStore;
 
-const chatId = computed(() => Number(route.params.id));
+const chatId = computed(() => route.params.id as string);
 const scrollContainer = ref<HTMLElement | null>(null);
 const shouldAutoScroll = ref(true);
 
@@ -77,7 +77,7 @@ watch(
 
 onMounted(async () => {
   if (route.params.id) {
-    changeSelected(Number(route.params.id));
+    changeSelected(route.params.id as string);
     scrollToBottom('instant');
   }
 });
@@ -86,7 +86,7 @@ watch(
   () => route.params.id,
   (newId) => {
     if (newId) {
-      changeSelected(Number(newId));
+      changeSelected(newId as string);
     }
   },
 );

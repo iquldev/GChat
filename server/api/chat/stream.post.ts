@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { systemPrompt } from '~~/server/utils/prompts';
 import type { OpenRouterMessage } from '~~/app/types/openrouter';
+import { auth } from '~~/server/lib/auth';
 
 const chatSchema = z.object({
   model: z.string().optional(),
@@ -36,40 +37,63 @@ const chatSchema = z.object({
 });
 
 const userLimits = new Map<string, number[]>();
-const LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+const LIMIT_WINDOW = 60 * 60 * 1000;
 const MAX_REQUESTS = 100;
+const CLEANUP_INTERVAL = 5 * 60 * 1000;
+
+let lastCleanup = Date.now();
 
 function checkRateLimit(userId: string): boolean {
   const now = Date.now();
   let timestamps = userLimits.get(userId) || [];
-  
-  // Keep only timestamps within the 1-hour window
+
   timestamps = timestamps.filter((t) => now - t < LIMIT_WINDOW);
-  
+
   if (timestamps.length >= MAX_REQUESTS) {
     userLimits.set(userId, timestamps);
     return true;
   }
-  
+
   timestamps.push(now);
   userLimits.set(userId, timestamps);
+
+  if (now - lastCleanup > CLEANUP_INTERVAL) {
+    for (const [id, times] of userLimits.entries()) {
+      const filtered = times.filter((t) => now - t < LIMIT_WINDOW);
+      if (filtered.length === 0) {
+        userLimits.delete(id);
+      } else {
+        userLimits.set(id, filtered);
+      }
+    }
+    lastCleanup = now;
+  }
+
   return false;
 }
 
 export default defineEventHandler(async (event) => {
-  if (!event.context.user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized: You must be logged in to interact with the AI.',
+  let user = event.context.user;
+
+  if (!user) {
+    const session = await auth.api.getSession({
+      headers: event.headers,
     });
+    if (!session) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'Unauthorized',
+      });
+    }
+    user = session.user;
   }
 
-  const userId = String(event.context.user._id);
+  const userId = user.id;
 
   if (checkRateLimit(userId)) {
     throw createError({
       statusCode: 429,
-      statusMessage: 'Rate limit exceeded: Max 100 requests per hour.',
+      statusMessage: 'Rate limit exceeded',
     });
   }
 
@@ -82,7 +106,7 @@ export default defineEventHandler(async (event) => {
   if (!apiKey) {
     throw createError({
       statusCode: 401,
-      statusMessage: 'Unauthorized: Missing OpenRouter API Key',
+      statusMessage: 'Unauthorized',
     });
   }
 

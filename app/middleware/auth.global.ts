@@ -1,14 +1,40 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { defineNuxtRouteMiddleware, navigateTo } from '#app';
 import { authClient } from '~/lib/auth-client';
 
-export default defineNuxtRouteMiddleware(async (to) => {
-  const { data } = await authClient.getSession({
-    fetchOptions: {
-      headers: useRequestHeaders(['cookie']) as Record<string, string>,
-    },
-  });
+let cachedSession: any = null;
+let sessionFetchPromise: Promise<any> | null = null;
 
-  const isAuthenticated = !!data?.session;
+export default defineNuxtRouteMiddleware(async (to) => {
+  if (cachedSession !== null) {
+    const isAuthenticated = !!cachedSession?.session;
+    if (!isAuthenticated && to.path !== '/login') {
+      return navigateTo('/login');
+    }
+    if (isAuthenticated && to.path === '/login') {
+      return navigateTo('/');
+    }
+    return;
+  }
+
+  if (!sessionFetchPromise) {
+    sessionFetchPromise = authClient
+      .getSession({
+        fetchOptions: {
+          headers: useRequestHeaders(['cookie']) as Record<string, string>,
+        },
+      })
+      .then((res) => {
+        cachedSession = res.data;
+        return res.data;
+      })
+      .finally(() => {
+        sessionFetchPromise = null;
+      });
+  }
+
+  const { session } = await sessionFetchPromise;
+  const isAuthenticated = !!session;
 
   if (!isAuthenticated && to.path !== '/login') {
     return navigateTo('/login');

@@ -5,6 +5,7 @@ import { client } from '../utils/db';
 export const auth = betterAuth({
   database: mongodbAdapter(client.db()),
   baseURL: process.env.NUXT_PUBLIC_AUTH_URL,
+  secret: process.env.NUXT_BETTER_AUTH_SECRET,
   socialProviders: {
     google: {
       clientId: process.env.NUXT_GOOGLE_CLIENT_ID as string,

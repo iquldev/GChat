@@ -119,7 +119,7 @@
                   </div>
 
                   <div class="grid gap-4 md:grid-cols-2">
-                    <button
+                    <!-- <button
                       class="flex items-center gap-3 p-4 rounded-2xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) transition cursor-pointer"
                       @click="chatStore.exportChats()"
                     >
@@ -132,9 +132,9 @@
                           {{ $t('settings.exportSub') }}
                         </div>
                       </div>
-                    </button>
+                    </button> -->
 
-                    <button
+                    <!-- <button
                       class="flex items-center gap-3 p-4 rounded-2xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) transition cursor-pointer"
                       @click="triggerImport"
                     >
@@ -147,7 +147,7 @@
                           {{ $t('settings.importSub') }}
                         </div>
                       </div>
-                    </button>
+                    </button> -->
 
                     <button
                       class="md:col-span-2 flex items-center justify-between gap-3 p-4 rounded-2xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) transition text-error cursor-pointer"
@@ -169,56 +169,50 @@
                   </div>
                 </section>
 
-                <!-- Profile -->
                 <section
                   v-else-if="activeCategory === 'profile'"
-                  class="space-y-6"
+                  class="space-y-4"
                 >
                   <div
-                    class="p-5 rounded-3xl border border-default bg-(--ui-block-background) flex items-center gap-4 animate-fade-in"
+                    class="flex items-center gap-4 p-4 rounded-2xl border border-default bg-(--ui-background)/30"
                   >
                     <img
                       v-if="currentUser?.image"
                       :src="currentUser.image"
-                      class="w-16 h-16 rounded-full object-cover ring-2 ring-primary"
+                      class="w-14 h-14 rounded-full object-cover ring-2 ring-primary shrink-0"
                       alt="Avatar"
                     />
                     <div
                       v-else
-                      class="w-16 h-16 rounded-full bg-linear-to-tr from-blue-500 to-violet-600 text-white flex items-center justify-center font-bold text-xl shadow-lg"
+                      class="w-14 h-14 rounded-full bg-linear-to-tr from-blue-500 to-violet-600 text-white flex items-center justify-center font-bold text-xl shrink-0"
                     >
                       {{ currentUser?.name?.slice(0, 2).toUpperCase() || 'U' }}
                     </div>
                     <div class="flex-1 min-w-0">
-                      <h3
-                        class="text-xl font-bold text-(--ui-text-primary) truncate"
+                      <p
+                        class="text-sm font-semibold text-(--ui-text-primary) truncate"
                       >
                         {{ currentUser?.name }}
-                      </h3>
-                      <p class="text-xs text-(--ui-text-second) mt-0.5">
-                        Connected via
-                        <span class="capitalize font-medium">
-                          {{ currentUser?.email.split('@')[1] }}
-                        </span>
+                      </p>
+                      <p
+                        class="text-xs text-(--ui-text-second) mt-0.5 truncate"
+                      >
+                        {{ currentUser?.email }}
                       </p>
                     </div>
                   </div>
 
                   <div class="grid gap-4 md:grid-cols-2">
                     <button
-                      class="flex items-center gap-4 p-5 rounded-3xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) hover:border-(--ui-error)/30 transition text-error cursor-pointer group"
+                      class="flex items-center gap-3 p-4 rounded-2xl border border-default bg-(--ui-background) hover:bg-(--ui-button-selected) transition cursor-pointer text-error"
                       @click="handleLogout"
                     >
-                      <div
-                        class="p-3 rounded-2xl bg-red-500/10 text-red-500 group-hover:bg-red-500/20 transition"
-                      >
-                        <Icon name="lucide:log-out" class="size-6" />
-                      </div>
-                      <div class="text-left flex-1 min-w-0">
-                        <div class="font-bold text-base leading-tight">
+                      <Icon name="lucide:log-out" class="size-5 shrink-0" />
+                      <div class="text-left">
+                        <div class="font-semibold text-sm">
                           {{ $t('settings.logout') }}
                         </div>
-                        <div class="text-xs text-(--ui-text-second) mt-1">
+                        <div class="text-xs text-(--ui-text-second)">
                           {{ $t('settings.logoutSub') }}
                         </div>
                       </div>
@@ -229,13 +223,13 @@
             </Transition>
           </div>
 
-          <input
+          <!-- <input
             ref="importInput"
             type="file"
             accept=".json"
             class="hidden"
             @change="handleImport"
-          />
+          /> -->
         </main>
       </div>
     </Transition>
@@ -255,7 +249,7 @@ import { getCurrentInstance } from 'vue';
 const props = defineProps<{ isSettingsOpen: boolean }>();
 
 const dialogRef = ref<HTMLDialogElement | null>(null);
-const importInput = ref<HTMLInputElement | null>(null);
+// const importInput = ref<HTMLInputElement | null>(null);
 const isAnimating = ref(false);
 const activeCategory = ref('general');
 
@@ -279,6 +273,9 @@ const handleLogout = async () => {
   await authClient.signOut({
     fetchOptions: {
       onSuccess: () => {
+        navigateTo('/login');
+      },
+      onError: () => {
         navigateTo('/login');
       },
     },
@@ -367,17 +364,17 @@ const handleBackdropClick = (event: MouseEvent) => {
   }
 };
 
-const triggerImport = () => {
-  importInput.value?.click();
-};
+// const triggerImport = () => {
+//   importInput.value?.click();
+// };
 
-const handleImport = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    chatStore.importChats(target.files[0]);
-    target.value = '';
-  }
-};
+// const handleImport = (event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   if (target.files && target.files[0]) {
+//     chatStore.importChats(target.files[0]);
+//     target.value = '';
+//   }
+// };
 
 const confirmClearAll = () => {
   if (confirm(t('settings.confirmClear'))) {
