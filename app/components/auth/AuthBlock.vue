@@ -7,9 +7,9 @@
     <div class="flex flex-col gap-4">
       <AuthButton
         v-for="provider in providers"
-        :key="provider.name"
+        :key="provider.id"
         :provider="provider"
-        @click="onAuth(provider.id)"
+        @click="$emit('auth', provider.id)"
       />
     </div>
   </div>
@@ -21,6 +21,9 @@ import type { Provider } from '~/types/auth';
 defineProps<{
   title: string;
   providers: Provider[];
-  onAuth: (provider: string) => void;
+}>();
+
+defineEmits<{
+  auth: [provider: string];
 }>();
 </script>

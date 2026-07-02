@@ -36,16 +36,15 @@ export const useChatStore = defineStore('chat', () => {
   );
 
   watch(
-    chats,
-    (newChats) => {
+    () => chats.value.map((c) => c.id),
+    (newIds) => {
       if (
         selectedChatId.value &&
-        !newChats.some((c) => c.id === selectedChatId.value)
+        !newIds.includes(selectedChatId.value)
       ) {
         selectedChatId.value = null;
       }
     },
-    { deep: true },
   );
 
   const fetchUserChats = async () => {
@@ -137,7 +136,7 @@ export const useChatStore = defineStore('chat', () => {
     }
 
     const aiMessage: ChatMessage = {
-      id: Date.now() + 1,
+      id: (Date.now() + 1).toString(),
       role: 'model',
       parts: [{ text: '' }],
       timestamp: new Date().toISOString(),

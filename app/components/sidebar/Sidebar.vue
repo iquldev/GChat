@@ -70,7 +70,10 @@
       >
         <div
           class="flex items-center gap-3 px-2 py-1.5 rounded-2xl hover:bg-(--ui-button-selected) transition cursor-pointer"
+          role="button"
+          tabindex="0"
           @click="toggleSettings(true)"
+          @keydown.enter="toggleSettings(true)"
         >
           <img
             v-if="session?.data?.user?.image"
