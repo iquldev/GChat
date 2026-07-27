@@ -7,6 +7,7 @@ GChat is a modern, high-performance chat interface powered by **OpenRouter API**
 [![Nuxt](https://img.shields.io/badge/Nuxt-4.x-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com)
 [![Bun](https://img.shields.io/badge/Bun-1.2-fbf0df?logo=bun&logoColor=black)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-8.x-47A248?logo=mongodb&logoColor=white)](https://mongodb.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -17,9 +18,12 @@ GChat is a modern, high-performance chat interface powered by **OpenRouter API**
 - ⚡ **Nuxt 4 Architecture**: Leveraging the latest Nuxt features for speed and developer productivity.
 - 🎨 **Modern UI/UX**:
   - **Nuxt UI & Tailwind CSS 4**: Clean, accessible, and responsive design.
-  - **Motion-v**: Fluid animations and transitions.
+  - **Motion-v**: Fluid animations, transitions, and page layout animations.
   - **Animated background**: Dynamic visual effect on the home screen.
-  - **Dark / Light / System themes**: Full color-mode support.
+  - **Dark / Light / System themes**: Full color-mode support including OLED mode.
+  - **Animated page transitions**: LayoutGroup + AnimatePresence for smooth navigation.
+- 🔐 **Authentication**: Google & GitHub OAuth via Better Auth with session management.
+- 🗄️ **MongoDB Persistence**: Chats stored in MongoDB — available across sessions and devices.
 - ⏹️ **Stop Generation**: Abort streaming responses in real-time with a dedicated button.
 - 📝 **Advanced Markdown**:
   - Full syntax support via `markdown-it`.
@@ -28,10 +32,13 @@ GChat is a modern, high-performance chat interface powered by **OpenRouter API**
   - Task lists and link attributes.
 - 🌍 **Multi-lingual**: Full English and Russian support out of the box.
 - 📂 **File Attachments**: Send images and files directly in conversations.
-- 🔁 **Chat Management**: Retry messages, copy responses, rename and delete chats.
+- 🔁 **Chat Management**: Retry messages, copy responses, rename, search, and delete chats.
+- ⚙️ **Rich Settings**: Temperature, max tokens, custom system prompt, personal API key, OLED theme, sound notifications, export/import history.
+- 💡 **Prompt Examples**: Quick-start panel on the homepage.
 - ⌨️ **Enter to Send**: Send with Enter, new line with Shift+Enter. Full IME composition support.
 - 🔐 **Secure by Default**:
-  - Rate limiting: 5 requests per minute on `/api/**`.
+  - Rate limiting: 5 req/min on `/api/**` and 30 req/min on `/api/auth/**`.
+  - Auth guard middleware — all API routes require a valid session.
   - Strict Content Security Policy (CSP) with nonce support.
   - Configurable CORS whitelist via environment variable.
   - Request size limits: 2 MB (body) / 8 MB (file uploads).
@@ -63,9 +70,20 @@ Create a `.env` file in the root directory:
 ```env
 # Required
 NUXT_OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxx
+NUXT_BETTER_AUTH_SECRET=your-secret-here
+NUXT_MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/
 
 # Optional — default model if none selected (falls back to openrouter/free)
 NUXT_DEFAULT_AI_MODEL=openrouter/auto
+
+# Optional — OAuth providers (at least one required for login)
+NUXT_GOOGLE_CLIENT_ID=...
+NUXT_GOOGLE_CLIENT_SECRET=...
+NUXT_GITHUB_CLIENT_ID=...
+NUXT_GITHUB_CLIENT_SECRET=...
+
+# Optional — auth URL (defaults to http://localhost:3000 in dev)
+NUXT_PUBLIC_AUTH_URL=https://your-domain.com
 
 # Optional — comma-separated list of allowed CORS origins (production)
 # If not set and NODE_ENV=production, all origins are blocked
@@ -85,19 +103,23 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## 🛠 Tech Stack
 
-| Category   | Technology                                                                    |
-| ---------- | ----------------------------------------------------------------------------- |
-| Framework  | [Nuxt 4](https://nuxt.com/)                                                   |
-| Runtime    | [Bun](https://bun.sh/)                                                        |
-| AI         | [OpenRouter API](https://openrouter.ai/) (SSE streaming)                      |
-| UI Kit     | [@nuxt/ui](https://ui.nuxt.com/) + [Tailwind CSS 4](https://tailwindcss.com/) |
-| State      | [Pinia](https://pinia.vuejs.org/) + LocalStorage                              |
-| Animations | [Motion-v](https://motion-v.com/)                                             |
-| Markdown   | [markdown-it](https://github.com/markdown-it/markdown-it) + highlight.js      |
-| i18n       | [@nuxtjs/i18n](https://i18n.nuxtjs.org/) (EN / RU)                            |
-| Security   | [nuxt-security](https://nuxt-security.vercel.app/)                            |
-| Validation | [Zod](https://zod.dev/)                                                       |
-| Testing    | [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/)         |
+| Category   | Technology                                                                           |
+| ---------- | ------------------------------------------------------------------------------------ |
+| Framework  | [Nuxt 4.4](https://nuxt.com/) + [Vite 7](https://vite.dev/)                         |
+| Runtime    | [Bun](https://bun.sh/)                                                               |
+| AI         | [OpenRouter API](https://openrouter.ai/) (SSE streaming)                             |
+| UI Kit     | [@nuxt/ui](https://ui.nuxt.com/) + [Tailwind CSS 4](https://tailwindcss.com/)        |
+| State      | [Pinia 3](https://pinia.vuejs.org/) + Cookies                                        |
+| Auth       | [Better Auth](https://better-auth.com/) (Google, GitHub OAuth)                       |
+| Database   | [MongoDB](https://mongodb.com/)                                                      |
+| Animations | [Motion-v](https://motion-v.com/)                                                    |
+| Markdown   | [markdown-it](https://github.com/markdown-it/markdown-it) + highlight.js             |
+| i18n       | [@nuxtjs/i18n](https://i18n.nuxtjs.org/) (EN / RU)                                   |
+| Icons      | [Lucide](https://lucide.dev/) (@iconify-json/lucide)                                 |
+| Fonts      | [@nuxt/fonts](https://fonts.nuxt.com/)                                               |
+| Security   | [nuxt-security](https://nuxt-security.vercel.app/)                                   |
+| Validation | [Zod 4](https://zod.dev/)                                                            |
+| Testing    | [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/)                |
 
 ---
 
@@ -106,21 +128,36 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 ```text
 .
 ├── app/
-│   ├── assets/          # Global styles (Tailwind, Markdown, colors)
-│   ├── components/      # Vue components (Chat, Sidebar, Settings, NewChat)
-│   ├── locales/         # i18n translation files (en.json, ru.json)
-│   ├── pages/           # Routes: / and /chat/[id]
-│   ├── stores/          # Pinia state management: chat.ts, ui.ts
-│   ├── types/           # TypeScript types (openrouter.ts, etc.)
-│   └── utils/           # Helper functions and formatters
+│   ├── assets/css/          # Global styles: main.css, colors.css, markdown.css, disable-blur.css
+│   ├── components/
+│   │   ├── auth/            # AuthBlock, AuthButton
+│   │   ├── chat/            # ChatMessage, MarkdownContent, MarkdownRenderer, MessageContent, MessageFooter
+│   │   ├── compose/         # MessageInput, ModelSelector, NewChatForm, PromptExamplesPanel
+│   │   ├── homepage/        # HomepageBackground, HomepageHero
+│   │   ├── settings/        # SettingItem, SettingsModal, SettingsSidebar
+│   │   ├── sidebar/         # Sidebar, ChatList, ChatListItem, SidebarActions, SidebarSearch
+│   │   └── ui/              # Avatar, IconButton, Timestamp
+│   ├── layouts/             # default.vue (sidebar + settings modal), blank.vue (login)
+│   ├── lib/                 # Better Auth client
+│   ├── locales/             # i18n: en.json, ru.json
+│   ├── middleware/          # Global auth guard (redirects unauthenticated users)
+│   ├── pages/               # /, /login, /chat/[id]
+│   ├── stores/              # chat.ts (chats, streaming), ui.ts (preferences)
+│   ├── types/               # OpenRouter, Auth types + module declarations
+│   ├── utils/               # Date formatters
+│   └── test/                # Nuxt component tests, unit tests, E2E specs
 ├── server/
 │   ├── api/
-│   │   └── chat/
-│   │       └── stream.post.ts   # SSE proxy → OpenRouter
-│   └── utils/
-│       └── prompts.ts           # System prompt
-├── i18n/                # i18n configuration
-├── nuxt.config.ts       # Main Nuxt configuration
+│   │   ├── auth/[...all].ts          # Better Auth handler
+│   │   ├── chat/stream.post.ts       # SSE proxy → OpenRouter
+│   │   └── chats/                    # CRUD: GET, POST, DELETE, PATCH + messages
+│   ├── lib/                # Better Auth server config (MongoDB adapter)
+│   ├── middleware/         # API auth guard (blocks unauthenticated requests)
+│   ├── plugins/            # Session injection on every request
+│   ├── types/              # H3EventContext augmentation
+│   └── utils/              # db.ts (MongoDB), prompts.ts (system prompt)
+├── i18n/                   # Locale files (en.json, ru.json)
+├── nuxt.config.ts          # Nuxt configuration
 └── package.json
 ```
 
@@ -128,24 +165,47 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## ⚙️ How the API Works
 
-The server accepts a POST request to `/api/chat/stream` with a message history and model name, validates the body with **Zod**, then proxies the request to `https://openrouter.ai/api/v1/chat/completions` in streaming mode (SSE). The client reads the stream via `ReadableStream` and updates the UI in real time. When the connection is closed, streaming is aborted via `AbortController`.
+### Authentication
 
-### File Attachment Support
+Better Auth handles sessions via its catch-all handler at `/api/auth/[...all]`. Users authenticate through Google or GitHub OAuth. A global auth middleware redirects unauthenticated visitors to `/login`, and a server middleware guards all `/api/**` routes (except `/api/auth/**`).
 
-Files are passed as `inlineData` (base64) and converted to the `image_url` format expected by OpenRouter.
+### Chats (CRUD)
+
+| Method | Endpoint                  | Description          |
+| ------ | ------------------------- | -------------------- |
+| GET    | `/api/chats`              | List user's chats    |
+| POST   | `/api/chats`              | Create a new chat    |
+| PATCH  | `/api/chats/[id]`         | Rename a chat        |
+| DELETE | `/api/chats/[id]`         | Delete a chat        |
+| POST   | `/api/chats/[id]/messages`| Append a message     |
+
+All chat data is persisted in MongoDB with user ownership enforced server-side.
+
+### Streaming (AI)
+
+`POST /api/chat/stream` accepts a message history and model configuration, validates the body with Zod, then proxies the request to OpenRouter's SSE endpoint. The client reads the stream via `ReadableStream` and updates the UI in real time. Key features:
+
+- **Authentication**: Session-based (Better Auth) or `Authorization` header fallback
+- **OpenRouter Tools**: Includes `openrouter:datetime` and `openrouter:web_fetch`
+- **Custom system prompts**: User-defined prompts override the default
+- **User API keys**: Clients can supply their own OpenRouter key
+- **Rate limiting**: 100 requests/hour per user (in-memory)
+- **Abort**: Client disconnect stops generation via `AbortController`
+- **File Attachments**: Sent as `inlineData` (base64), converted to `image_url` format
 
 ---
 
 ## 🔐 Security
 
-| Parameter        | Value                                |
-| ---------------- | ------------------------------------ |
-| Rate Limit       | 5 requests / 60 sec on `/api/**`     |
-| Max request body | 2 MB                                 |
-| Max file upload  | 8 MB                                 |
-| CSP              | Enabled in production (nonce-based)  |
-| CORS             | Whitelist via `NUXT_ALLOWED_ORIGINS` |
-| Security module  | Enabled in `production` only         |
+| Parameter          | Value                                     |
+| ------------------ | ----------------------------------------- |
+| Rate Limit (API)   | 5 requests / 60 sec on `/api/**`          |
+| Rate Limit (Auth)  | 30 requests / 60 sec on `/api/auth/**`    |
+| Auth Guard         | All `/api/**` (except auth) require session |
+| Request size       | 2 MB body / 8 MB uploads                  |
+| CSP                | Enabled in production (nonce-based)       |
+| CORS               | Whitelist via `NUXT_ALLOWED_ORIGINS`      |
+| Security module    | Enabled in `production` only              |
 
 ---
 
@@ -174,7 +234,7 @@ bun run build
 bun run preview
 ```
 
-> ⚠️ **Note**: All chats are stored in the browser's `localStorage`. Clearing browser data will permanently delete all conversation history.
+> ⚠️ **Note**: Chats are persisted in MongoDB. UI preferences (theme, model, temperature, etc.) are stored in cookies. Clearing browser data will reset your preferences but not your conversation history.
 
 ---
 
